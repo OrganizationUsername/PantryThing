@@ -1,17 +1,64 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
-using System.Runtime.CompilerServices;
-using System.Security.Cryptography.X509Certificates;
 
 namespace Pantry.Core
 {
+    public static class ExtensionMethods
+    {
+        public static void ConsoleResult(this CanMakeSomething canCook)
+        {
+            if (canCook.CanMake)
+            {
+                Console.WriteLine(string.Join(Environment.NewLine, canCook.TotalCost.Select(x => x.FoodType.Name)));
+                Console.WriteLine($"Recipes: {Environment.NewLine}" + string.Join(Environment.NewLine, canCook.RecipesTouched.Select(x => x.Description)));
+                //Console.WriteLine($"Time Taken: {canCook.RecipesTouched.Sum(x => x.RecipeSteps.Sum(y => y.TimeCost))}");
+                Console.WriteLine($"Total Cost:{Environment.NewLine}"
+                                  + string.Join(Environment.NewLine, canCook.RawCost.Select(x => x.FoodType.Name + ": " + x.Amount)));
+                Console.WriteLine("-----");
+            }
+        }
+
+        public static List<FoodInstance> DiminishFoodInstances(this List<FoodInstance> pantry, CanMakeSomething canCook)
+        {
+            if (canCook.CanMake)
+            {
+                foreach (var rawCost in canCook.RawCost)
+                {
+                    while (rawCost.Amount > 0)
+                    {
+                        var pantryItem =
+                            pantry.First(pantry => pantry.FoodType == rawCost.FoodType && pantry.Amount > 0);
+                        var AmountToDeduct = Math.Min(pantryItem.Amount, rawCost.Amount);
+                        pantryItem.Amount -= AmountToDeduct;
+                        rawCost.Amount -= AmountToDeduct;
+                    }
+                }
+
+                return pantry.Where(pi => pi.Amount > 0).ToList();
+            }
+            else
+            {
+                return null;
+            }
+        }
+        public static void OutputRemaining(this List<FoodInstance> pantry)
+        {
+            if (pantry is null)
+            {
+                return;
+            }
+            Console.WriteLine($"Remaining: {Environment.NewLine}" + string.Join(Environment.NewLine, pantry.Where(pi => pi.Amount > 0 && pi.Amount < 10_000_000).Select(pi => pi.FoodType.Name + ": " + pi.Amount)));
+        }
+    }
+
     public class Food
     {
         public int FoodId { get; set; }
         public string Name { get; set; }
 
-        public static bool operator ==(Food lhs, Food rhs) => lhs.FoodId == rhs.FoodId;
+        public static bool operator ==(Food lhs, Food rhs) => rhs is not null && lhs is not null && lhs.FoodId == rhs.FoodId;
 
         public static bool operator !=(Food lhs, Food rhs) => !(lhs.FoodId == rhs.FoodId);
     }
@@ -40,7 +87,7 @@ namespace Pantry.Core
     {
         public int EquipmentId { get; set; }
         public string Name { get; set; }
-        public List<(DateTime startTime, DateTime endTime)> BookedTimes { get; set; }
+        public List<(DateTime startTime, DateTime endTime, string StepName)> BookedTimes { get; set; }
     }
 
     public class FoodInstance
@@ -51,36 +98,56 @@ namespace Pantry.Core
         public DateTime Created { get; set; }
     }
 
-    public class TaskProjection
+    public interface IScheduler
     {
-
+        void TrySchedule(DateTime Goal);
+        List<CanMakeSomething> ScheduledTasks { get; set; }
+        List<Equipment> Equipments { get; set; }
     }
 
-    public class Scheduler
+    public class SimpleScheduler : IScheduler
     {
-        public List<CanMakeSomething> Things = new List<CanMakeSomething>();
-        public List<Equipment> Equipments = new List<Equipment>();
-        public void TrySchedule(DateTime Goal)
-        {
+        //public SimpleScheduler(List<CanMakeSomething> scheduledTasks, List<Equipment> equipments)
+        //{
+        //    this.ScheduledTasks = scheduledTasks;
+        //    this.Equipments = equipments;
+        //}
 
-            foreach (var thing in Things)
+        public List<CanMakeSomething> ScheduledTasks { get; set; } = new List<CanMakeSomething>();
+        public List<Equipment> Equipments { get; set; } = new List<Equipment>();
+        public void TrySchedule(DateTime goal)
+        {
+            foreach (var scheduledTask in ScheduledTasks)
             {
-                var x = thing.RecipesTouched.Last().RecipeSteps.Last();
-                //Find the latest time in which all of the equipment is available.
-                bool satisfied = false;
-                for (int offset = 0; !satisfied; offset++)
+                var recipeSteps = scheduledTask.RecipesTouched.SelectMany(b => b.RecipeSteps).Reverse();
+                int offset = 0;
+                foreach (var recipeStep in recipeSteps)
                 {
-                    if (x.Equipments.All(y =>
-                        y.IsAvailable(Goal.AddMinutes(-(offset + x.TimeCost)), Goal.AddMinutes(-offset))))
+                    bool satisfied = false;
+                    for (; !satisfied; offset++)
                     {
-                        satisfied = true;
-                        foreach (var y in x.Equipments)
+                        if (recipeStep.Equipments.All(y =>
+                            y.IsAvailable(goal.AddMinutes(-(offset + recipeStep.TimeCost)), goal.AddMinutes(-offset))))
                         {
-                            y.BookedTimes.Add((Goal.AddMinutes(-(offset + x.TimeCost)), Goal.AddMinutes(-offset)));
+                            satisfied = true;
+                            foreach (var y in recipeStep.Equipments)
+                            {
+                                y.BookedTimes.Add(
+                                    (goal.AddMinutes(-(offset + recipeStep.TimeCost)),
+                                        goal.AddMinutes(-offset), recipeStep.Instruction + $"_ {scheduledTask.RecipeName}")
+                                    );
+                            }
                         }
                     }
+                }
+            }
 
-
+            foreach (var equipment in Equipments)
+            {
+                Console.WriteLine(equipment.Name);
+                foreach (var y in equipment.BookedTimes.OrderBy(z => z.startTime))
+                {
+                    Console.WriteLine($"{y.startTime.ToShortTimeString()}:{y.endTime.ToShortTimeString()}: {y.StepName}");
                 }
             }
         }
@@ -95,12 +162,10 @@ namespace Pantry.Core
                 return true;
             }
 
-            foreach (var bt in e.BookedTimes)
+            foreach (var bookedTime in e.BookedTimes)
             {
                 if (false
-                    || (bt.endTime >= start && bt.startTime <= start)
-                    || (bt.endTime >= end && bt.startTime <= end)
-                    || (bt.startTime >= start && bt.endTime <= bt.startTime))
+                    || (bookedTime.startTime < end && bookedTime.endTime >= start))
                 {
                     return false;
                 }
@@ -111,6 +176,7 @@ namespace Pantry.Core
 
     public class CanMakeSomething
     {
+        public string RecipeName;
         public bool CanMake;
         public IList<FoodInstance> TotalOutPut;
         public IList<FoodInstance> TotalCost;
@@ -130,7 +196,7 @@ namespace Pantry.Core
             var clonedFoodInventory = CloneFoodInstances(foodInventory);
             foreach (var recipeInputFoodInstance in recipeLines)
             {
-                bool usedRaw = true;
+                var usedRaw = true;
                 while (recipeInputFoodInstance.Amount > 0)
                 {
                     var fi = clonedFoodInventory.FirstOrDefault(foodInstance =>
@@ -218,6 +284,7 @@ namespace Pantry.Core
                 TotalCost = totalInput,
                 TotalOutPut = new List<FoodInstance>() { recipe.OutputFoodInstance },
                 RawCost = rawCost,
+                RecipeName = recipe.Description,
             };
         }
 
