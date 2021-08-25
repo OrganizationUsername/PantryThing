@@ -16,7 +16,7 @@ namespace Pantry.Core.Test
         private readonly Food _grilledCheese = new() { FoodId = 7, Name = "GrilledCheese" };
         private readonly Food _unobtainableTomatoSoup = new() { FoodId = 8, Name = "TomatoSoupWithoutRecipe" };
         private readonly Food _unobtainableMeal = new() { FoodId = 9, Name = "UnobtainableMeal" };
-
+        private FoodProcessor FoodProcessor = new FoodProcessor();
         [SetUp]
         public void Setup()
         {
@@ -90,14 +90,14 @@ namespace Pantry.Core.Test
         {
             List<FoodInstance> pantry = new()
             {
-                new() { FoodType = _flour, Amount = 4 },
-                new() { FoodType = _milk, Amount = 3 },
-                new() { FoodType = _cheese, Amount = 1 },
-                new() { FoodType = _bread, Amount = 10 },
+                new FoodInstance() { FoodType = _flour, Amount = 4 },
+                new FoodInstance() { FoodType = _milk, Amount = 3 },
+                new FoodInstance() { FoodType = _cheese, Amount = 1 },
+                new FoodInstance() { FoodType = _bread, Amount = 10 },
             };
 
             var recipe = Recipes.First(r => r.OutputFoodInstance.FoodType == _unobtainableMeal);
-            var canCook = CookSomething.CanCookSomething(pantry, recipe, Recipes);
+            var canCook = FoodProcessor.CanCookSomething(pantry, recipe, Recipes);
             canCook.ConsoleResult();
             Assert.IsFalse(canCook.CanMake);
         }
@@ -107,13 +107,13 @@ namespace Pantry.Core.Test
         {
             List<FoodInstance> pantry = new()
             {
-                new() { FoodType = _flour, Amount = 4 },
-                new() { FoodType = _milk, Amount = 3 },
-                new() { FoodType = _cheese, Amount = 1 },
+                new FoodInstance() { FoodType = _flour, Amount = 4 },
+                new FoodInstance() { FoodType = _milk, Amount = 3 },
+                new FoodInstance() { FoodType = _cheese, Amount = 1 },
             };
 
             var recipe = Recipes.First(r => r.OutputFoodInstance.FoodType == _cheeseSandwichMeal);
-            var canCook = CookSomething.CanCookSomething(pantry, recipe, Recipes);
+            var canCook = FoodProcessor.CanCookSomething(pantry, recipe, Recipes);
             canCook.ConsoleResult();
             Assert.IsTrue(canCook.CanMake);
         }
@@ -123,14 +123,14 @@ namespace Pantry.Core.Test
         {
             List<FoodInstance> pantry = new()
             {
-                new() { FoodType = _flour, Amount = 4 },
-                new() { FoodType = _milk, Amount = 3 },
-                new() { FoodType = _cheese, Amount = 1 },
-                new() { FoodType = _bread, Amount = 0.25 },
+                new FoodInstance() { FoodType = _flour, Amount = 4 },
+                new FoodInstance() { FoodType = _milk, Amount = 3 },
+                new FoodInstance() { FoodType = _cheese, Amount = 1 },
+                new FoodInstance() { FoodType = _bread, Amount = 0.25 },
             };
 
             var recipe = Recipes.First(r => r.OutputFoodInstance.FoodType == _cheeseSandwichMeal);
-            var canCook = CookSomething.CanCookSomething(pantry, recipe, Recipes);
+            var canCook = FoodProcessor.CanCookSomething(pantry, recipe, Recipes);
             canCook.ConsoleResult();
             Assert.IsTrue(canCook.CanMake);
             Assert.AreEqual(2, canCook.RecipesTouched.Count(x => x.Description == "Bread"));
@@ -141,14 +141,14 @@ namespace Pantry.Core.Test
         {
             List<FoodInstance> pantry = new()
             {
-                new() { FoodType = _flour, Amount = 4 },
-                new() { FoodType = _milk, Amount = 3 },
-                new() { FoodType = _cheese, Amount = 1 },
-                new() { FoodType = _bread, Amount = 1.25 },
+                new FoodInstance() { FoodType = _flour, Amount = 4 },
+                new FoodInstance() { FoodType = _milk, Amount = 3 },
+                new FoodInstance() { FoodType = _cheese, Amount = 1 },
+                new FoodInstance() { FoodType = _bread, Amount = 1.25 },
             };
 
             var recipe = Recipes.First(r => r.OutputFoodInstance.FoodType == _cheeseSandwichMeal);
-            var canCook = CookSomething.CanCookSomething(pantry, recipe, Recipes);
+            var canCook = FoodProcessor.CanCookSomething(pantry, recipe, Recipes);
             canCook.ConsoleResult();
             Assert.IsTrue(canCook.CanMake);
             Assert.AreEqual(1, canCook.RecipesTouched.Count(x => x.Description == "Bread"));
@@ -159,15 +159,15 @@ namespace Pantry.Core.Test
         {
             List<FoodInstance> pantry = new()
             {
-                new() { FoodType = _flour, Amount = 2 },
-                new() { FoodType = _milk, Amount = 3 },
-                new() { FoodType = _cheese, Amount = 1 },
-                new() { FoodType = _bread, Amount = 1 },
+                new FoodInstance() { FoodType = _flour, Amount = 2 },
+                new FoodInstance() { FoodType = _milk, Amount = 3 },
+                new FoodInstance() { FoodType = _cheese, Amount = 1 },
+                new FoodInstance() { FoodType = _bread, Amount = 1 },
 
             };
 
             var recipe = Recipes.First(r => r.OutputFoodInstance.FoodType == _cheeseSandwichMeal);
-            var canCook = CookSomething.CanCookSomething(pantry, recipe, Recipes);
+            var canCook = FoodProcessor.CanCookSomething(pantry, recipe, Recipes);
             canCook.ConsoleResult();
             Assert.IsTrue(canCook.CanMake);
         }
@@ -177,13 +177,13 @@ namespace Pantry.Core.Test
         {
             List<FoodInstance> pantry = new()
             {
-                new() { FoodType = _flour, Amount = 3 },
-                new() { FoodType = _milk, Amount = 3 },
-                new() { FoodType = _cheese, Amount = 1 },
+                new FoodInstance() { FoodType = _flour, Amount = 3 },
+                new FoodInstance() { FoodType = _milk, Amount = 3 },
+                new FoodInstance() { FoodType = _cheese, Amount = 1 },
             };
 
             var recipe = Recipes.First(r => r.OutputFoodInstance.FoodType == _cheeseSandwichMeal);
-            var canCook = CookSomething.CanCookSomething(pantry, recipe, Recipes);
+            var canCook = FoodProcessor.CanCookSomething(pantry, recipe, Recipes);
             canCook.ConsoleResult();
             Assert.IsFalse(canCook.CanMake);
         }
@@ -193,13 +193,13 @@ namespace Pantry.Core.Test
         {
             List<FoodInstance> pantry = new()
             {
-                new() { FoodType = _flour, Amount = 2 },
-                new() { FoodType = _milk, Amount = 1 },
-                new() { FoodType = _cheese, Amount = 2 },
+                new FoodInstance() { FoodType = _flour, Amount = 2 },
+                new FoodInstance() { FoodType = _milk, Amount = 1 },
+                new FoodInstance() { FoodType = _cheese, Amount = 2 },
             };
 
             var recipe = Recipes.First(r => r.OutputFoodInstance.FoodType == _cheeseSandwichMeal);
-            var canCook = CookSomething.CanCookSomething(pantry, recipe, Recipes);
+            var canCook = FoodProcessor.CanCookSomething(pantry, recipe, Recipes);
             canCook.ConsoleResult();
             Assert.IsFalse(canCook.CanMake);
         }
@@ -209,13 +209,13 @@ namespace Pantry.Core.Test
         {
             List<FoodInstance> pantry = new()
             {
-                new() { FoodType = _flour, Amount = 4 },
-                new() { FoodType = _milk, Amount = 2 },
-                new() { FoodType = _cheese, Amount = 2 },
+                new FoodInstance() { FoodType = _flour, Amount = 4 },
+                new FoodInstance() { FoodType = _milk, Amount = 2 },
+                new FoodInstance() { FoodType = _cheese, Amount = 2 },
             };
 
             var recipe = Recipes.First(r => r.OutputFoodInstance.FoodType == _cheeseSandwich);
-            var canCook = CookSomething.CanCookSomething(pantry, recipe, Recipes);
+            var canCook = FoodProcessor.CanCookSomething(pantry, recipe, Recipes);
             canCook.ConsoleResult();
             Assert.IsTrue(canCook.CanMake);
         }
@@ -225,14 +225,14 @@ namespace Pantry.Core.Test
         {
             List<FoodInstance> pantry = new()
             {
-                new() { FoodType = _flour, Amount = 1 },
-                new() { FoodType = _milk, Amount = 1 },
-                new() { FoodType = _cheese, Amount = 2 },
-                new() { FoodType = _bread, Amount = 0 },
+                new FoodInstance() { FoodType = _flour, Amount = 1 },
+                new FoodInstance() { FoodType = _milk, Amount = 1 },
+                new FoodInstance() { FoodType = _cheese, Amount = 2 },
+                new FoodInstance() { FoodType = _bread, Amount = 0 },
             };
 
             var recipe = Recipes.First(r => r.OutputFoodInstance.FoodType == _cheeseSandwich);
-            var canCook = CookSomething.CanCookSomething(pantry, recipe, Recipes);
+            var canCook = FoodProcessor.CanCookSomething(pantry, recipe, Recipes);
             canCook.ConsoleResult();
             Assert.IsFalse(canCook.CanMake);
         }
@@ -242,13 +242,13 @@ namespace Pantry.Core.Test
         {
             List<FoodInstance> pantry = new()
             {
-                new() { FoodType = _flour, Amount = 1 },
-                new() { FoodType = _milk, Amount = 1 },
-                new() { FoodType = _cheese, Amount = 1 },
+                new FoodInstance() { FoodType = _flour, Amount = 1 },
+                new FoodInstance() { FoodType = _milk, Amount = 1 },
+                new FoodInstance() { FoodType = _cheese, Amount = 1 },
             };
 
             var recipe = Recipes.First(r => r.OutputFoodInstance.FoodType == _cheeseSandwich);
-            var canCook = CookSomething.CanCookSomething(pantry, recipe, Recipes);
+            var canCook = FoodProcessor.CanCookSomething(pantry, recipe, Recipes);
             canCook.ConsoleResult();
             Assert.IsFalse(canCook.CanMake);
         }
@@ -258,13 +258,13 @@ namespace Pantry.Core.Test
         {
             List<FoodInstance> pantry = new()
             {
-                new() { FoodType = _flour, Amount = 2 },
-                new() { FoodType = _milk, Amount = 1 },
-                new() { FoodType = _cheese, Amount = 1 },
+                new FoodInstance() { FoodType = _flour, Amount = 2 },
+                new FoodInstance() { FoodType = _milk, Amount = 1 },
+                new FoodInstance() { FoodType = _cheese, Amount = 1 },
             };
 
             var recipe = Recipes.First(r => r.OutputFoodInstance.FoodType == _cheeseSandwich);
-            var canCook = CookSomething.CanCookSomething(pantry, recipe, Recipes);
+            var canCook = FoodProcessor.CanCookSomething(pantry, recipe, Recipes);
             canCook.ConsoleResult();
             Assert.IsFalse(canCook.CanMake);
         }
@@ -274,12 +274,12 @@ namespace Pantry.Core.Test
         {
             List<FoodInstance> pantry = new()
             {
-                new() { FoodType = _bread, Amount = 2 },
-                new() { FoodType = _cheese, Amount = 1 },
+                new FoodInstance() { FoodType = _bread, Amount = 2 },
+                new FoodInstance() { FoodType = _cheese, Amount = 1 },
             };
 
             var recipe = Recipes.First(r => r.OutputFoodInstance.FoodType == _cheeseSandwich);
-            var canCook = CookSomething.CanCookSomething(pantry, recipe);
+            var canCook = FoodProcessor.CanCookSomething(pantry, recipe);
             Assert.AreEqual(1, canCook.TotalCost.Single(x => x.FoodType == _cheese).Amount);
             Assert.AreEqual(2, canCook.TotalCost.Single(x => x.FoodType == _bread).Amount);
             Assert.AreEqual(1, canCook.TotalOutPut.Single(x => x.FoodType == _cheeseSandwich).Amount);
@@ -292,13 +292,13 @@ namespace Pantry.Core.Test
         {
             List<FoodInstance> pantry = new()
             {
-                new() { FoodType = _bread, Amount = 1 },
-                new() { FoodType = _bread, Amount = 1 },
-                new() { FoodType = _cheese, Amount = 1 },
+                new FoodInstance() { FoodType = _bread, Amount = 1 },
+                new FoodInstance() { FoodType = _bread, Amount = 1 },
+                new FoodInstance() { FoodType = _cheese, Amount = 1 },
             };
 
             var recipe = Recipes.First(r => r.OutputFoodInstance.FoodType == _cheeseSandwich);
-            var canCook = CookSomething.CanCookSomething(pantry, recipe);
+            var canCook = FoodProcessor.CanCookSomething(pantry, recipe);
             canCook.ConsoleResult();
             Assert.IsTrue(canCook.CanMake);
         }
@@ -308,11 +308,11 @@ namespace Pantry.Core.Test
         {
             List<FoodInstance> pantry = new()
             {
-                new() { FoodType = _bread, Amount = 1 },
-                new() { FoodType = _cheese, Amount = 1 },
+                new FoodInstance() { FoodType = _bread, Amount = 1 },
+                new FoodInstance() { FoodType = _cheese, Amount = 1 },
             };
             var recipe = Recipes.First(r => r.OutputFoodInstance.FoodType == _cheeseSandwich);
-            var canCook = CookSomething.CanCookSomething(pantry, recipe);
+            var canCook = FoodProcessor.CanCookSomething(pantry, recipe);
             canCook.ConsoleResult();
             Assert.IsFalse(canCook.CanMake);
         }

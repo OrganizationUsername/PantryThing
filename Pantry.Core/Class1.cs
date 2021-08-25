@@ -7,7 +7,7 @@ namespace Pantry.Core
 {
     public static class ExtensionMethods
     {
-        public static void ConsoleResult(this CanMakeSomething canCook)
+        public static void ConsoleResult(this GetCookPlan canCook)
         {
             if (canCook.CanMake)
             {
@@ -20,7 +20,7 @@ namespace Pantry.Core
             }
         }
 
-        public static List<FoodInstance> DiminishFoodInstances(this List<FoodInstance> pantry, CanMakeSomething canCook)
+        public static List<FoodInstance> DiminishFoodInstances(this List<FoodInstance> pantry, GetCookPlan canCook)
         {
             if (canCook.CanMake)
             {
@@ -98,61 +98,6 @@ namespace Pantry.Core
         public DateTime Created { get; set; }
     }
 
-    public interface IScheduler
-    {
-        void TrySchedule(DateTime Goal);
-        List<CanMakeSomething> ScheduledTasks { get; set; }
-        List<Equipment> Equipments { get; set; }
-    }
-
-    public class SimpleScheduler : IScheduler
-    {
-        //public SimpleScheduler(List<CanMakeSomething> scheduledTasks, List<Equipment> equipments)
-        //{
-        //    this.ScheduledTasks = scheduledTasks;
-        //    this.Equipments = equipments;
-        //}
-
-        public List<CanMakeSomething> ScheduledTasks { get; set; } = new List<CanMakeSomething>();
-        public List<Equipment> Equipments { get; set; } = new List<Equipment>();
-        public void TrySchedule(DateTime goal)
-        {
-            foreach (var scheduledTask in ScheduledTasks)
-            {
-                var recipeSteps = scheduledTask.RecipesTouched.SelectMany(b => b.RecipeSteps).Reverse();
-                int offset = 0;
-                foreach (var recipeStep in recipeSteps)
-                {
-                    bool satisfied = false;
-                    for (; !satisfied; offset++)
-                    {
-                        if (recipeStep.Equipments.All(y =>
-                            y.IsAvailable(goal.AddMinutes(-(offset + recipeStep.TimeCost)), goal.AddMinutes(-offset))))
-                        {
-                            satisfied = true;
-                            foreach (var y in recipeStep.Equipments)
-                            {
-                                y.BookedTimes.Add(
-                                    (goal.AddMinutes(-(offset + recipeStep.TimeCost)),
-                                        goal.AddMinutes(-offset), recipeStep.Instruction + $"_ {scheduledTask.RecipeName}")
-                                    );
-                            }
-                        }
-                    }
-                }
-            }
-
-            foreach (var equipment in Equipments)
-            {
-                Console.WriteLine(equipment.Name);
-                foreach (var y in equipment.BookedTimes.OrderBy(z => z.startTime))
-                {
-                    Console.WriteLine($"{y.startTime.ToShortTimeString()}:{y.endTime.ToShortTimeString()}: {y.StepName}");
-                }
-            }
-        }
-    }
-
     public static class SchedulerExtensions
     {
         public static bool IsAvailable(this Equipment e, DateTime start, DateTime end)
@@ -174,7 +119,7 @@ namespace Pantry.Core
         }
     }
 
-    public class CanMakeSomething
+    public class GetCookPlan
     {
         public string RecipeName;
         public bool CanMake;
@@ -184,9 +129,15 @@ namespace Pantry.Core
         public List<Recipe> RecipesTouched;
     }
 
-    public class CookSomething
+    public interface IFoodProcessor
     {
-        public static CanMakeSomething
+         GetCookPlan
+            CanCookSomething(IList<FoodInstance> foodInventory, Recipe recipe, IList<Recipe> recipes = null);
+    }
+
+    public class FoodProcessor : IFoodProcessor
+    {
+        public  GetCookPlan
             CanCookSomething(IList<FoodInstance> foodInventory, Recipe recipe, IList<Recipe> recipes = null)
         {
             List<Recipe> recipesTouched = new();
@@ -272,12 +223,12 @@ namespace Pantry.Core
                             continue;
                         }
                     }
-                    return new CanMakeSomething() { CanMake = false };
+                    return new GetCookPlan() { CanMake = false };
                 }
             }
             recipesTouched.Add(recipe);
 
-            return new CanMakeSomething()
+            return new GetCookPlan()
             {
                 CanMake = true,
                 RecipesTouched = recipesTouched,
@@ -288,7 +239,7 @@ namespace Pantry.Core
             };
         }
 
-        public static FoodInstance[] GetFoodInstancesFromRecipe(Recipe recipe)
+        private static FoodInstance[] GetFoodInstancesFromRecipe(Recipe recipe)
         {
             FoodInstance[] clones = new FoodInstance[recipe.InputFoodInstance.Count];
             for (var index = 0; index < recipe.InputFoodInstance.Count; index++)
@@ -303,7 +254,7 @@ namespace Pantry.Core
             return clones;
         }
 
-        public static FoodInstance[] CloneFoodInstances(IList<FoodInstance> foodInstances)
+        private static FoodInstance[] CloneFoodInstances(IList<FoodInstance> foodInstances)
         {
             FoodInstance[] clones = new FoodInstance[foodInstances.Count];
             for (var index = 0; index < foodInstances.Count; index++)

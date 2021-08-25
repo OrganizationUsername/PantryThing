@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using NUnit.Framework;
+using Pantry.Core.Scheduler;
 
 namespace Pantry.Core.Test
 {
@@ -22,7 +23,8 @@ namespace Pantry.Core.Test
         private readonly Equipment _riceMachine = new() { Name = "Rice Machine", BookedTimes = new List<(DateTime startTime, DateTime endTime, string TaskName)>() };
         private readonly Equipment _humanMachine = new() { Name = "Human", BookedTimes = new List<(DateTime startTime, DateTime endTime, string TaskName)>() };
         private readonly Equipment _stoveTop = new() { Name = "StoveTop", BookedTimes = new List<(DateTime startTime, DateTime endTime, string TaskName)>() };
-
+        private List<Equipment> _equipments;
+        private FoodProcessor FoodProcessor = new FoodProcessor();
 
         [SetUp]
         public void Setup()
@@ -96,46 +98,120 @@ namespace Pantry.Core.Test
                     new(){Order = 1,Instruction = "Heat and plate.", TimeCost = 5, Equipments = new List<Equipment>() {_stoveTop, _humanMachine}},
                 },
             });
+            _equipments = new List<Equipment>() { _breadMachine, _humanMachine, _riceMachine, _stoveTop };
         }
 
         [Test]
         public void ScheduleMealsBeforeATime()
         {
-            SimpleScheduler simpleScheduler= new();// = SimpleScheduler.CreateInstance();
-
             List<FoodInstance> pantry = new()
             {
-                new() { FoodType = _flour, Amount = 4 },
-                new() { FoodType = _milk, Amount = 3 },
-                new() { FoodType = _cheese, Amount = 1 },
-                new() { FoodType = _bread, Amount = 1 },
-                new() { FoodType = _water, Amount = double.MaxValue },
-                new() { FoodType = _rice, Amount = 100 },
-                new() { FoodType = _currySauce, Amount = 10 },
+                new FoodInstance() { FoodType = _flour, Amount = 4 },
+                new FoodInstance() { FoodType = _milk, Amount = 3 },
+                new FoodInstance() { FoodType = _cheese, Amount = 1 },
+                new FoodInstance() { FoodType = _bread, Amount = 1 },
+                new FoodInstance() { FoodType = _water, Amount = double.MaxValue },
+                new FoodInstance() { FoodType = _rice, Amount = 100 },
+                new FoodInstance() { FoodType = _currySauce, Amount = 10 },
             };
+            var cms = new List<GetCookPlan>();
             Recipe recipe = default;
-            CanMakeSomething canCook = default;
+            GetCookPlan canCook = default;
             recipe = Recipes.First(r => r.OutputFoodInstance.FoodType == _cheeseSandwich);
-            canCook = CookSomething.CanCookSomething(pantry, recipe, Recipes);
-            simpleScheduler.ScheduledTasks.Add(canCook);
+            canCook = FoodProcessor.CanCookSomething(pantry, recipe, Recipes);
+            cms.Add(canCook);
             canCook.ConsoleResult();
             pantry = pantry.DiminishFoodInstances(canCook);
             Assert.IsTrue(canCook.CanMake);
             recipe = Recipes.First(r => r.OutputFoodInstance.FoodType == _curryMeal);
-            canCook = CookSomething.CanCookSomething(pantry, recipe, Recipes);
-            simpleScheduler.ScheduledTasks.Add(canCook);
+            canCook = FoodProcessor.CanCookSomething(pantry, recipe, Recipes);
+            cms.Add(canCook);
             canCook.ConsoleResult();
             pantry = pantry.DiminishFoodInstances(canCook);
             pantry.OutputRemaining();
             Assert.IsTrue(canCook.CanMake);
             Console.WriteLine("-----");
-            foreach (var canMakeSomething in simpleScheduler.ScheduledTasks)
+
+            foreach (var canMakeSomething in cms)
             {
                 Console.WriteLine(string.Join(Environment.NewLine, canMakeSomething.RecipesTouched.Select(y => y.Description + ": " + y.RecipeSteps.Sum(z => z.TimeCost))));
                 Console.WriteLine("-----");
             }
-            simpleScheduler.Equipments.AddRange(new List<Equipment>() { _breadMachine, _riceMachine, _humanMachine, _stoveTop });
+            IScheduler simpleScheduler = new SimpleScheduler(cms, _equipments);
             simpleScheduler.TrySchedule(DateTime.Parse("2021/08/15 18:00"));
         }
     }
+
+
+
+
+    /// <summary>
+    /// Provides the pantry at a certain time and does everything else.
+    /// This object should also be able to watch you go into the negatives.
+    /// Like if your plan has you using bread on Friday, but you want to use it all up on Thursday but start a new loaf, it could use
+    /// the deficit to make a plan to make more.
+    /// For this reason there will be some hypothetical RecipeThingys.
+    /// </summary>
+    public class PantryController
+    {
+        /// <summary>
+        /// One of the outputs it might give is a pantry at an instance, so a DateTime might be nice
+        /// </summary>
+        public DateTime DateTime { get; set; }
+        public List<FoodInstance> fis { get; set; }
+        public IRecipeThingy RealRecipeThingy { get; set; }
+        public IScheduler Scheduler { get; set; }
+        public IPantryProvider PantryProvider { get; set; }
+        public IFoodProcessor FoodProcessor { get; set; }
+
+        public void UseFood(GetCookPlan canCook)
+        {
+            fis = RealRecipeThingy.UseFood(canCook, fis);
+        }
+    }
+
+    public interface IPantryProvider
+    {
+        List<FoodInstance> GetFoodInstances();
+    }
+
+    public class PantryProvider : IPantryProvider
+    {
+        public List<FoodInstance> GetFoodInstances()
+        {
+            return null;
+        }
+    }
+
+    public interface IRecipeThingy
+    {
+        List<FoodInstance> UseFood(GetCookPlan canCook, List<FoodInstance> fis);
+    }
+
+    /// <summary>
+    /// This RecipeProcessor doesn't allow you to go into the negatives, and also requires that you can cook it.
+    /// </summary>
+    public class RealRecipeThingy : IRecipeThingy
+    {
+        public List<FoodInstance> UseFood(GetCookPlan canCook, List<FoodInstance> fis)
+        {
+            if (!canCook.CanMake)
+            {
+                return null;
+            }
+            foreach (var rawCost in canCook.RawCost)
+            {
+                while (rawCost.Amount > 0)
+                {
+                    var pantryItem =
+                        fis.First(pantry => pantry.FoodType == rawCost.FoodType && pantry.Amount > 0);
+                    var amountToDeduct = Math.Min(pantryItem.Amount, rawCost.Amount);
+                    pantryItem.Amount -= amountToDeduct;
+                    rawCost.Amount -= amountToDeduct;
+                }
+            }
+            return fis.Where(pi => pi.Amount > 0).ToList();
+        }
+    }
+
 }
