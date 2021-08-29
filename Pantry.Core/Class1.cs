@@ -42,6 +42,7 @@ namespace Pantry.Core
     {
         public List<FoodInstance> Inputs { get; set; }
         public List<FoodInstance> Outputs { get; set; }
+        public Food MainOutput { get; set; }
         public List<RecipeStep> RecipeSteps { get; set; }
     }
 

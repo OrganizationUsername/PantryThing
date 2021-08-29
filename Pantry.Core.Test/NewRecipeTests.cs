@@ -9,18 +9,10 @@ namespace Pantry.Core.Test
 {
     public class BetterFoodProcessor
     {
-        public GetCookPlan CanCookSomething(IList<FoodInstance> foodInventory, Recipe recipe,
-            IList<Recipe> recipes = null)
+        public GetCookPlan CanCookSomething(IList<FoodInstance> foodInventory, BetterRecipe recipe, IList<BetterRecipe> recipes = null)
         {
             throw new NotImplementedException();
         }
-    }
-
-    public class BetterRecipe
-    {
-        public List<FoodInstance> Inputs { get; set; }
-        public List<FoodInstance> Outputs { get; set; }
-        public List<RecipeStep> RecipeSteps { get; set; }
     }
 
     public class NewRecipeTests
@@ -40,294 +32,122 @@ namespace Pantry.Core.Test
         private readonly Equipment _sousVide = new()
         { Name = "Sous Vide", BookedTimes = new List<(DateTime startTime, DateTime endTime, string TaskName)>() };
 
-        public List<Recipe> Recipes;
-
-
-
-
-
-
-        private List<Equipment> _equipments;
-        private readonly BetterFoodProcessor _foodProcessor = new BetterFoodProcessor();
+        private List<Equipment> _equipments = new();
+        private List<BetterRecipe> _recipes = new();
+        private readonly BetterFoodProcessor _foodProcessor = new();
+        Food frozenChicken = new Food() { FoodId = 0, Name = "Frozen Chicken", BetterRecipes = null };
+        Food rawChicken = new Food() { FoodId = 1, Name = "Raw Chicken", };
+        Food bbqSauce = new Food() { FoodId = 2, Name = "BBQ Sauce", BetterRecipes = null };
+        Food cookedChicken = new Food() { FoodId = 3, Name = "Cooked Chicken" };
+        Food slicedChicken = new Food() { FoodId = 4, Name = "Sliced Chicken" };
+        Food flour = new Food() { FoodId = 5, Name = "Flour", BetterRecipes = null };
+        Food eggs = new Food() { FoodId = 6, Name = "Eggs", BetterRecipes = null };
+        Food milk = new Food() { FoodId = 7, Name = "Milk", BetterRecipes = null };
+        Food bread = new Food() { FoodId = 8, Name = "Bread" };
+        Food slicedBread = new Food() { FoodId = 9, Name = "Sliced Bread" };
+        Food chickenSandwich = new Food() { FoodId = 10, Name = "Chicken Sandwich" };
 
         [SetUp]
         public void Setup()
         {
-            Food _frozenChicken = new Food() { FoodId = 0, Name = "Frozen Chicken", BetterRecipes = null };
-            Food _rawChicken = new Food() { FoodId = 1, Name = "Raw Chicken", };
-            Food _bbqSauce = new Food() { FoodId = 2, Name = "BBQ Sauce", BetterRecipes = null };
-            Food _cookedChicken = new Food() { FoodId = 3, Name = "Cooked Chicken" };
-            Food _slicedChicken = new Food() { FoodId = 4, Name = "Sliced Chicken" };
-            Food _flour = new Food() { FoodId = 5, Name = "Flour", BetterRecipes = null };
-            Food _eggs = new Food() { FoodId = 6, Name = "Eggs", BetterRecipes = null };
-            Food _milk = new Food() { FoodId = 7, Name = "Milk", BetterRecipes = null };
-            Food _bread = new Food() { FoodId = 8, Name = "Bread" };
-            Food _slicedBread = new Food() { FoodId = 9, Name = "Sliced Bread" };
-            Food _chickenSandwich = new Food() { FoodId = 10, Name = "Chicken Sandwich" };
 
-            //Actually all of these should go to a recipe provider.
-            _rawChicken.BetterRecipes = new List<Core.BetterRecipe>()
-            {
+
+            _recipes.Add(
                 new Core.BetterRecipe()
                 {
-                    Inputs = new List<FoodInstance>() {new FoodInstance(){Amount = 120,FoodType = _frozenChicken}},
-                    Outputs = new List<FoodInstance>(){new FoodInstance(){Amount = 120, FoodType = _rawChicken}},
-                    RecipeSteps = new List<RecipeStep>()
-                    {
-                        new RecipeStep() {Instruction = "Put chicken in fridge.", TimeCost = 1},
-                        new RecipeStep()
-                        {
-                            Instruction = "Let it defrost.", TimeCost = 1440,
-                            Equipments = new List<Equipment>() {_fridge}
-                        }
-                    }
-                }
-            };
-            _cookedChicken.BetterRecipes = new List<Core.BetterRecipe>()
-            {
-                new Core.BetterRecipe()
-                {
-
+                    MainOutput = cookedChicken,
                     Inputs = new List<FoodInstance>() {
-                        new FoodInstance(){Amount = 120,FoodType = _rawChicken },
-                        new FoodInstance(){Amount = 1,FoodType = _bbqSauce } },
-                    Outputs = new List<FoodInstance>(){new FoodInstance(){Amount = 120, FoodType = _cookedChicken } },
+                        new(){Amount = 120,FoodType = rawChicken },
+                        new(){Amount = 1,FoodType = bbqSauce } },
+                    Outputs = new List<FoodInstance>() { new() { Amount = 120, FoodType = cookedChicken } },
                     RecipeSteps = new List<RecipeStep>()
                     {
-                        new RecipeStep() {Instruction = "Put chicken in Sous Vide.", TimeCost = 1, Equipments = new List<Equipment>() {_sousVide, _humanMachine}},
-                        new RecipeStep()
-                        {
-                            Instruction = "Let it defrost.", TimeCost = 1440,
-                            Equipments = new List<Equipment>() { _sousVide }
-                        },
-                        new RecipeStep() {Instruction = "Take chicken out.", TimeCost = 1, Equipments = new List<Equipment>() {_sousVide, _humanMachine}},
-
+                        new() {Instruction = "Put chicken in Sous Vide.", TimeCost = 1, Equipments = new List<Equipment>() {_sousVide, _humanMachine}},
+                        new() {Instruction = "Let it cook.", TimeCost = 120, Equipments = new List<Equipment>() { _sousVide }},
+                        new() {Instruction = "Take chicken out.", TimeCost = 1, Equipments = new List<Equipment>() {_sousVide, _humanMachine}},
                     }
-                }
-            };
-
-
+                });
+            _recipes.Add(
+                new Core.BetterRecipe()
+                {
+                    MainOutput = rawChicken,
+                    Inputs = new List<FoodInstance>() { new() { Amount = 120, FoodType = frozenChicken } },
+                    Outputs = new List<FoodInstance>() { new() { Amount = 120, FoodType = rawChicken } },
+                    RecipeSteps = new List<RecipeStep>()
+                    {
+                        new() {Instruction = "Put chicken in fridge.", TimeCost = 1,Equipments = new List<Equipment>() {_fridge, _humanMachine}},
+                        new() {Instruction = "Let it defrost.", TimeCost = 1440, Equipments = new List<Equipment>() {_fridge}}
+                    }
+                });
+            _recipes.Add(
+                new Core.BetterRecipe()
+                {
+                    MainOutput = slicedChicken,
+                    Inputs = new List<FoodInstance>() { new() { Amount = 120, FoodType = cookedChicken } },
+                    Outputs = new List<FoodInstance>() { new() { Amount = 120, FoodType = slicedChicken } },
+                    RecipeSteps = new List<RecipeStep>()
+                    {
+                        new() {Instruction = "Cut chicken with a knife.", TimeCost = 3, Equipments = new List<Equipment>(){_humanMachine}},
+                    }
+                });
+            _recipes.Add(
+                new Core.BetterRecipe()
+                {
+                    MainOutput = slicedBread,
+                    Inputs = new List<FoodInstance>() { new() { Amount = 1, FoodType = bread } },
+                    Outputs = new List<FoodInstance>() { new() { Amount = 10, FoodType = slicedBread } },
+                    RecipeSteps = new List<RecipeStep>()
+                    {
+                        new() {Instruction = "Cut Bread", TimeCost = 2, Equipments = new List<Equipment>(){_humanMachine}},
+                    }
+                });
+            _recipes.Add(
+                new Core.BetterRecipe()
+                {
+                    MainOutput = chickenSandwich,
+                    Inputs = new List<FoodInstance>() {
+                        new() { Amount = 2, FoodType = slicedBread } ,
+                        new() { Amount = 120, FoodType = slicedChicken} },
+                    Outputs = new List<FoodInstance>() { new() { Amount = 10, FoodType = chickenSandwich } },
+                    RecipeSteps = new List<RecipeStep>()
+                    {
+                        new() {Instruction = "Assemble Sandwich", TimeCost = 1, Equipments = new List<Equipment>(){_humanMachine}},
+                    }
+                });
+            _recipes.Add(
+                new Core.BetterRecipe()
+                {
+                    MainOutput = bread,
+                    Inputs = new List<FoodInstance>() {
+                        new() { Amount = 120, FoodType = eggs } ,
+                        new() { Amount = 120, FoodType = milk} ,
+                        new() { Amount = 120, FoodType = flour } ,
+                    },
+                    Outputs = new List<FoodInstance>() { new() { Amount = 1, FoodType = bread } },
+                    RecipeSteps = new List<RecipeStep>()
+                    {
+                        new() {Instruction = "Insert into Bread Machine.", TimeCost = 1, Equipments = new List<Equipment>(){_humanMachine, _breadMachine}},
+                        new() {Instruction = "Bread Machine cooks.", TimeCost = 180, Equipments = new List<Equipment>(){ _breadMachine}},
+                        new() {Instruction = "Extract bread from bread machine.", TimeCost = 1, Equipments = new List<Equipment>(){_humanMachine, _breadMachine}},
+                    }
+                });
         }
+
+        [Test]
+        public void BetterFoodProcessorSimple()
+        {
+            List<FoodInstance> pantry = new()
+            {
+                new FoodInstance() { FoodType = slicedBread, Amount = 10 },
+                new FoodInstance() { FoodType = slicedChicken, Amount = 120 },
+            };
+            BetterRecipe recipe = _recipes.First(x => x.MainOutput == chickenSandwich);
+            GetCookPlan canCook = _foodProcessor.CanCookSomething(pantry, recipe, _recipes);
+            Assert.IsTrue(canCook.CanMake);
+        }
+
+
     }
 
 }
 
-
-
-
-
-
-/////
-//Recipe recipe = new Recipe()
-//    {
-//        RecipeId = 1,
-//        Description = "Chicken Sandwich",
-//        InputFoodInstance = new List<FoodInstance>()
-//        {
-//            new() {FoodType = _slicedChicken, Amount = 120},
-//            new() {FoodType = _slicedBread, Amount = 2},
-//        },
-//        OutputFoodInstance = new FoodInstance() { FoodType = _chickenSandwich, Amount = 1 },
-//        TimeCost = 1,
-//        RecipeSteps = new List<RecipeStep>()
-//        {
-//            new()
-//            {
-//                Order = 1,
-//                Instruction = "Assemble Sandwich.",
-//                TimeCost = 3,
-//                Equipments = new List<Equipment>() {_humanMachine}
-//            },
-//        },
-//        RecipeHierarchy = new RecipeHierarchy()
-//        {
-//            Instruction = "Assemble Sandwich",
-//            TimeCost = 3,
-//            Equipments = new List<Equipment>() { _humanMachine }
-//        },
-//    };
-
-//    Recipes = new List<Recipe>
-//    {
-//        new Recipe()
-//        {
-//            RecipeId = 1,
-//            Description = "Chicken Sandwich",
-//            InputFoodInstance = new List<FoodInstance>()
-//            {
-//                new() {FoodType = _slicedChicken, Amount = 120},
-//                new() {FoodType = _slicedBread, Amount = 2},
-//            },
-//            OutputFoodInstance = new FoodInstance() {FoodType = _cheeseSandwich, Amount = 1},
-//            TimeCost = 3,
-//            RecipeSteps = new List<RecipeStep>()
-//            {
-//                new()
-//                {
-//                    Order = 1,
-//                    Instruction = "Assemble Sandwich.",
-//                    TimeCost = 3,
-//                    Equipments = new List<Equipment>() {_humanMachine}
-//                },
-//            },
-//            RecipeHierarchy = new RecipeHierarchy()
-//            {
-//                Instruction = "Assemble Sandwich",
-//                TimeCost = 3,
-//                Equipments = new List<Equipment>() {_humanMachine},
-//                Dependents = new List<RecipeHierarchy>() { }
-//            },
-//        },
-//        new Recipe()
-//        {
-//            RecipeId = 2,
-//            Description = "Bread",
-//            InputFoodInstance = new List<FoodInstance>()
-//            {
-//                new() {FoodType = _flour, Amount = 2},
-//                new() {FoodType = _milk, Amount = 1},
-//            },
-//            OutputFoodInstance = new FoodInstance() {FoodType = _bread, Amount = 10},
-//            TimeCost = 45,
-//            RecipeSteps = new List<RecipeStep>()
-//            {
-//                new()
-//                {
-//                    Order = 1, Instruction = "Fill/operate bread machine.", TimeCost = 1,
-//                    Equipments = new List<Equipment>() {_breadMachine, _humanMachine}
-//                },
-//                new()
-//                {
-//                    Order = 2, Instruction = "Do its thing.", TimeCost = 40,
-//                    Equipments = new List<Equipment>() {_breadMachine}
-//                },
-//            },
-//            RecipeHierarchy = new RecipeHierarchy()
-//            {
-//                Instruction = "Do its thing.",
-//                TimeCost = 40,
-//                Equipments = new List<Equipment>() {_breadMachine},
-//                Dependents = new List<RecipeHierarchy>()
-//                {
-//                    new RecipeHierarchy()
-//                    {
-//                        Instruction = "Fill/operate bread machine.",
-//                        TimeCost = 1,
-//                        Equipments = new List<Equipment>() {_breadMachine, _humanMachine},
-//                        Dependents = new List<RecipeHierarchy>() { }
-//                    }
-//                }
-//            },
-//        },
-//        new Recipe()
-//        {
-//            RecipeId = 10,
-//            Description = "CookedRice",
-//            InputFoodInstance = new List<FoodInstance>()
-//            {
-//                new() {FoodType = _rice, Amount = 1},
-//                new() {FoodType = _water, Amount = 3},
-//            },
-//            OutputFoodInstance = new FoodInstance() {FoodType = _cookedRice, Amount = 4},
-//            TimeCost = 60,
-//            RecipeSteps = new List<RecipeStep>()
-//            {
-//                new()
-//                {
-//                    Order = 1, Instruction = "Fill/operate rice machine.", TimeCost = 1,
-//                    Equipments = new List<Equipment>() {_riceMachine, _humanMachine}
-//                },
-//                new()
-//                {
-//                    Order = 2, Instruction = "Do its thing.", TimeCost = 40,
-//                    Equipments = new List<Equipment>() {_riceMachine}
-//                },
-//            },
-//            RecipeHierarchy = new RecipeHierarchy()
-//            {
-//                Instruction = "Do its thing.",
-//                TimeCost = 40,
-//                Equipments = new List<Equipment>() {_riceMachine},
-//                Dependents = new List<RecipeHierarchy>()
-//                {
-//                    new RecipeHierarchy()
-//                    {
-//                        Instruction = "Fill/operate rice machine.",
-//                        TimeCost = 1,
-//                        Equipments = new List<Equipment>() {_riceMachine, _humanMachine},
-//                        Dependents = new List<RecipeHierarchy>() { }
-//                    }
-//                }
-//            },
-//        },
-//        new Recipe()
-//        {
-//            RecipeId = 11,
-//            Description = "CurriedRice",
-//            InputFoodInstance = new List<FoodInstance>()
-//            {
-//                new() {FoodType = _cookedRice, Amount = 4},
-//                new() {FoodType = _currySauce, Amount = 2},
-//            },
-//            OutputFoodInstance = new FoodInstance() {FoodType = _curryMeal, Amount = 6},
-//            TimeCost = 5,
-//            RecipeSteps = new List<RecipeStep>()
-//            {
-//                new()
-//                {
-//                    Order = 1, Instruction = "Heat and plate.", TimeCost = 5,
-//                    Equipments = new List<Equipment>() {_stoveTop, _humanMachine}
-//                },
-//            },
-//            RecipeHierarchy = new RecipeHierarchy()
-//            {
-//                Instruction = "Heat and plate.",
-//                TimeCost = 5,
-//                Equipments = new List<Equipment>() {_stoveTop, _humanMachine},
-//                Dependents = new List<RecipeHierarchy>()
-//            },
-//        }
-//    };
-//    _equipments = new List<Equipment>() { _breadMachine, _humanMachine, _riceMachine, _stoveTop };
-
-
-
-//List<FoodInstance> pantry = new()
-//{
-//    new FoodInstance() { FoodType = _flour, Amount = 4 },
-//    new FoodInstance() { FoodType = _milk, Amount = 3 },
-//    new FoodInstance() { FoodType = _cheese, Amount = 1 },
-//    new FoodInstance() { FoodType = _bread, Amount = 1 },
-//    new FoodInstance() { FoodType = _water, Amount = double.MaxValue },
-//    new FoodInstance() { FoodType = _rice, Amount = 100 },
-//    new FoodInstance() { FoodType = _currySauce, Amount = 10 },
-//};
-//var pp = new PantryProvider(pantry);
-//var cms = new List<GetCookPlan>();
-//Recipe recipe = default;
-//GetCookPlan canCook = default;
-//recipe = Recipes.First(r => r.OutputFoodInstance.FoodType == _cheeseSandwich);
-//canCook = _foodProcessor.CanCookSomething(pantry, recipe, Recipes);
-//cms.Add(canCook);
-//canCook.ConsoleResult();
-//pantry = pp.DiminishFood(canCook);
-//Assert.IsTrue(canCook.CanMake);
-//recipe = Recipes.First(r => r.OutputFoodInstance.FoodType == _curryMeal);
-//canCook = _foodProcessor.CanCookSomething(pp.GetFoodInstances(), recipe, Recipes);
-//cms.Add(canCook);
-//canCook.ConsoleResult();
-//pantry = pp.DiminishFood(canCook);
-//pp.GetFoodInstances().OutputRemaining();
-//Assert.IsTrue(canCook.CanMake);
-//Console.WriteLine("-----");
-
-//foreach (var canMakeSomething in cms)
-//{
-//    Console.WriteLine(string.Join(Environment.NewLine,
-//        canMakeSomething.RecipesTouched.Select(y =>
-//            y.Description + ": " + y.RecipeSteps.Sum(z => z.TimeCost))));
-//    Console.WriteLine("-----");
-//}
-
-//IScheduler simpleScheduler = new NaiveScheduler(cms, _equipments);
-//simpleScheduler.TrySchedule(DateTime.Parse("2021/08/15 18:00"));
