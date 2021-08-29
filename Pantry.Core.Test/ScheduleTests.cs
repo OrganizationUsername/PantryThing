@@ -164,7 +164,7 @@ namespace Pantry.Core.Test
                 new FoodInstance() { FoodType = _rice, Amount = 100 },
                 new FoodInstance() { FoodType = _currySauce, Amount = 10 },
             };
-            PantryProvider pp = new PantryProvider(pantry);
+            var pp = new PantryProvider(pantry);
             var cms = new List<GetCookPlan>();
             Recipe recipe = default;
             GetCookPlan canCook = default;
@@ -205,7 +205,7 @@ namespace Pantry.Core.Test
                 new FoodInstance() { FoodType = _rice, Amount = 100 },
                 new FoodInstance() { FoodType = _currySauce, Amount = 10 },
             };
-            PantryProvider pp = new PantryProvider(pantry);
+            var pp = new PantryProvider(pantry);
             var cms = new List<GetCookPlan>();
             Recipe recipe = default;
             GetCookPlan canCook = default;

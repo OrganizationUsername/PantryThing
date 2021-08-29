@@ -33,10 +33,16 @@ namespace Pantry.Core
     {
         public int FoodId { get; set; }
         public string Name { get; set; }
-
+        public List<BetterRecipe> BetterRecipes { get; set; }
         public static bool operator ==(Food lhs, Food rhs) => rhs is not null && lhs is not null && lhs.FoodId == rhs.FoodId;
-
         public static bool operator !=(Food lhs, Food rhs) => !(lhs.FoodId == rhs.FoodId);
+    }
+
+    public class BetterRecipe
+    {
+        public List<FoodInstance> Inputs { get; set; }
+        public List<FoodInstance> Outputs { get; set; }
+        public List<RecipeStep> RecipeSteps { get; set; }
     }
 
     public class Recipe
@@ -84,7 +90,6 @@ namespace Pantry.Core
         public Food FoodType { get; set; }
         public double Amount { get; set; }
         public List<Recipe> Recipes { get; set; } //If I populate all of the FoodInstances in Recipe, I don't have to pass all recipes down to the CanCookSomething method.
-        public DateTime Created { get; set; }
     }
 
     public static class SchedulerExtensions
