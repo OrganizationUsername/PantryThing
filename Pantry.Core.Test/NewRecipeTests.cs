@@ -37,6 +37,8 @@ namespace Pantry.Core.Test
         private readonly Equipment _fridge = new()
         { Name = "Fridge", BookedTimes = new List<(DateTime startTime, DateTime endTime, string TaskName)>() };
 
+        private readonly Equipment _sousVide = new()
+        { Name = "Sous Vide", BookedTimes = new List<(DateTime startTime, DateTime endTime, string TaskName)>() };
 
         public List<Recipe> Recipes;
 
@@ -52,32 +54,24 @@ namespace Pantry.Core.Test
         public void Setup()
         {
             Food _frozenChicken = new Food() { FoodId = 0, Name = "Frozen Chicken", BetterRecipes = null };
-
-
+            Food _rawChicken = new Food() { FoodId = 1, Name = "Raw Chicken", };
             Food _bbqSauce = new Food() { FoodId = 2, Name = "BBQ Sauce", BetterRecipes = null };
             Food _cookedChicken = new Food() { FoodId = 3, Name = "Cooked Chicken" };
             Food _slicedChicken = new Food() { FoodId = 4, Name = "Sliced Chicken" };
-            Food _flour = new Food() { FoodId = 5, Name = "Flour" };
-            Food _eggs = new Food() { FoodId = 6, Name = "Eggs" };
-            Food _milk = new Food() { FoodId = 7, Name = "Milk" };
+            Food _flour = new Food() { FoodId = 5, Name = "Flour", BetterRecipes = null };
+            Food _eggs = new Food() { FoodId = 6, Name = "Eggs", BetterRecipes = null };
+            Food _milk = new Food() { FoodId = 7, Name = "Milk", BetterRecipes = null };
             Food _bread = new Food() { FoodId = 8, Name = "Bread" };
             Food _slicedBread = new Food() { FoodId = 9, Name = "Sliced Bread" };
             Food _chickenSandwich = new Food() { FoodId = 10, Name = "Chicken Sandwich" };
-            System.Diagnostics.Process.Start("ArbitraryProgram.exe");
 
-            Food _rawChicken = new Food()
-            {
-                FoodId = 1,
-                Name = "Raw Chicken",
-            };
+            //Actually all of these should go to a recipe provider.
             _rawChicken.BetterRecipes = new List<Core.BetterRecipe>()
             {
                 new Core.BetterRecipe()
                 {
-                    Inputs = new List<FoodInstance>()
-                    {
-                        new FoodInstance(){Amount = 120,FoodType = _rawChicken}
-                    },
+                    Inputs = new List<FoodInstance>() {new FoodInstance(){Amount = 120,FoodType = _frozenChicken}},
+                    Outputs = new List<FoodInstance>(){new FoodInstance(){Amount = 120, FoodType = _rawChicken}},
                     RecipeSteps = new List<RecipeStep>()
                     {
                         new RecipeStep() {Instruction = "Put chicken in fridge.", TimeCost = 1},
@@ -89,7 +83,28 @@ namespace Pantry.Core.Test
                     }
                 }
             };
+            _cookedChicken.BetterRecipes = new List<Core.BetterRecipe>()
+            {
+                new Core.BetterRecipe()
+                {
 
+                    Inputs = new List<FoodInstance>() {
+                        new FoodInstance(){Amount = 120,FoodType = _rawChicken },
+                        new FoodInstance(){Amount = 1,FoodType = _bbqSauce } },
+                    Outputs = new List<FoodInstance>(){new FoodInstance(){Amount = 120, FoodType = _cookedChicken } },
+                    RecipeSteps = new List<RecipeStep>()
+                    {
+                        new RecipeStep() {Instruction = "Put chicken in Sous Vide.", TimeCost = 1, Equipments = new List<Equipment>() {_sousVide, _humanMachine}},
+                        new RecipeStep()
+                        {
+                            Instruction = "Let it defrost.", TimeCost = 1440,
+                            Equipments = new List<Equipment>() { _sousVide }
+                        },
+                        new RecipeStep() {Instruction = "Take chicken out.", TimeCost = 1, Equipments = new List<Equipment>() {_sousVide, _humanMachine}},
+
+                    }
+                }
+            };
 
 
         }
