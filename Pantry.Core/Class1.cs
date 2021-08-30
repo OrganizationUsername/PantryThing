@@ -11,16 +11,18 @@ namespace Pantry.Core
         {
             if (canCook.CanMake)
             {
-                if (canCook.TotalInput is not null) Console.WriteLine("Ingredients used: " + Environment.NewLine + string.Join(Environment.NewLine, canCook.TotalInput.Select(x => x.FoodType.Name + "- " + x.Amount)));
-                if (canCook.RecipesTouched is not null) Console.WriteLine($"Recipes: {Environment.NewLine}" + string.Join(Environment.NewLine, canCook.RecipesTouched.Select(x => x.Description)));
+                if (canCook.TotalInput is not null) Console.WriteLine("Ingredients Used: " + Environment.NewLine + string.Join(Environment.NewLine, canCook.TotalInput.Select(x => x.FoodType.Name + "- " + x.Amount)));
+                if (canCook.TotalOutput is not null) Console.WriteLine($"{Environment.NewLine}New Products: " + Environment.NewLine + string.Join(Environment.NewLine, canCook.TotalOutput.Where(x => x.Amount > 0).Select(x => x.FoodType.Name + "- " + x.Amount)));
+                if (canCook.RecipesTouched is not null) Console.WriteLine($"{Environment.NewLine}Recipes: {Environment.NewLine}" + string.Join(Environment.NewLine, canCook.RecipesTouched.Select(x => x.Description)));
                 //Console.WriteLine($"Time Taken: {canCook.RecipesTouched.Sum(x => x.RecipeSteps.Sum(y => y.TimeCost))}");
-                if (canCook.RawCost is not null) Console.WriteLine($"Total Cost:{Environment.NewLine}"
+                if (canCook.RawCost is not null) Console.WriteLine($"{Environment.NewLine}Total Cost:{Environment.NewLine}"
                                    + string.Join(Environment.NewLine, canCook.RawCost.Select(x => x.FoodType.Name + ": " + x.Amount)));
                 if (canCook.RecipeSteps is not null)
                 {
+                    Console.WriteLine($"{Environment.NewLine}Steps: ");
                     foreach (var x in canCook.RecipeSteps)
                     {
-                        Console.WriteLine(string.Join(Environment.NewLine, x.Select(y => y.Instruction)));
+                        Console.WriteLine(string.Join(Environment.NewLine, x.Select(y => y.Instruction + "- " + y.TimeCost)));
                     }
                 }
 
@@ -131,7 +133,7 @@ namespace Pantry.Core
     {
         public string RecipeName;
         public bool CanMake;
-        public IList<FoodInstance> TotalOutPut;
+        public IList<FoodInstance> TotalOutput;
         public IList<FoodInstance> TotalInput;
         public IList<FoodInstance> RawCost;
         public List<Recipe> RecipesTouched;

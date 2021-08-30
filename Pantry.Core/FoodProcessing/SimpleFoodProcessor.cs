@@ -78,7 +78,7 @@ namespace Pantry.Core.FoodProcessing
                             {
                                 rawCost.Add(new FoodInstance() { FoodType = rawDeductions.FoodType, Amount = rawDeductions.Amount });
                             }
-                            foreach (var additions in payload.TotalOutPut)
+                            foreach (var additions in payload.TotalOutput)
                             {
                                 var fi2 = clonedFoodInventory.FirstOrDefault(foodInstance =>
                                     foodInstance.FoodType == additions.FoodType);
@@ -106,7 +106,7 @@ namespace Pantry.Core.FoodProcessing
                 CanMake = true,
                 RecipesTouched = recipesTouched,
                 TotalInput = totalInput,
-                TotalOutPut = new List<FoodInstance>() { recipe.OutputFoodInstance },
+                TotalOutput = new List<FoodInstance>() { recipe.OutputFoodInstance },
                 RawCost = rawCost,
                 RecipeName = recipe.Description,
             };

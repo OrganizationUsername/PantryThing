@@ -281,7 +281,7 @@ namespace Pantry.Core.Test
             var canCook = _foodProcessor.CanCookSomething(pantry, recipe);
             Assert.AreEqual(1, canCook.TotalInput.Single(x => x.FoodType == _cheese).Amount);
             Assert.AreEqual(2, canCook.TotalInput.Single(x => x.FoodType == _bread).Amount);
-            Assert.AreEqual(1, canCook.TotalOutPut.Single(x => x.FoodType == _cheeseSandwich).Amount);
+            Assert.AreEqual(1, canCook.TotalOutput.Single(x => x.FoodType == _cheeseSandwich).Amount);
             canCook.ConsoleResult();
             Assert.IsTrue(canCook.CanMake);
         }

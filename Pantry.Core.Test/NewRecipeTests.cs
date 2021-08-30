@@ -53,8 +53,8 @@ namespace Pantry.Core.Test
                     if (result.CanMake)
                     {
                         totalInput.AddRange(result.TotalInput);
-                        clonedFoodInventory.AddRange(CloneFoodInstances(result.TotalOutPut));
-                        totalOutput.AddRange(CloneFoodInstances(result.TotalOutPut));
+                        clonedFoodInventory.AddRange(CloneFoodInstances(result.TotalOutput));
+                        totalOutput.AddRange(CloneFoodInstances(result.TotalOutput));
                         recipeSteps.Enqueue(result.RecipeSteps.SelectMany(x => x).ToList()); //This is very wrong.
                         steps += $"{Environment.NewLine}{result.Steps}-> \"{recipe.MainOutput.Name}\"";
                     }
@@ -72,7 +72,7 @@ namespace Pantry.Core.Test
             return new CookPlan()
             {
                 CanMake = true,
-                TotalOutPut = totalOutput,
+                TotalOutput = totalOutput,
                 TotalInput = totalInput,
                 RecipeSteps = recipeSteps,
                 Steps = steps// + $"[End {recipe.MainOutput.Name}]"
@@ -139,8 +139,6 @@ namespace Pantry.Core.Test
         [SetUp]
         public void Setup()
         {
-
-
             _recipes.Add(
                 new Core.BetterRecipe()
                 {
@@ -202,7 +200,7 @@ namespace Pantry.Core.Test
                     Inputs = new List<FoodInstance>() {
                         new() { Amount = 2, FoodType = _slicedBread } ,
                         new() { Amount = 120, FoodType = _slicedChicken} },
-                    Outputs = new List<FoodInstance>() { new() { Amount = 10, FoodType = _chickenSandwich } },
+                    Outputs = new List<FoodInstance>() { new() { Amount = 1, FoodType = _chickenSandwich } },
                     RecipeSteps = new List<RecipeStep>()
                     {
                         new() {Instruction = "Assemble Sandwich", TimeCost = 1, Equipments = new List<Equipment>(){_humanMachine}},
