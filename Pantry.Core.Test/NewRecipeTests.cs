@@ -14,6 +14,7 @@ namespace Pantry.Core.Test
         public CookPlan GetCookPlan(IList<FoodInstance> foodInventory, BetterRecipe recipe, IList<BetterRecipe> recipes)
         {
             var recipeSteps = new Queue<List<RecipeStep>>();
+            string steps = $"[Start {recipe.MainOutput.Name}]";
             recipeSteps.Enqueue(recipe.RecipeSteps);
             var totalOutput = new List<FoodInstance>();
             var totalInput = new List<FoodInstance>();
@@ -58,6 +59,7 @@ namespace Pantry.Core.Test
                                 clonedFoodInventory.AddRange(CloneFoodInstances(result.TotalOutPut));
                                 totalOutput.AddRange(CloneFoodInstances(result.TotalOutPut));
                                 recipeSteps.Enqueue(result.RecipeSteps.SelectMany(x => x).ToList());
+                                steps += $"-> {result.Steps}";
                                 //Let's try just concatenating a string that shows RecipeX->RecipeY so dependencies are clear.
                             }
                             else
@@ -74,7 +76,8 @@ namespace Pantry.Core.Test
                 CanMake = true,
                 TotalOutPut = totalOutput,
                 TotalInput = totalInput,
-                RecipeSteps = recipeSteps
+                RecipeSteps = recipeSteps,
+                Steps = steps + $"[End {recipe.MainOutput.Name}]"
             };
         }
         private static FoodInstance[] GetFoodInstancesFromRecipe(BetterRecipe recipe)

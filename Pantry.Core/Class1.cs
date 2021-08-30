@@ -23,6 +23,11 @@ namespace Pantry.Core
                         Console.WriteLine(string.Join(Environment.NewLine, x.Select(y => y.Instruction)));
                     }
                 }
+
+                if (canCook.Steps is not null)
+                {
+                    Console.WriteLine(canCook.Steps);
+                }
                 Console.WriteLine("-----");
             }
         }
@@ -130,5 +135,6 @@ namespace Pantry.Core
         public IList<FoodInstance> RawCost;
         public List<Recipe> RecipesTouched;
         public Queue<List<RecipeStep>> RecipeSteps;
+        public string Steps;
     }
 }
