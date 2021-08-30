@@ -16,6 +16,13 @@ namespace Pantry.Core
                 //Console.WriteLine($"Time Taken: {canCook.RecipesTouched.Sum(x => x.RecipeSteps.Sum(y => y.TimeCost))}");
                 if (canCook.RawCost is not null) Console.WriteLine($"Total Cost:{Environment.NewLine}"
                                    + string.Join(Environment.NewLine, canCook.RawCost.Select(x => x.FoodType.Name + ": " + x.Amount)));
+                if (canCook.RecipeSteps is not null)
+                {
+                    foreach (var x in canCook.RecipeSteps)
+                    {
+                        Console.WriteLine(string.Join(Environment.NewLine, x.Select(y => y.Instruction)));
+                    }
+                }
                 Console.WriteLine("-----");
             }
         }
@@ -122,5 +129,6 @@ namespace Pantry.Core
         public IList<FoodInstance> TotalInput;
         public IList<FoodInstance> RawCost;
         public List<Recipe> RecipesTouched;
+        public Queue<List<RecipeStep>> RecipeSteps;
     }
 }

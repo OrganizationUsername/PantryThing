@@ -1,7 +1,9 @@
 using System;
+using System.Collections;
 using Pantry.Core.FoodProcessing;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using NUnit.Framework;
 using Pantry.Core.Scheduler;
 
@@ -11,6 +13,8 @@ namespace Pantry.Core.Test
     {
         public CookPlan GetCookPlan(IList<FoodInstance> foodInventory, BetterRecipe recipe, IList<BetterRecipe> recipes)
         {
+            var recipeSteps = new Queue<List<RecipeStep>>();
+            recipeSteps.Enqueue(recipe.RecipeSteps);
             var totalOutput = new List<FoodInstance>();
             var totalInput = new List<FoodInstance>();
             var clonedFoodInventory = CloneFoodInstances(foodInventory);
@@ -20,7 +24,7 @@ namespace Pantry.Core.Test
                 bool onlyPantryUsed = true;
                 while (foodInstance.Amount > 0)
                 {
-                    var target = clonedFoodInventory.FirstOrDefault(x => x.FoodType == foodInstance.FoodType && x.Amount > 0);
+                    var target = clonedFoodInventory.FirstOrDefault(x => x.FoodType.FoodId == foodInstance.FoodType.FoodId && x.Amount > 0);
                     if (target is not null)
                     {
                         double diminishAmount = Math.Min(foodInstance.Amount, target.Amount);
@@ -32,17 +36,15 @@ namespace Pantry.Core.Test
                         }
                         else
                         {
-                            //Reduce total output.
-                            //Null because I didn't deep copy anything.
-                            //var OutputToReduce = totalOutput.FirstOrDefault(x => x.FoodType == foodInstance.FoodType && x.Amount > 0);
-                            //OutputToReduce.Amount -= diminishAmount;
+                            var outputToReduce = totalOutput.First(x => x.FoodType.FoodId == foodInstance.FoodType.FoodId && x.Amount > 0);
+                            outputToReduce.Amount -= diminishAmount;
                         }
                         continue;
                     }
                     else
                     {
                         onlyPantryUsed = false;
-                        var newRecipe = recipes.FirstOrDefault(x => x.MainOutput == foodInstance.FoodType);
+                        var newRecipe = recipes.FirstOrDefault(x => x.MainOutput.FoodId == foodInstance.FoodType.FoodId);
                         if (newRecipe is null)
                         {
                             return new CookPlan() { CanMake = false };
@@ -53,8 +55,10 @@ namespace Pantry.Core.Test
                             if (result.CanMake)
                             {
                                 totalInput.AddRange(result.TotalInput);
-                                clonedFoodInventory.AddRange(result.TotalOutPut);
-                                totalOutput.AddRange(result.TotalOutPut);
+                                clonedFoodInventory.AddRange(CloneFoodInstances(result.TotalOutPut));
+                                totalOutput.AddRange(CloneFoodInstances(result.TotalOutPut));
+                                recipeSteps.Enqueue(result.RecipeSteps.SelectMany(x => x).ToList());
+                                //Let's try just concatenating a string that shows RecipeX->RecipeY so dependencies are clear.
                             }
                             else
                             {
@@ -63,10 +67,15 @@ namespace Pantry.Core.Test
                         }
                     }
                 }
-
             }
             totalOutput.AddRange(recipe.Outputs);
-            return new CookPlan() { CanMake = true, TotalOutPut = totalOutput, TotalInput = totalInput };
+            return new CookPlan()
+            {
+                CanMake = true,
+                TotalOutPut = totalOutput,
+                TotalInput = totalInput,
+                RecipeSteps = recipeSteps
+            };
         }
         private static FoodInstance[] GetFoodInstancesFromRecipe(BetterRecipe recipe)
         {
@@ -90,7 +99,7 @@ namespace Pantry.Core.Test
                 FoodInstance fi = foodInstances[index];
                 clones[index] = (new FoodInstance()
                 {
-                    FoodType = fi.FoodType,
+                    FoodType = new Food() { Name = fi.FoodType.Name, FoodId = fi.FoodType.FoodId },
                     Amount = fi.Amount
                 });
             }
@@ -254,7 +263,36 @@ namespace Pantry.Core.Test
             Assert.IsTrue(canCook.CanMake);
         }
 
+        [Test]
+        public void BetterFoodProcessorComplexNested()
+        {
+            List<FoodInstance> pantry = new()
+            {
+                new FoodInstance() { FoodType = _bread, Amount = 10 },
+                new FoodInstance() { FoodType = _cookedChicken, Amount = 120 },
+            };
+            BetterRecipe recipe = _recipes.First(x => x.MainOutput == _chickenSandwich);
+            CookPlan canCook = _foodProcessor.GetCookPlan(pantry, recipe, _recipes);
+            canCook.ConsoleResult();
+            Assert.IsTrue(canCook.CanMake);
+        }
 
+
+        [Test]
+        public void BetterFoodProcessorWorstCaseNested()
+        {
+            List<FoodInstance> pantry = new()
+            {
+                new FoodInstance() { FoodType = _eggs, Amount = 210 },
+                new FoodInstance() { FoodType = _flour, Amount = 210 },
+                new FoodInstance() { FoodType = _milk, Amount = 210 },
+                new FoodInstance() { FoodType = _cookedChicken, Amount = 120 },
+            };
+            BetterRecipe recipe = _recipes.First(x => x.MainOutput == _chickenSandwich);
+            CookPlan canCook = _foodProcessor.GetCookPlan(pantry, recipe, _recipes);
+            canCook.ConsoleResult();
+            Assert.IsTrue(canCook.CanMake);
+        }
     }
 
 }
