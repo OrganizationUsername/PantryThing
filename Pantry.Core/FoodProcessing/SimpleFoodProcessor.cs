@@ -10,7 +10,7 @@ namespace Pantry.Core.FoodProcessing
     /// </summary>
     public class SimpleFoodProcessor : IFoodProcessor
     {
-        public GetCookPlan
+        public CookPlan
             CanCookSomething(IList<FoodInstance> foodInventory, Recipe recipe, IList<Recipe> recipes = null)
         {
             List<Recipe> recipesTouched = new();
@@ -53,7 +53,7 @@ namespace Pantry.Core.FoodProcessing
                                 recipesTouched.Add(payload.RecipesTouched[0]);
                                 payload.RecipesTouched.RemoveAt(0);
                             }
-                            foreach (var deductions in payload.TotalCost)
+                            foreach (var deductions in payload.TotalInput)
                             {
                                 totalInput.Add(new FoodInstance() { FoodType = deductions.FoodType, Amount = deductions.Amount });
                                 while (deductions.Amount > 0)
@@ -96,16 +96,16 @@ namespace Pantry.Core.FoodProcessing
                             continue;
                         }
                     }
-                    return new GetCookPlan() { CanMake = false };
+                    return new CookPlan() { CanMake = false };
                 }
             }
             recipesTouched.Add(recipe);
 
-            return new GetCookPlan()
+            return new CookPlan()
             {
                 CanMake = true,
                 RecipesTouched = recipesTouched,
-                TotalCost = totalInput,
+                TotalInput = totalInput,
                 TotalOutPut = new List<FoodInstance>() { recipe.OutputFoodInstance },
                 RawCost = rawCost,
                 RecipeName = recipe.Description,
@@ -129,7 +129,7 @@ namespace Pantry.Core.FoodProcessing
 
         private static FoodInstance[] CloneFoodInstances(IList<FoodInstance> foodInstances)
         {
-            FoodInstance[] clones = new FoodInstance[foodInstances.Count];
+            var clones = new FoodInstance[foodInstances.Count];
             for (var index = 0; index < foodInstances.Count; index++)
             {
                 FoodInstance fi = foodInstances[index];

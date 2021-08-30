@@ -165,9 +165,9 @@ namespace Pantry.Core.Test
                 new FoodInstance() { FoodType = _currySauce, Amount = 10 },
             };
             var pp = new PantryProvider(pantry);
-            var cms = new List<GetCookPlan>();
+            var cms = new List<CookPlan>();
             Recipe recipe = default;
-            GetCookPlan canCook = default;
+            CookPlan canCook = default;
             recipe = Recipes.First(r => r.OutputFoodInstance.FoodType == _cheeseSandwich);
             canCook = _foodProcessor.CanCookSomething(pantry, recipe, Recipes);
             cms.Add(canCook);
@@ -206,9 +206,9 @@ namespace Pantry.Core.Test
                 new FoodInstance() { FoodType = _currySauce, Amount = 10 },
             };
             var pp = new PantryProvider(pantry);
-            var cms = new List<GetCookPlan>();
+            var cms = new List<CookPlan>();
             Recipe recipe = default;
-            GetCookPlan canCook = default;
+            CookPlan canCook = default;
             recipe = Recipes.First(r => r.OutputFoodInstance.FoodType == _cheeseSandwich);
             canCook = _foodProcessor.CanCookSomething(pantry, recipe, Recipes);
             cms.Add(canCook);
@@ -253,7 +253,7 @@ namespace Pantry.Core.Test
         public IPantryProvider PantryProvider { get; set; }
         public IFoodProcessor FoodProcessor { get; set; }
 
-        public void UseFood(GetCookPlan canCook)
+        public void UseFood(CookPlan canCook)
         {
             fis = RealRecipeValidator.DiminishFood(canCook, fis);
         }
@@ -262,7 +262,7 @@ namespace Pantry.Core.Test
     public interface IPantryProvider
     {
         List<FoodInstance> GetFoodInstances();
-        List<FoodInstance> DiminishFood(GetCookPlan canCook);
+        List<FoodInstance> DiminishFood(CookPlan canCook);
     }
 
     public class PantryProvider : IPantryProvider
@@ -277,7 +277,7 @@ namespace Pantry.Core.Test
             return _foodInstances;
         }
 
-        public List<FoodInstance> DiminishFood(GetCookPlan canCook)
+        public List<FoodInstance> DiminishFood(CookPlan canCook)
         {
             if (!canCook.CanMake)
             {
@@ -301,7 +301,7 @@ namespace Pantry.Core.Test
 
     public interface IRecipeValidator
     {
-        List<FoodInstance> DiminishFood(GetCookPlan canCook, List<FoodInstance> fis);
+        List<FoodInstance> DiminishFood(CookPlan canCook, List<FoodInstance> fis);
     }
 
     /// <summary>
@@ -309,7 +309,7 @@ namespace Pantry.Core.Test
     /// </summary>
     public class RealRecipeValidator : IRecipeValidator
     {
-        public List<FoodInstance> DiminishFood(GetCookPlan canCook, List<FoodInstance> fis)
+        public List<FoodInstance> DiminishFood(CookPlan canCook, List<FoodInstance> fis)
         {
             if (!canCook.CanMake)
             {

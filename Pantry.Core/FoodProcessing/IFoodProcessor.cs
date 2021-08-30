@@ -4,7 +4,7 @@ namespace Pantry.Core.FoodProcessing
 {
     public interface IFoodProcessor
     {
-        GetCookPlan
+        CookPlan
             CanCookSomething(IList<FoodInstance> foodInventory, Recipe recipe, IList<Recipe> recipes = null);
     }
 }

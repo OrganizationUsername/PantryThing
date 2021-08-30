@@ -7,15 +7,15 @@ namespace Pantry.Core
 {
     public static class ExtensionMethods
     {
-        public static void ConsoleResult(this GetCookPlan canCook)
+        public static void ConsoleResult(this CookPlan canCook)
         {
             if (canCook.CanMake)
             {
-                Console.WriteLine(string.Join(Environment.NewLine, canCook.TotalCost.Select(x => x.FoodType.Name)));
-                Console.WriteLine($"Recipes: {Environment.NewLine}" + string.Join(Environment.NewLine, canCook.RecipesTouched.Select(x => x.Description)));
+                if (canCook.TotalInput is not null) Console.WriteLine("Ingredients used: " + Environment.NewLine + string.Join(Environment.NewLine, canCook.TotalInput.Select(x => x.FoodType.Name + "- " + x.Amount)));
+                if (canCook.RecipesTouched is not null) Console.WriteLine($"Recipes: {Environment.NewLine}" + string.Join(Environment.NewLine, canCook.RecipesTouched.Select(x => x.Description)));
                 //Console.WriteLine($"Time Taken: {canCook.RecipesTouched.Sum(x => x.RecipeSteps.Sum(y => y.TimeCost))}");
-                Console.WriteLine($"Total Cost:{Environment.NewLine}"
-                                  + string.Join(Environment.NewLine, canCook.RawCost.Select(x => x.FoodType.Name + ": " + x.Amount)));
+                if (canCook.RawCost is not null) Console.WriteLine($"Total Cost:{Environment.NewLine}"
+                                   + string.Join(Environment.NewLine, canCook.RawCost.Select(x => x.FoodType.Name + ": " + x.Amount)));
                 Console.WriteLine("-----");
             }
         }
@@ -90,7 +90,7 @@ namespace Pantry.Core
     {
         public Food FoodType { get; set; }
         public double Amount { get; set; }
-        public List<Recipe> Recipes { get; set; } //If I populate all of the FoodInstances in Recipe, I don't have to pass all recipes down to the CanCookSomething method.
+        public DateTime Created { get; set; }
     }
 
     public static class SchedulerExtensions
@@ -114,12 +114,12 @@ namespace Pantry.Core
         }
     }
 
-    public class GetCookPlan
+    public class CookPlan
     {
         public string RecipeName;
         public bool CanMake;
         public IList<FoodInstance> TotalOutPut;
-        public IList<FoodInstance> TotalCost;
+        public IList<FoodInstance> TotalInput;
         public IList<FoodInstance> RawCost;
         public List<Recipe> RecipesTouched;
     }

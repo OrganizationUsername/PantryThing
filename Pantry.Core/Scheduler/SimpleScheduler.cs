@@ -7,10 +7,10 @@ namespace Pantry.Core.Scheduler
 
     public class NaiveScheduler : IScheduler
     {
-        public List<GetCookPlan> ScheduledTasks { get; set; }
+        public List<CookPlan> ScheduledTasks { get; set; }
         public List<Equipment> Equipments { get; set; }
 
-        public NaiveScheduler(List<GetCookPlan> scheduledTasks, List<Equipment> equipments)
+        public NaiveScheduler(List<CookPlan> scheduledTasks, List<Equipment> equipments)
         {
             this.ScheduledTasks = scheduledTasks;
             this.Equipments = equipments;
@@ -70,13 +70,13 @@ namespace Pantry.Core.Scheduler
 
     public class SimpleScheduler : IScheduler
     {
-        public SimpleScheduler(List<GetCookPlan> scheduledTasks, List<Equipment> equipments)
+        public SimpleScheduler(List<CookPlan> scheduledTasks, List<Equipment> equipments)
         {
             this.ScheduledTasks = scheduledTasks;
             this.Equipments = equipments;
         }
 
-        public List<GetCookPlan> ScheduledTasks { get; set; } = new();
+        public List<CookPlan> ScheduledTasks { get; set; } = new();
         public List<Equipment> Equipments { get; set; } = new();
         public void TrySchedule(DateTime goal)
         {
