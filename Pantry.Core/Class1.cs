@@ -7,6 +7,13 @@ namespace Pantry.Core
 {
     public static class ExtensionMethods
     {
+
+        public static string GetDagString(RecipeDAG dag)
+        {
+            if (dag.SubordinateBetterRecipes.Count == 0) { return dag.MainRecipe.MainOutput.Name.ToString(); }
+            return string.Join(Environment.NewLine, dag.SubordinateBetterRecipes.Select(x => dag.MainRecipe.MainOutput.Name.ToString() + "->" + GetDagString(x)));
+        }
+
         public static void ConsoleResult(this CookPlan canCook)
         {
             if (canCook.CanMake)
@@ -26,6 +33,7 @@ namespace Pantry.Core
                     }
                 }
 
+                if (canCook.RecipeDAG is not null) { Console.WriteLine(GetDagString(canCook.RecipeDAG)); }
                 if (canCook.Steps is not null)
                 {
                     Console.WriteLine(canCook.Steps);
@@ -138,6 +146,17 @@ namespace Pantry.Core
         public IList<FoodInstance> RawCost;
         public List<Recipe> RecipesTouched;
         public Queue<List<RecipeStep>> RecipeSteps;
+        public RecipeDAG RecipeDAG;
         public string Steps;
     }
+
+    public class RecipeDAG
+    {
+        public BetterRecipe MainRecipe { get; set; }
+        public List<RecipeDAG> SubordinateBetterRecipes = new();
+        public bool Resolved = false;
+    }
+
+
+
 }

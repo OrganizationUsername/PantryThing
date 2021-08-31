@@ -13,13 +13,11 @@ namespace Pantry.Core.Test
     {
         public CookPlan GetCookPlan(IList<FoodInstance> foodInventory, BetterRecipe recipe, IList<BetterRecipe> recipes)
         {
-            var recipeSteps = new Queue<List<RecipeStep>>();
-            var steps = "";//$"\"Start {recipe.MainOutput.Name}\"";
-            recipeSteps.Enqueue(recipe.RecipeSteps);
             var totalOutput = new List<FoodInstance>();
             var totalInput = new List<FoodInstance>();
             var clonedFoodInventory = CloneFoodInstances(foodInventory);
             var recipeLines = GetFoodInstancesFromRecipe(recipe);
+            RecipeDAG recipeDag = new RecipeDAG() { MainRecipe = recipe };
             foreach (var foodInstance in recipeLines)
             {
                 bool onlyPantryUsed = true;
@@ -52,11 +50,10 @@ namespace Pantry.Core.Test
                     var result = this.GetCookPlan(CloneFoodInstances(clonedFoodInventory), newRecipe, recipes);
                     if (result.CanMake)
                     {
+                        recipeDag.SubordinateBetterRecipes.Add(result.RecipeDAG);
                         totalInput.AddRange(result.TotalInput);
                         clonedFoodInventory.AddRange(CloneFoodInstances(result.TotalOutput));
                         totalOutput.AddRange(CloneFoodInstances(result.TotalOutput));
-                        recipeSteps.Enqueue(result.RecipeSteps.SelectMany(x => x).ToList()); //This is very wrong.
-                        steps += $"{Environment.NewLine}{result.Steps}-> \"{recipe.MainOutput.Name}\"";
                     }
                     else
                     {
@@ -65,17 +62,14 @@ namespace Pantry.Core.Test
                 }
             }
             totalOutput.AddRange(recipe.Outputs);
-            if (string.IsNullOrWhiteSpace(steps))
-            {
-                steps = $"\"{recipe.MainOutput.Name}\"";
-            }
+
+
             return new CookPlan()
             {
                 CanMake = true,
                 TotalOutput = totalOutput,
                 TotalInput = totalInput,
-                RecipeSteps = recipeSteps,
-                Steps = steps// + $"[End {recipe.MainOutput.Name}]"
+                RecipeDAG = recipeDag
             };
         }
         private static FoodInstance[] GetFoodInstancesFromRecipe(BetterRecipe recipe)
@@ -282,7 +276,6 @@ namespace Pantry.Core.Test
             Assert.IsTrue(canCook.CanMake);
         }
 
-
         [Test]
         public void BetterFoodProcessorBadCaseNested()
         {
@@ -314,6 +307,43 @@ namespace Pantry.Core.Test
             CookPlan canCook = _foodProcessor.GetCookPlan(pantry, recipe, _recipes);
             canCook.ConsoleResult();
             Assert.IsTrue(canCook.CanMake);
+        }
+
+        [Test]
+        public void MakeMultiple()
+        {
+            List<FoodInstance> pantry = new()
+            {
+                new FoodInstance() { FoodType = _slicedBread, Amount = 10 },
+                new FoodInstance() { FoodType = _cookedChicken, Amount = 500 },
+            };
+            BetterRecipe recipe = _recipes.First(x => x.MainOutput == _chickenSandwich);
+            CookPlan canCook = null;
+            for (var i = 0; i < 4; i++)
+            {
+                canCook = _foodProcessor.GetCookPlan(pantry, recipe, _recipes);
+                canCook.ConsoleResult();
+            }
+            Assert.IsNotNull(canCook);
+            Assert.IsTrue(canCook.CanMake);
+        }
+
+        [Test]
+        public void MakeMultiple_Bad()
+        {
+            List<FoodInstance> pantry = new()
+            {
+                new FoodInstance() { FoodType = _slicedBread, Amount = 10 },
+                new FoodInstance() { FoodType = _cookedChicken, Amount = 500 },
+            };
+            BetterRecipe recipe = _recipes.First(x => x.MainOutput == _chickenSandwich);
+            CookPlan canCook = null;
+            for (var i = 0; i < 5; i++)
+            {
+                canCook = _foodProcessor.GetCookPlan(pantry, recipe, _recipes);
+                canCook.ConsoleResult();
+            }
+            Assert.IsNull(canCook);
         }
 
     }
