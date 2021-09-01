@@ -221,7 +221,7 @@ namespace Pantry.Core.Test
         }
 
         [Test]
-        public void BetterFoodProcessorSimple()
+        public void BetterFoodProcessorSimple_OK()
         {
             List<FoodInstance> pantry = new()
             {
@@ -235,7 +235,21 @@ namespace Pantry.Core.Test
         }
 
         [Test]
-        public void BetterFoodProcessorSimple_InsufficientBread()
+        public void BetterFoodProcessorSimple_Fail()
+        {
+            List<FoodInstance> pantry = new()
+            {
+                new FoodInstance() { FoodType = _slicedBread, Amount = 10 },
+                new FoodInstance() { FoodType = _slicedChicken, Amount = 119 },
+            };
+            BetterRecipe recipe = _recipes.First(x => x.MainOutput == _chickenSandwich);
+            CookPlan canCook = _foodProcessor.GetCookPlan(pantry, recipe, _recipes);
+            canCook.ConsoleResult();
+            Assert.IsFalse(canCook.CanMake);
+        }
+
+        [Test]
+        public void BetterFoodProcessorSimple_InsufficientBread_Fail()
         {
             List<FoodInstance> pantry = new()
             {
@@ -249,7 +263,7 @@ namespace Pantry.Core.Test
         }
 
         [Test]
-        public void BetterFoodProcessorSimpleNested()
+        public void BetterFoodProcessorSimpleNested_OK()
         {
             List<FoodInstance> pantry = new()
             {
@@ -263,7 +277,7 @@ namespace Pantry.Core.Test
         }
 
         [Test]
-        public void BetterFoodProcessorComplexNested()
+        public void BetterFoodProcessorComplexNested_OK()
         {
             List<FoodInstance> pantry = new()
             {
@@ -277,7 +291,7 @@ namespace Pantry.Core.Test
         }
 
         [Test]
-        public void BetterFoodProcessorBadCaseNested()
+        public void BetterFoodProcessorNested_Fail()
         {
             List<FoodInstance> pantry = new()
             {
@@ -307,6 +321,23 @@ namespace Pantry.Core.Test
             CookPlan canCook = _foodProcessor.GetCookPlan(pantry, recipe, _recipes);
             canCook.ConsoleResult();
             Assert.IsTrue(canCook.CanMake);
+        }
+
+        [Test]
+        public void BetterFoodProcessorWorstCaseNested_Fail()
+        {
+            List<FoodInstance> pantry = new()
+            {
+                new FoodInstance() { FoodType = _eggs, Amount = 1 },
+                new FoodInstance() { FoodType = _flour, Amount = 210 },
+                new FoodInstance() { FoodType = _milk, Amount = 210 },
+                new FoodInstance() { FoodType = _frozenChicken, Amount = 120 },
+                new FoodInstance() { FoodType = _bbqSauce, Amount = 10 },
+            };
+            BetterRecipe recipe = _recipes.First(x => x.MainOutput == _chickenSandwich);
+            CookPlan canCook = _foodProcessor.GetCookPlan(pantry, recipe, _recipes);
+            canCook.ConsoleResult();
+            Assert.IsFalse(canCook.CanMake);
         }
 
         [Test]
@@ -343,7 +374,8 @@ namespace Pantry.Core.Test
                 canCook = _foodProcessor.GetCookPlan(pantry, recipe, _recipes);
                 canCook.ConsoleResult();
             }
-            Assert.IsNull(canCook);
+            Assert.IsNotNull(canCook);
+            Assert.IsFalse(canCook.CanMake);
         }
 
     }
