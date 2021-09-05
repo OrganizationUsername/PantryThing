@@ -33,7 +33,7 @@ namespace Pantry.Core.Extensions
                     }
                 }
 
-                if (canCook.RecipeDAG is not null) { Console.WriteLine(GetDagString(canCook.RecipeDAG)); }
+                if (canCook.RecipeDAG is not null) { Console.WriteLine($"Dags{Environment.NewLine}" + GetDagString(canCook.RecipeDAG)); }
                 if (canCook.Steps is not null)
                 {
                     Console.WriteLine(canCook.Steps);

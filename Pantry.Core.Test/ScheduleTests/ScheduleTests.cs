@@ -7,7 +7,7 @@ using Pantry.Core.FoodProcessing;
 using Pantry.Core.Models;
 using Pantry.Core.Scheduler;
 
-namespace Pantry.Models.Core.Test
+namespace Pantry.Core.Test.ScheduleTests
 {
     public class ScheduleTests
     {

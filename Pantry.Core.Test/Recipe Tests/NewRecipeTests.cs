@@ -6,7 +6,7 @@ using Pantry.Core.Extensions;
 using Pantry.Core.FoodProcessing;
 using Pantry.Core.Models;
 
-namespace Pantry.Models.Core.Test
+namespace Pantry.Core.Test.Recipe_Tests
 {
 
     public class NewRecipeTests

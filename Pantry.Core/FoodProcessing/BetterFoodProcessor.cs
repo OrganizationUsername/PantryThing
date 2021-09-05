@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using Pantry.Core.Models;
-using Pantry.Core.Models;
 
 namespace Pantry.Core.FoodProcessing
 {
@@ -17,7 +16,7 @@ namespace Pantry.Core.FoodProcessing
             RecipeDAG recipeDag = new() { MainRecipe = recipe };
             foreach (var foodInstance in recipeLines)
             {
-                bool onlyPantryUsed = true;
+                var onlyPantryUsed = true;
                 while (foodInstance.Amount > 0)
                 {
                     var target = clonedFoodInventory.FirstOrDefault(x => x.FoodType.FoodId == foodInstance.FoodType.FoodId && x.Amount > 0);
@@ -68,6 +67,7 @@ namespace Pantry.Core.FoodProcessing
                 RecipeDAG = recipeDag
             };
         }
+
         private static FoodInstance[] GetFoodInstancesFromRecipe(BetterRecipe recipe)
         {
             FoodInstance[] clones = new FoodInstance[recipe.Inputs.Count];
@@ -82,6 +82,7 @@ namespace Pantry.Core.FoodProcessing
             }
             return clones;
         }
+
         private static List<FoodInstance> CloneFoodInstances(IList<FoodInstance> foodInstances)
         {
             var clones = new FoodInstance[foodInstances.Count];
@@ -96,8 +97,5 @@ namespace Pantry.Core.FoodProcessing
             }
             return clones.ToList();
         }
-
-
     }
-
 }
