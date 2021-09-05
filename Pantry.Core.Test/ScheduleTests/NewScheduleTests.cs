@@ -22,6 +22,7 @@ namespace Pantry.Core.Test.ScheduleTests
 
         private readonly Equipment _sousVide = new()
         { Name = "Sous Vide", BookedTimes = new List<(DateTime startTime, DateTime endTime, string TaskName)>() };
+        private List<Equipment> _equipments;
 
         private readonly List<BetterRecipe> _recipes = new();
         private readonly BetterFoodProcessor _foodProcessor = new();
@@ -171,6 +172,7 @@ namespace Pantry.Core.Test.ScheduleTests
                         },
                     }
                 });
+            _equipments = new List<Equipment>() { _breadMachine, _humanMachine, _fridge, _sousVide };
         }
 
         [Test]
@@ -405,7 +407,6 @@ namespace Pantry.Core.Test.ScheduleTests
             Assert.AreNotEqual(ExtensionMethods.GetDagString(result), "Chicken Sandwich->Sliced Chicken->Cooked Chicken");
             Assert.AreEqual(ExtensionMethods.GetDagString(result), "Chicken Sandwich->Sliced Bread->Bread");
             Assert.AreEqual(ExtensionMethods.GetDagString(tempResult), "Chicken Sandwich->Sliced Bread->Bread");
-
         }
 
         [Test]
@@ -437,62 +438,37 @@ namespace Pantry.Core.Test.ScheduleTests
             Console.WriteLine(ExtensionMethods.GetDagString(dags.Last()));
             Assert.AreEqual(ExtensionMethods.GetDagString(dags.Last()), "Chicken Sandwich->Sliced Chicken");
         }
-    }
 
-    public class AnotherScheduler
-    {
-        public List<RecipeDAG> Dags { get; set; }
-        public List<Equipment> Equipments { get; set; }
-
-        public AnotherScheduler(List<RecipeDAG> dags, List<Equipment> equipments)
+        [Test]
+        public void AnActualSchedulingTest()
         {
-            Dags = dags;
-            Equipments = equipments;
-        }
-
-        public static IEnumerable<RecipeDAG> DecomposeDags(RecipeDAG dag)
-        {
-            if (dag.SubordinateBetterRecipes is null || dag.SubordinateBetterRecipes.Count == 0)
+            List<FoodInstance> pantry = new()
             {
-                return new List<RecipeDAG>() { dag };
+                new FoodInstance() { FoodType = _slicedBread, Amount = 2 },
+                new FoodInstance() { FoodType = _eggs, Amount = 120 },
+                new FoodInstance() { FoodType = _flour, Amount = 210 },
+                new FoodInstance() { FoodType = _milk, Amount = 210 },
+                new FoodInstance() { FoodType = _cookedChicken, Amount = 500 },
+                new FoodInstance() { FoodType = _rawChicken, Amount = 500 },
+                new FoodInstance() { FoodType = _bbqSauce, Amount = 500 },
+            };
+            PantryProvider pp = new(pantry);
+            var recipe = _recipes.First(x => x.MainOutput == _chickenSandwich);
+            CookPlan canCook = default;
+            var dags = new List<RecipeDAG>();
+            for (var i = 0; i < 5; i++)
+            {
+                canCook = _foodProcessor.GetCookPlan(pp.GetFoodInstances(), recipe, _recipes);
+                canCook.ConsoleResult();
+                dags.Add(canCook.RecipeDAG);
+                pp.AdjustOnHandQuantity(canCook);
             }
-
-            //List<RecipeDAG> result = new List<RecipeDAG>();
-            //foreach (var x in dag.SubordinateBetterRecipes.SelectMany(DecomposeDags))
-            //{
-            //    result.Add(new RecipeDAG() { MainRecipe = dag.MainRecipe, SubordinateBetterRecipes = new List<RecipeDAG>() { x } });
-            //}
-            //return result;
-            return dag.SubordinateBetterRecipes.SelectMany(DecomposeDags).Select(x => new RecipeDAG()
-            {
-                MainRecipe = dag.MainRecipe,
-                SubordinateBetterRecipes = new List<RecipeDAG>() { x }
-            }).ToList();
-        }
-
-        public static double? GetDagTime(RecipeDAG dag)
-        {
-            if (dag is null) { return null; }
-            var thisGuysCost = dag.MainRecipe.RecipeSteps.Sum(x => x.TimeCost);
-            if (dag.SubordinateBetterRecipes is null || dag.SubordinateBetterRecipes.Count == 0)
-            {
-                return thisGuysCost;
-            }
-            return thisGuysCost + dag.SubordinateBetterRecipes.Max(GetDagTime);
-        }
-
-        public static RecipeDAG GetLongestUnresolvedDag(IEnumerable<RecipeDAG> dags)
-        {
-            return dags.Where(x=>!x.Scheduled).OrderBy(x => GetDagTime(x) ?? -1).Last();
-        }
-
-        public void TrySchedule()
-        {
-            var x = Dags.Count + Equipments.Count;
-            Console.WriteLine(x);
+            pp.GetFoodInstances().OutputRemaining();
+            Assert.IsNotNull(canCook); Assert.IsTrue(canCook.CanMake);
+            Console.WriteLine($"{Environment.NewLine}All Dag text in original order:" + string.Join(Environment.NewLine, dags.Select(x => ExtensionMethods.GetDagString(x) + $"- {AnotherScheduler.GetDagTime(x)}")));
+            var another = new AnotherScheduler(DateTime.Parse("2021/08/15 18:00"), dags, _equipments);
+            another.TrySchedule();
         }
 
     }
-
-
 }

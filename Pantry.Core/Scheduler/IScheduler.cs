@@ -10,6 +10,4 @@ namespace Pantry.Core.Scheduler
         List<CookPlan> ScheduledTasks { get; set; }
         List<Equipment> Equipments { get; set; }
     }
-
-
 }
