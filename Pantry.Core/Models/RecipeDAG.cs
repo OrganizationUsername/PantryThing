@@ -6,6 +6,6 @@ namespace Pantry.Core.Models
     {
         public BetterRecipe MainRecipe { get; set; }
         public IList<RecipeDAG> SubordinateBetterRecipes = new List<RecipeDAG>();
-        public bool Resolved = false;
+        public bool Scheduled = false;
     }
 }

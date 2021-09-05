@@ -243,7 +243,7 @@ namespace Pantry.Core.Test.ScheduleTests
             }
             pp.GetFoodInstances().OutputRemaining();
             Assert.IsNotNull(canCook); Assert.IsTrue(canCook.CanMake);
-            var result = AnotherScheduler.GetLongestDag(dags);
+            var result = AnotherScheduler.GetLongestUnresolvedDag(dags);
             Console.WriteLine("-----");
             Console.WriteLine("Longest");
             Console.WriteLine(ExtensionMethods.GetDagString(result));
@@ -276,7 +276,7 @@ namespace Pantry.Core.Test.ScheduleTests
             pp.GetFoodInstances().OutputRemaining();
             Assert.IsNotNull(canCook); Assert.IsTrue(canCook.CanMake);
             var allDags = dags.SelectMany(AnotherScheduler.DecomposeDags).ToList();
-            var result = AnotherScheduler.GetLongestDag(allDags);
+            var result = AnotherScheduler.GetLongestUnresolvedDag(allDags);
             Console.WriteLine("-----");
             Console.WriteLine("Longest");
             Console.WriteLine(ExtensionMethods.GetDagString(result));
@@ -311,7 +311,7 @@ namespace Pantry.Core.Test.ScheduleTests
             pp.GetFoodInstances().OutputRemaining();
             Assert.IsNotNull(canCook); Assert.IsTrue(canCook.CanMake);
             var allDags = dags.SelectMany(AnotherScheduler.DecomposeDags).ToList();
-            var result = AnotherScheduler.GetLongestDag(allDags);
+            var result = AnotherScheduler.GetLongestUnresolvedDag(allDags);
             Console.WriteLine("-----");
             Console.WriteLine("Longest");
             Console.WriteLine(ExtensionMethods.GetDagString(result));
@@ -319,6 +319,93 @@ namespace Pantry.Core.Test.ScheduleTests
             Console.WriteLine("All");
             Console.WriteLine(string.Join(Environment.NewLine, allDags.Select(x => ExtensionMethods.GetDagString(x) + $"- {AnotherScheduler.GetDagTime(x)}")));
             Assert.AreEqual(ExtensionMethods.GetDagString(result), "Chicken Sandwich->Sliced Bread->Bread");
+        }
+
+        [Test]
+        public void GetSecondLongestDagText()
+        {
+            List<FoodInstance> pantry = new()
+            {
+                new FoodInstance() { FoodType = _slicedBread, Amount = 2 },
+                new FoodInstance() { FoodType = _eggs, Amount = 120 },
+                new FoodInstance() { FoodType = _flour, Amount = 210 },
+                new FoodInstance() { FoodType = _milk, Amount = 210 },
+                new FoodInstance() { FoodType = _cookedChicken, Amount = 500 },
+                new FoodInstance() { FoodType = _rawChicken, Amount = 500 },
+                new FoodInstance() { FoodType = _bbqSauce, Amount = 500 },
+            };
+            PantryProvider pp = new(pantry);
+            var recipe = _recipes.First(x => x.MainOutput == _chickenSandwich);
+            CookPlan canCook = default;
+            var dags = new List<RecipeDAG>();
+            for (var i = 0; i < 5; i++)
+            {
+                canCook = _foodProcessor.GetCookPlan(pp.GetFoodInstances(), recipe, _recipes);
+                canCook.ConsoleResult();
+                dags.Add(canCook.RecipeDAG);
+                pp.AdjustOnHandQuantity(canCook);
+            }
+            pp.GetFoodInstances().OutputRemaining();
+            Assert.IsNotNull(canCook); Assert.IsTrue(canCook.CanMake);
+            var allDags = dags.SelectMany(AnotherScheduler.DecomposeDags).ToList();
+            var tempResult = AnotherScheduler.GetLongestUnresolvedDag(allDags);
+            tempResult.Scheduled = true;
+            var result = AnotherScheduler.GetLongestUnresolvedDag(allDags);
+            Console.WriteLine("-----");
+            Console.WriteLine("Longest");
+            Console.WriteLine(ExtensionMethods.GetDagString(tempResult));
+            Console.WriteLine("-----");
+            Console.WriteLine("2nd Longest");
+            Console.WriteLine(ExtensionMethods.GetDagString(result));
+            Console.WriteLine("-----");
+            Console.WriteLine("All");
+            Console.WriteLine(string.Join(Environment.NewLine, allDags.Select(x => ExtensionMethods.GetDagString(x) + $"- {AnotherScheduler.GetDagTime(x)}")));
+            Assert.AreEqual(ExtensionMethods.GetDagString(result), "Chicken Sandwich->Sliced Chicken->Cooked Chicken");
+        }
+
+        [Test]
+        public void GetSecondLongestDagText_Bad()
+        {
+            List<FoodInstance> pantry = new()
+            {
+                new FoodInstance() { FoodType = _slicedBread, Amount = 2 },
+                new FoodInstance() { FoodType = _eggs, Amount = 120 },
+                new FoodInstance() { FoodType = _flour, Amount = 210 },
+                new FoodInstance() { FoodType = _milk, Amount = 210 },
+                new FoodInstance() { FoodType = _cookedChicken, Amount = 500 },
+                new FoodInstance() { FoodType = _rawChicken, Amount = 500 },
+                new FoodInstance() { FoodType = _bbqSauce, Amount = 500 },
+            };
+            PantryProvider pp = new(pantry);
+            var recipe = _recipes.First(x => x.MainOutput == _chickenSandwich);
+            CookPlan canCook = default;
+            var dags = new List<RecipeDAG>();
+            for (var i = 0; i < 5; i++)
+            {
+                canCook = _foodProcessor.GetCookPlan(pp.GetFoodInstances(), recipe, _recipes);
+                canCook.ConsoleResult();
+                dags.Add(canCook.RecipeDAG);
+                pp.AdjustOnHandQuantity(canCook);
+            }
+            pp.GetFoodInstances().OutputRemaining();
+            Assert.IsNotNull(canCook); Assert.IsTrue(canCook.CanMake);
+            var allDags = dags.SelectMany(AnotherScheduler.DecomposeDags).ToList();
+            var tempResult = AnotherScheduler.GetLongestUnresolvedDag(allDags);
+            //tempResult.Scheduled = true; //It hasn't been scheduled, so both tempResult/result will be the the longest
+            var result = AnotherScheduler.GetLongestUnresolvedDag(allDags);
+            Console.WriteLine("-----");
+            Console.WriteLine("Longest");
+            Console.WriteLine(ExtensionMethods.GetDagString(tempResult));
+            Console.WriteLine("-----");
+            Console.WriteLine("2nd Longest");
+            Console.WriteLine(ExtensionMethods.GetDagString(result));
+            Console.WriteLine("-----");
+            Console.WriteLine("All");
+            Console.WriteLine(string.Join(Environment.NewLine, allDags.Select(x => ExtensionMethods.GetDagString(x) + $"- {AnotherScheduler.GetDagTime(x)}")));
+            Assert.AreNotEqual(ExtensionMethods.GetDagString(result), "Chicken Sandwich->Sliced Chicken->Cooked Chicken");
+            Assert.AreEqual(ExtensionMethods.GetDagString(result), "Chicken Sandwich->Sliced Bread->Bread");
+            Assert.AreEqual(ExtensionMethods.GetDagString(tempResult), "Chicken Sandwich->Sliced Bread->Bread");
+
         }
 
         [Test]
@@ -344,7 +431,7 @@ namespace Pantry.Core.Test.ScheduleTests
             }
             pp.GetFoodInstances().OutputRemaining();
             Assert.IsNotNull(canCook); Assert.IsTrue(canCook.CanMake);
-            var result = AnotherScheduler.GetLongestDag(dags);
+            var result = AnotherScheduler.GetLongestUnresolvedDag(dags);
             Console.WriteLine("-----");
             Console.WriteLine("Last");
             Console.WriteLine(ExtensionMethods.GetDagString(dags.Last()));
@@ -394,9 +481,9 @@ namespace Pantry.Core.Test.ScheduleTests
             return thisGuysCost + dag.SubordinateBetterRecipes.Max(GetDagTime);
         }
 
-        public static RecipeDAG GetLongestDag(IEnumerable<RecipeDAG> dags)
+        public static RecipeDAG GetLongestUnresolvedDag(IEnumerable<RecipeDAG> dags)
         {
-            return dags.OrderBy(x => GetDagTime(x) ?? -1).Last();
+            return dags.Where(x=>!x.Scheduled).OrderBy(x => GetDagTime(x) ?? -1).Last();
         }
 
         public void TrySchedule()
