@@ -13,7 +13,7 @@ namespace Pantry.Core.FoodProcessing
             var totalInput = new List<FoodInstance>();
             var clonedFoodInventory = CloneFoodInstances(foodInventory);
             var recipeLines = GetFoodInstancesFromRecipe(recipe);
-            RecipeDAG recipeDag = new() { MainRecipe = recipe };
+            RecipeDag recipeDag = new() { MainRecipe = recipe };
             foreach (var foodInstance in recipeLines)
             {
                 var onlyPantryUsed = true;
@@ -46,7 +46,7 @@ namespace Pantry.Core.FoodProcessing
                     var result = this.GetCookPlan(CloneFoodInstances(clonedFoodInventory), newRecipe, recipes);
                     if (result.CanMake)
                     {
-                        recipeDag.SubordinateBetterRecipes.Add(result.RecipeDAG);
+                        recipeDag.SubordinateBetterRecipes.Add(result.RecipeDag);
                         totalInput.AddRange(result.TotalInput);
                         clonedFoodInventory.AddRange(CloneFoodInstances(result.TotalOutput));
                         totalOutput.AddRange(CloneFoodInstances(result.TotalOutput));
@@ -64,7 +64,7 @@ namespace Pantry.Core.FoodProcessing
                 CanMake = true,
                 TotalOutput = totalOutput,
                 TotalInput = totalInput,
-                RecipeDAG = recipeDag
+                RecipeDag = recipeDag
             };
         }
 

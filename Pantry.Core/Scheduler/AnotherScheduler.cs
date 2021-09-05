@@ -8,27 +8,27 @@ namespace Pantry.Core.Scheduler
 {
     public class AnotherScheduler
     {
-        private readonly IEnumerable<RecipeDAG> _manyDags;
+        private readonly IEnumerable<RecipeDag> _manyDags;
         private readonly List<Equipment> _equipments;
         private readonly DateTime _goal;
-        public AnotherScheduler(DateTime goal, IEnumerable<RecipeDAG> manyDags, List<Equipment> equipments)
+        public AnotherScheduler(DateTime goal, IEnumerable<RecipeDag> manyDags, List<Equipment> equipments)
         {
             _goal = goal;
             _manyDags = manyDags;
             _equipments = equipments;
         }
-        public static IEnumerable<RecipeDAG> DecomposeDags(RecipeDAG dag)
+        public static IEnumerable<RecipeDag> DecomposeDags(RecipeDag dag)
         {
-            if (dag.SubordinateBetterRecipes is null || dag.SubordinateBetterRecipes.Count == 0) { return new List<RecipeDAG>() { dag }; }
+            if (dag.SubordinateBetterRecipes is null || dag.SubordinateBetterRecipes.Count == 0) { return new List<RecipeDag>() { dag }; }
 
-            return dag.SubordinateBetterRecipes.SelectMany(DecomposeDags).Select(x => new RecipeDAG()
+            return dag.SubordinateBetterRecipes.SelectMany(DecomposeDags).Select(x => new RecipeDag()
             {
                 MainRecipe = dag.MainRecipe,
-                SubordinateBetterRecipes = new List<RecipeDAG>() { x }
+                SubordinateBetterRecipes = new List<RecipeDag>() { x }
             }).ToList();
         }
 
-        public static double? GetDagTime(RecipeDAG dag)
+        public static double? GetDagTime(RecipeDag dag)
         {
             if (dag is null) { return null; }
             var thisGuysCost = dag.MainRecipe.RecipeSteps.Sum(x => x.TimeCost);
@@ -39,14 +39,14 @@ namespace Pantry.Core.Scheduler
             return thisGuysCost + dag.SubordinateBetterRecipes.Max(GetDagTime);
         }
 
-        public static RecipeDAG GetLongestUnresolvedDag(IEnumerable<RecipeDAG> dags)
+        public static RecipeDag GetLongestUnresolvedDag(IEnumerable<RecipeDag> dags)
         {
             return dags.Where(x => !x.Scheduled).OrderBy(x => GetDagTime(x) ?? -1).Last();
         }
 
         public void TrySchedule()
         {
-            var ScheduledTasks = _manyDags.SelectMany(DecomposeDags).OrderBy(GetDagTime);
+            var scheduledTasks = _manyDags.SelectMany(DecomposeDags).OrderBy(GetDagTime);
             foreach (var scheduledTask in _manyDags)
             {
                 Schedule(scheduledTask);
@@ -64,7 +64,7 @@ namespace Pantry.Core.Scheduler
             }
         }
 
-        public void Schedule(RecipeDAG dag)
+        public void Schedule(RecipeDag dag)
         {
             var offset = 0;
             for (var index = dag.MainRecipe.RecipeSteps.Count - 1; index >= 0; index--)

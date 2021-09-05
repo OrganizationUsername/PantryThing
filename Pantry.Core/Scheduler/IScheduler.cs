@@ -6,7 +6,7 @@ namespace Pantry.Core.Scheduler
 {
     public interface IScheduler
     {
-        void TrySchedule(DateTime Goal);
+        void TrySchedule(DateTime goal);
         List<CookPlan> ScheduledTasks { get; set; }
         List<Equipment> Equipments { get; set; }
     }

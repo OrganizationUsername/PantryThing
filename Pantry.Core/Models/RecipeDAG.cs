@@ -2,10 +2,10 @@
 
 namespace Pantry.Core.Models
 {
-    public class RecipeDAG
+    public class RecipeDag
     {
         public BetterRecipe MainRecipe { get; set; }
-        public IList<RecipeDAG> SubordinateBetterRecipes = new List<RecipeDAG>();
+        public IList<RecipeDag> SubordinateBetterRecipes = new List<RecipeDag>();
         public bool Scheduled = false;
     }
 }

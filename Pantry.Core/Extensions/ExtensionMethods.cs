@@ -8,7 +8,7 @@ namespace Pantry.Core.Extensions
     public static class ExtensionMethods
     {
 
-        public static string GetDagString(RecipeDAG dag)
+        public static string GetDagString(RecipeDag dag)
         {
             if (dag.SubordinateBetterRecipes.Count == 0) { return dag.MainRecipe.MainOutput.Name.ToString(); }
             return string.Join(Environment.NewLine, dag.SubordinateBetterRecipes.Select(x => dag.MainRecipe.MainOutput.Name.ToString() + "->" + GetDagString(x)));
@@ -33,7 +33,7 @@ namespace Pantry.Core.Extensions
                     }
                 }
 
-                if (canCook.RecipeDAG is not null) { Console.WriteLine($"Dags{Environment.NewLine}" + GetDagString(canCook.RecipeDAG)); }
+                if (canCook.RecipeDag is not null) { Console.WriteLine($"Dags{Environment.NewLine}" + GetDagString(canCook.RecipeDag)); }
                 if (canCook.Steps is not null)
                 {
                     Console.WriteLine(canCook.Steps);

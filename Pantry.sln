@@ -3,9 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.31515.178
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Pantry.Core.Test", "Pantry.Core.Test\Pantry.Core.Test.csproj", "{10BA8377-F88A-4902-84F6-776B583AB475}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Pantry.Core.Test", "Pantry.Core.Test\Pantry.Core.Test.csproj", "{10BA8377-F88A-4902-84F6-776B583AB475}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Pantry.Core", "Pantry.Core\Pantry.Core.csproj", "{B606DDA8-610F-4BAD-A7A0-DC31DD2A5B7F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Pantry.Core", "Pantry.Core\Pantry.Core.csproj", "{B606DDA8-610F-4BAD-A7A0-DC31DD2A5B7F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PantryWPF", "PantryWPF\PantryWPF.csproj", "{65F3A279-AFBA-4427-B5F2-225AA7A161A4}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,6 +23,10 @@ Global
 		{B606DDA8-610F-4BAD-A7A0-DC31DD2A5B7F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B606DDA8-610F-4BAD-A7A0-DC31DD2A5B7F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B606DDA8-610F-4BAD-A7A0-DC31DD2A5B7F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{65F3A279-AFBA-4427-B5F2-225AA7A161A4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{65F3A279-AFBA-4427-B5F2-225AA7A161A4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{65F3A279-AFBA-4427-B5F2-225AA7A161A4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{65F3A279-AFBA-4427-B5F2-225AA7A161A4}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

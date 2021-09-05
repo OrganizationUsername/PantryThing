@@ -206,12 +206,12 @@ namespace Pantry.Core.Test.ScheduleTests
             PantryProvider pp = new(pantry);
             var recipe = _recipes.First(x => x.MainOutput == _chickenSandwich);
             CookPlan canCook = null;
-            RecipeDAG daggy = null;
+            RecipeDag daggy = null;
             for (var i = 0; i < 4; i++)
             {
                 canCook = _foodProcessor.GetCookPlan(pp.GetFoodInstances(), recipe, _recipes);
                 canCook.ConsoleResult();
-                daggy ??= canCook.RecipeDAG;
+                daggy ??= canCook.RecipeDag;
                 pp.AdjustOnHandQuantity(canCook);
             }
             pp.GetFoodInstances().OutputRemaining();
@@ -235,12 +235,12 @@ namespace Pantry.Core.Test.ScheduleTests
             PantryProvider pp = new(pantry);
             var recipe = _recipes.First(x => x.MainOutput == _chickenSandwich);
             CookPlan canCook = null;
-            List<RecipeDAG> dags = new();
+            List<RecipeDag> dags = new();
             for (var i = 0; i < 4; i++)
             {
                 canCook = _foodProcessor.GetCookPlan(pp.GetFoodInstances(), recipe, _recipes);
                 canCook.ConsoleResult();
-                dags.Add(canCook.RecipeDAG);
+                dags.Add(canCook.RecipeDag);
                 pp.AdjustOnHandQuantity(canCook);
             }
             pp.GetFoodInstances().OutputRemaining();
@@ -267,12 +267,12 @@ namespace Pantry.Core.Test.ScheduleTests
             PantryProvider pp = new(pantry);
             var recipe = _recipes.First(x => x.MainOutput == _chickenSandwich);
             CookPlan canCook = null;
-            List<RecipeDAG> dags = new();
+            List<RecipeDag> dags = new();
             for (var i = 0; i < 4; i++)
             {
                 canCook = _foodProcessor.GetCookPlan(pp.GetFoodInstances(), recipe, _recipes);
                 canCook.ConsoleResult();
-                dags.Add(canCook.RecipeDAG);
+                dags.Add(canCook.RecipeDag);
                 pp.AdjustOnHandQuantity(canCook);
             }
             pp.GetFoodInstances().OutputRemaining();
@@ -302,12 +302,12 @@ namespace Pantry.Core.Test.ScheduleTests
             PantryProvider pp = new(pantry);
             var recipe = _recipes.First(x => x.MainOutput == _chickenSandwich);
             CookPlan canCook = default;
-            var dags = new List<RecipeDAG>();
+            var dags = new List<RecipeDag>();
             for (var i = 0; i < 4; i++)
             {
                 canCook = _foodProcessor.GetCookPlan(pp.GetFoodInstances(), recipe, _recipes);
                 canCook.ConsoleResult();
-                dags.Add(canCook.RecipeDAG);
+                dags.Add(canCook.RecipeDag);
                 pp.AdjustOnHandQuantity(canCook);
             }
             pp.GetFoodInstances().OutputRemaining();
@@ -339,12 +339,12 @@ namespace Pantry.Core.Test.ScheduleTests
             PantryProvider pp = new(pantry);
             var recipe = _recipes.First(x => x.MainOutput == _chickenSandwich);
             CookPlan canCook = default;
-            var dags = new List<RecipeDAG>();
+            var dags = new List<RecipeDag>();
             for (var i = 0; i < 5; i++)
             {
                 canCook = _foodProcessor.GetCookPlan(pp.GetFoodInstances(), recipe, _recipes);
                 canCook.ConsoleResult();
-                dags.Add(canCook.RecipeDAG);
+                dags.Add(canCook.RecipeDag);
                 pp.AdjustOnHandQuantity(canCook);
             }
             pp.GetFoodInstances().OutputRemaining();
@@ -381,12 +381,12 @@ namespace Pantry.Core.Test.ScheduleTests
             PantryProvider pp = new(pantry);
             var recipe = _recipes.First(x => x.MainOutput == _chickenSandwich);
             CookPlan canCook = default;
-            var dags = new List<RecipeDAG>();
+            var dags = new List<RecipeDag>();
             for (var i = 0; i < 5; i++)
             {
                 canCook = _foodProcessor.GetCookPlan(pp.GetFoodInstances(), recipe, _recipes);
                 canCook.ConsoleResult();
-                dags.Add(canCook.RecipeDAG);
+                dags.Add(canCook.RecipeDag);
                 pp.AdjustOnHandQuantity(canCook);
             }
             pp.GetFoodInstances().OutputRemaining();
@@ -422,12 +422,12 @@ namespace Pantry.Core.Test.ScheduleTests
             PantryProvider pp = new(pantry);
             var recipe = _recipes.First(x => x.MainOutput == _chickenSandwich);
             CookPlan canCook = null;
-            List<RecipeDAG> dags = new();
+            List<RecipeDag> dags = new();
             for (var i = 0; i < 4; i++)
             {
                 canCook = _foodProcessor.GetCookPlan(pantry, recipe, _recipes);
                 canCook.ConsoleResult();
-                dags.Add(canCook.RecipeDAG);
+                dags.Add(canCook.RecipeDag);
                 pp.AdjustOnHandQuantity(canCook);
             }
             pp.GetFoodInstances().OutputRemaining();
@@ -455,12 +455,12 @@ namespace Pantry.Core.Test.ScheduleTests
             PantryProvider pp = new(pantry);
             var recipe = _recipes.First(x => x.MainOutput == _chickenSandwich);
             CookPlan canCook = default;
-            var dags = new List<RecipeDAG>();
+            var dags = new List<RecipeDag>();
             for (var i = 0; i < 5; i++)
             {
                 canCook = _foodProcessor.GetCookPlan(pp.GetFoodInstances(), recipe, _recipes);
                 canCook.ConsoleResult();
-                dags.Add(canCook.RecipeDAG);
+                dags.Add(canCook.RecipeDag);
                 pp.AdjustOnHandQuantity(canCook);
             }
             pp.GetFoodInstances().OutputRemaining();

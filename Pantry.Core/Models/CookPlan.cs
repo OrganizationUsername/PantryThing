@@ -11,7 +11,7 @@ namespace Pantry.Core.Models
         public IList<FoodInstance> RawCost;
         public List<Recipe> RecipesTouched;
         public Queue<List<RecipeStep>> RecipeSteps;
-        public RecipeDAG RecipeDAG;
+        public RecipeDag RecipeDag;
         public string Steps;
     }
 }
