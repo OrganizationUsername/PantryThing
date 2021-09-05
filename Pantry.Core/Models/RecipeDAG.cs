@@ -5,7 +5,7 @@ namespace Pantry.Core.Models
     public class RecipeDAG
     {
         public BetterRecipe MainRecipe { get; set; }
-        public List<RecipeDAG> SubordinateBetterRecipes = new();
+        public IList<RecipeDAG> SubordinateBetterRecipes = new List<RecipeDAG>();
         public bool Resolved = false;
     }
 }

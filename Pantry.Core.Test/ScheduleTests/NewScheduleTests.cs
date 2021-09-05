@@ -207,7 +207,7 @@ namespace Pantry.Core.Test.ScheduleTests
             RecipeDAG daggy = null;
             for (var i = 0; i < 4; i++)
             {
-                canCook = _foodProcessor.GetCookPlan(pantry, recipe, _recipes);
+                canCook = _foodProcessor.GetCookPlan(pp.GetFoodInstances(), recipe, _recipes);
                 canCook.ConsoleResult();
                 daggy ??= canCook.RecipeDAG;
                 pp.AdjustOnHandQuantity(canCook);
@@ -236,7 +236,7 @@ namespace Pantry.Core.Test.ScheduleTests
             List<RecipeDAG> dags = new();
             for (var i = 0; i < 4; i++)
             {
-                canCook = _foodProcessor.GetCookPlan(pantry, recipe, _recipes);
+                canCook = _foodProcessor.GetCookPlan(pp.GetFoodInstances(), recipe, _recipes);
                 canCook.ConsoleResult();
                 dags.Add(canCook.RecipeDAG);
                 pp.AdjustOnHandQuantity(canCook);
@@ -268,16 +268,56 @@ namespace Pantry.Core.Test.ScheduleTests
             List<RecipeDAG> dags = new();
             for (var i = 0; i < 4; i++)
             {
-                canCook = _foodProcessor.GetCookPlan(pantry, recipe, _recipes);
+                canCook = _foodProcessor.GetCookPlan(pp.GetFoodInstances(), recipe, _recipes);
                 canCook.ConsoleResult();
                 dags.Add(canCook.RecipeDAG);
                 pp.AdjustOnHandQuantity(canCook);
             }
             pp.GetFoodInstances().OutputRemaining();
             Assert.IsNotNull(canCook); Assert.IsTrue(canCook.CanMake);
-            var result = AnotherScheduler.GetLongestDag(dags);
+            var allDags = dags.SelectMany(AnotherScheduler.DecomposeDags).ToList();
+            var result = AnotherScheduler.GetLongestDag(allDags);
             Console.WriteLine("-----");
             Console.WriteLine("Longest");
+            Console.WriteLine(ExtensionMethods.GetDagString(result));
+            Console.WriteLine("-----");
+            Console.WriteLine("All");
+            Console.WriteLine(string.Join(Environment.NewLine, allDags.Select(x => ExtensionMethods.GetDagString(x) + $"- {AnotherScheduler.GetDagTime(x)}")));
+            Assert.AreEqual(ExtensionMethods.GetDagString(result), "Chicken Sandwich->Sliced Bread->Bread");
+        }
+
+        [Test]
+        public void GetLongestDagTextWithLimitedBread()
+        {
+            List<FoodInstance> pantry = new()
+            {
+                new FoodInstance() { FoodType = _slicedBread, Amount = 2 },
+                new FoodInstance() { FoodType = _eggs, Amount = 120 },
+                new FoodInstance() { FoodType = _flour, Amount = 210 },
+                new FoodInstance() { FoodType = _milk, Amount = 210 },
+                new FoodInstance() { FoodType = _cookedChicken, Amount = 500 },
+            };
+            PantryProvider pp = new(pantry);
+            var recipe = _recipes.First(x => x.MainOutput == _chickenSandwich);
+            CookPlan canCook = default;
+            var dags = new List<RecipeDAG>();
+            for (var i = 0; i < 4; i++)
+            {
+                canCook = _foodProcessor.GetCookPlan(pp.GetFoodInstances(), recipe, _recipes);
+                canCook.ConsoleResult();
+                dags.Add(canCook.RecipeDAG);
+                pp.AdjustOnHandQuantity(canCook);
+            }
+            pp.GetFoodInstances().OutputRemaining();
+            Assert.IsNotNull(canCook); Assert.IsTrue(canCook.CanMake);
+            var allDags = dags.SelectMany(AnotherScheduler.DecomposeDags).ToList();
+            var result = AnotherScheduler.GetLongestDag(allDags);
+            Console.WriteLine("-----");
+            Console.WriteLine("Longest");
+            Console.WriteLine(ExtensionMethods.GetDagString(result));
+            Console.WriteLine("-----");
+            Console.WriteLine("All");
+            Console.WriteLine(string.Join(Environment.NewLine, allDags.Select(x => ExtensionMethods.GetDagString(x) + $"- {AnotherScheduler.GetDagTime(x)}")));
             Assert.AreEqual(ExtensionMethods.GetDagString(result), "Chicken Sandwich->Sliced Bread->Bread");
         }
 
@@ -323,12 +363,28 @@ namespace Pantry.Core.Test.ScheduleTests
             Equipments = equipments;
         }
 
+        public static IEnumerable<RecipeDAG> DecomposeDags(RecipeDAG dag)
+        {
+            if (dag.SubordinateBetterRecipes is null || dag.SubordinateBetterRecipes.Count == 0)
+            {
+                return new List<RecipeDAG>() { dag };
+            }
+
+            //List<RecipeDAG> result = new List<RecipeDAG>();
+            //foreach (var x in dag.SubordinateBetterRecipes.SelectMany(DecomposeDags))
+            //{
+            //    result.Add(new RecipeDAG() { MainRecipe = dag.MainRecipe, SubordinateBetterRecipes = new List<RecipeDAG>() { x } });
+            //}
+            //return result;
+            return dag.SubordinateBetterRecipes.SelectMany(DecomposeDags).Select(x => new RecipeDAG()
+            {
+                MainRecipe = dag.MainRecipe,
+                SubordinateBetterRecipes = new List<RecipeDAG>() { x }
+            }).ToList();
+        }
+
         public static double? GetDagTime(RecipeDAG dag)
         {
-            //I guess the easiest way is to go down from every base to tip and add stuff.
-            //There's probably a clever Max thing that can be done.
-            //What if I could store in a .ToLookup with (double Time, Dag)
-            //lol, whatever
             if (dag is null) { return null; }
             var thisGuysCost = dag.MainRecipe.RecipeSteps.Sum(x => x.TimeCost);
             if (dag.SubordinateBetterRecipes is null || dag.SubordinateBetterRecipes.Count == 0)
@@ -338,9 +394,8 @@ namespace Pantry.Core.Test.ScheduleTests
             return thisGuysCost + dag.SubordinateBetterRecipes.Max(GetDagTime);
         }
 
-        public static RecipeDAG GetLongestDag(List<RecipeDAG> dags)
+        public static RecipeDAG GetLongestDag(IEnumerable<RecipeDAG> dags)
         {
-            var y = dags.ToLookup(x => GetDagTime(x), x => x);
             return dags.OrderBy(x => GetDagTime(x) ?? -1).Last();
         }
 
