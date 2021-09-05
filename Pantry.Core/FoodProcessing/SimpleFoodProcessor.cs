@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Pantry.Core.Models;
 
 namespace Pantry.Core.FoodProcessing
 {

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Pantry.Core.Models;
 
 namespace Pantry.Core.Scheduler
 {

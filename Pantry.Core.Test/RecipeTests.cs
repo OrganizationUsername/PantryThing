@@ -1,9 +1,11 @@
-using Pantry.Core.FoodProcessing;
 using System.Collections.Generic;
 using System.Linq;
 using NUnit.Framework;
+using Pantry.Core.Extensions;
+using Pantry.Core.FoodProcessing;
+using Pantry.Core.Models;
 
-namespace Pantry.Core.Test
+namespace Pantry.Models.Core.Test
 {
     public class RecipeTests
     {

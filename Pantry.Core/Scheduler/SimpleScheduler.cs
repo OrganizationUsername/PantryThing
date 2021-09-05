@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Pantry.Core.Extensions;
+using Pantry.Core.Models;
 
 namespace Pantry.Core.Scheduler
 {
@@ -59,9 +61,9 @@ namespace Pantry.Core.Scheduler
             foreach (var equipment in Equipments)
             {
                 Console.WriteLine(equipment.Name);
-                foreach (var y in equipment.BookedTimes.OrderBy(z => z.startTime))
+                foreach (var (startTime, endTime, stepName) in equipment.BookedTimes.OrderBy(z => z.startTime))
                 {
-                    Console.WriteLine($"{y.startTime.ToShortTimeString()}:{y.endTime.ToShortTimeString()}: {y.StepName}");
+                    Console.WriteLine($"{startTime.ToShortTimeString()}:{endTime.ToShortTimeString()}: {stepName}");
                 }
             }
         }
@@ -121,9 +123,9 @@ namespace Pantry.Core.Scheduler
             foreach (var equipment in Equipments)
             {
                 Console.WriteLine(equipment.Name);
-                foreach (var y in equipment.BookedTimes.OrderBy(z => z.startTime))
+                foreach (var (startTime, endTime, stepName) in equipment.BookedTimes.OrderBy(z => z.startTime))
                 {
-                    Console.WriteLine($"{y.startTime.ToShortTimeString()}:{y.endTime.ToShortTimeString()}: {y.StepName}");
+                    Console.WriteLine($"{startTime.ToShortTimeString()}:{endTime.ToShortTimeString()}: {stepName}");
                 }
             }
         }

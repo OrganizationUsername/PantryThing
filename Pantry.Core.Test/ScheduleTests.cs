@@ -2,10 +2,12 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using NUnit.Framework;
-using Pantry.Core.Scheduler;
+using Pantry.Core.Extensions;
 using Pantry.Core.FoodProcessing;
+using Pantry.Core.Models;
+using Pantry.Core.Scheduler;
 
-namespace Pantry.Core.Test
+namespace Pantry.Models.Core.Test
 {
     public class ScheduleTests
     {
@@ -172,13 +174,13 @@ namespace Pantry.Core.Test
             canCook = _foodProcessor.CanCookSomething(pantry, recipe, Recipes);
             cms.Add(canCook);
             canCook.ConsoleResult();
-            pantry = pp.DiminishFood(canCook);
+            pantry = pp.AdjustOnHandQuantity(canCook);
             Assert.IsTrue(canCook.CanMake);
             recipe = Recipes.First(r => r.OutputFoodInstance.FoodType == _curryMeal);
             canCook = _foodProcessor.CanCookSomething(pp.GetFoodInstances(), recipe, Recipes);
             cms.Add(canCook);
             canCook.ConsoleResult();
-            pantry = pp.DiminishFood(canCook);
+            pantry = pp.AdjustOnHandQuantity(canCook);
             pp.GetFoodInstances().OutputRemaining();
             Assert.IsTrue(canCook.CanMake);
             Console.WriteLine("-----");
@@ -213,13 +215,13 @@ namespace Pantry.Core.Test
             canCook = _foodProcessor.CanCookSomething(pantry, recipe, Recipes);
             cms.Add(canCook);
             canCook.ConsoleResult();
-            pantry = pp.DiminishFood(canCook);
+            pantry = pp.AdjustOnHandQuantity(canCook);
             Assert.IsTrue(canCook.CanMake);
             recipe = Recipes.First(r => r.OutputFoodInstance.FoodType == _curryMeal);
             canCook = _foodProcessor.CanCookSomething(pp.GetFoodInstances(), recipe, Recipes);
             cms.Add(canCook);
             canCook.ConsoleResult();
-            pantry = pp.DiminishFood(canCook);
+            pantry = pp.AdjustOnHandQuantity(canCook);
             pp.GetFoodInstances().OutputRemaining();
             Assert.IsTrue(canCook.CanMake);
             Console.WriteLine("-----");
@@ -234,100 +236,5 @@ namespace Pantry.Core.Test
         }
     }
 
-    /// <summary>
-    /// Provides the pantry at a certain time and does everything else.
-    /// This object should also be able to watch you go into the negatives.
-    /// Like if your plan has you using bread on Friday, but you want to use it all up on Thursday but start a new loaf, it could use
-    /// the deficit to make a plan to make more.
-    /// For this reason there will be some hypothetical RecipeThingys.
-    /// </summary>
-    public class PantryController
-    {
-        /// <summary>
-        /// One of the outputs it might give is a pantry at an instance, so a DateTime might be nice
-        /// </summary>
-        public DateTime DateTime { get; set; }
-        public List<FoodInstance> fis { get; set; }
-        public IRecipeValidator RealRecipeValidator { get; set; }
-        public IScheduler Scheduler { get; set; }
-        public IPantryProvider PantryProvider { get; set; }
-        public IFoodProcessor FoodProcessor { get; set; }
-
-        public void UseFood(CookPlan canCook)
-        {
-            fis = RealRecipeValidator.DiminishFood(canCook, fis);
-        }
-    }
-
-    public interface IPantryProvider
-    {
-        List<FoodInstance> GetFoodInstances();
-        List<FoodInstance> DiminishFood(CookPlan canCook);
-    }
-
-    public class PantryProvider : IPantryProvider
-    {
-        private List<FoodInstance> _foodInstances;
-        public PantryProvider(List<FoodInstance> foodInstances)
-        {
-            _foodInstances = foodInstances;
-        }
-        public List<FoodInstance> GetFoodInstances()
-        {
-            return _foodInstances;
-        }
-
-        public List<FoodInstance> DiminishFood(CookPlan canCook)
-        {
-            if (!canCook.CanMake)
-            {
-                return null;
-            }
-            foreach (var rawCost in canCook.RawCost)
-            {
-                while (rawCost.Amount > 0)
-                {
-                    var pantryItem =
-                        _foodInstances.First(pantry => pantry.FoodType == rawCost.FoodType && pantry.Amount > 0);
-                    var amountToDeduct = Math.Min(pantryItem.Amount, rawCost.Amount);
-                    pantryItem.Amount -= amountToDeduct;
-                    rawCost.Amount -= amountToDeduct;
-                }
-            }
-            _foodInstances = _foodInstances.Where(pi => pi.Amount > 0).ToList();
-            return _foodInstances;
-        }
-    }
-
-    public interface IRecipeValidator
-    {
-        List<FoodInstance> DiminishFood(CookPlan canCook, List<FoodInstance> fis);
-    }
-
-    /// <summary>
-    /// This RecipeProcessor doesn't allow you to go into the negatives, and also requires that you can cook it.
-    /// </summary>
-    public class RealRecipeValidator : IRecipeValidator
-    {
-        public List<FoodInstance> DiminishFood(CookPlan canCook, List<FoodInstance> fis)
-        {
-            if (!canCook.CanMake)
-            {
-                return null;
-            }
-            foreach (var rawCost in canCook.RawCost)
-            {
-                while (rawCost.Amount > 0)
-                {
-                    var pantryItem =
-                        fis.First(pantry => pantry.FoodType == rawCost.FoodType && pantry.Amount > 0);
-                    var amountToDeduct = Math.Min(pantryItem.Amount, rawCost.Amount);
-                    pantryItem.Amount -= amountToDeduct;
-                    rawCost.Amount -= amountToDeduct;
-                }
-            }
-            return fis.Where(pi => pi.Amount > 0).ToList();
-        }
-    }
-
+  
 }
