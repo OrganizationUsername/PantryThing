@@ -19,7 +19,6 @@ namespace PantryWPF.Recipes
             FakeSaveCommand = new FakeSaveCommand(this);
         }
 
-
         [NotifyPropertyChangedInvocator]
         protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
@@ -49,6 +48,4 @@ namespace PantryWPF.Recipes
 
         public event EventHandler CanExecuteChanged;
     }
-
-
 }

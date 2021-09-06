@@ -8,7 +8,7 @@ namespace PantryWPF.Recipes
 {
     public class RecipesListViewModel : VmBase
     {
-        private RecipeDetailViewModel _selectedRecipeDetailViewModel { get; set; }
+        private RecipeDetailViewModel _selectedRecipeDetailViewModel;
         public RecipeDetailViewModel SelectedRecipeDetailViewModel
         {
             get => _selectedRecipeDetailViewModel;
@@ -42,7 +42,8 @@ namespace PantryWPF.Recipes
 
         public RecipesListViewModel()
         {
-            HardCodedRecipeRepository rr = new HardCodedRecipeRepository();
+            //TODO: Replace this with constructor injection and Unity
+            var rr = new HardCodedRecipeRepository();
             ACollection = new ObservableCollection<BetterRecipe>(
                 rr.GetRecipes());
             SelectedRecipeDetailViewModel = ACollection
@@ -56,6 +57,4 @@ namespace PantryWPF.Recipes
                 }).First();
         }
     }
-
-
 }
