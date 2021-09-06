@@ -1,7 +1,4 @@
-﻿using System.Runtime.CompilerServices;
-using System.Windows.Controls;
-using System.Windows.Navigation;
-using PantryWPF.Inventory;
+﻿using PantryWPF.Inventory;
 using PantryWPF.Recipes;
 
 namespace PantryWPF.Main
