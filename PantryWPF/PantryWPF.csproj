@@ -10,4 +10,8 @@
     <Page Include="App.xaml" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\Pantry.Data\Pantry.Data.csproj" />
+  </ItemGroup>
+
 </Project>

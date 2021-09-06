@@ -14,7 +14,7 @@
         <main:MainWindowViewModel/>
     </Window.DataContext>
     <Window.Resources>
-        <DataTemplate DataType="{x:Type recipes:RecipesViewModel}">
+        <DataTemplate DataType="{x:Type recipes:RecipesListViewModel}">
             <recipes:RecipesView/>
         </DataTemplate>
         <DataTemplate DataType="{x:Type inventory:InventoryViewModel}">
@@ -27,7 +27,7 @@
             <Button Content="Recipes" Command="{Binding RecipeNavigationCommand}" />
             <Button Content="Inventory" Command="{Binding InventoryNavigationCommand}" />
         </StackPanel>
-        <ContentControl Content="{Binding MainView}"/>
+        <ContentControl Content="{Binding MainView}" DockPanel.Dock="Left"/>
     </DockPanel>
 
 </Window>

@@ -13,8 +13,8 @@ namespace PantryWPF.Main
         public NavigationCommand InventoryNavigationCommand { get; set; }
         public MainWindowViewModel()
         {
-            MainView = new RecipesViewModel();
-            RecipeNavigationCommand = new NavigationCommand(this, new RecipesViewModel());
+            MainView = new RecipesListViewModel();
+            RecipeNavigationCommand = new NavigationCommand(this, new RecipesListViewModel());
             InventoryNavigationCommand = new NavigationCommand(this, new InventoryViewModel());
         }
     }

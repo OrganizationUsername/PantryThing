@@ -13,17 +13,17 @@ namespace PantryWPF.Main
             _vm = vm;
             _vmBase = vmBase;
         }
-        public bool CanExecute(object? parameter)
+        public bool CanExecute(object parameter)
         {
             return true;
         }
 
-        public void Execute(object? parameter)
+        public void Execute(object parameter)
         {
             _vm.MainView = _vmBase;
             _vm.OnPropertyChanged(nameof(_vm.MainView));
         }
 
-        public event EventHandler? CanExecuteChanged;
+        public event EventHandler CanExecuteChanged;
     }
 }
