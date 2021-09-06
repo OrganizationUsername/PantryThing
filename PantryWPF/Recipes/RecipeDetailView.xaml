@@ -3,35 +3,34 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:local="clr-namespace:PantryWPF.Recipes" 
+             xmlns:local="clr-namespace:PantryWPF.Recipes"
+             xmlns:models="clr-namespace:Pantry.Core.Models;assembly=Pantry.Core"
              d:DataContext="{d:DesignInstance Type=local:RecipeDetailViewModel}"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
-
-    <StackPanel>
-        <TextBlock Text="{Binding MainOutput.Name}"/>
-        <GroupBox Header="Inputs: ">
-            <ListView ItemsSource="{Binding Inputs}">
-                <ListView.ItemTemplate>
-                    <DataTemplate>
-                        <StackPanel Orientation="Horizontal">
-                            <TextBlock Text="{Binding  FoodType.Name }"/>
-                            <TextBlock Text="{Binding Amount}"/>
-                        </StackPanel>
-                    </DataTemplate>
-                </ListView.ItemTemplate>
-            </ListView>
-        </GroupBox>
-        <GroupBox Header="Instructions: ">
-            <ListView ItemsSource="{Binding  RecipeSteps}">
-                <ListView.ItemTemplate>
-                    <DataTemplate>
-                        <StackPanel>
-                            <TextBlock Text="{Binding  Instruction }"/>
-                        </StackPanel>
-                    </DataTemplate>
-                </ListView.ItemTemplate>
-            </ListView>
-        </GroupBox>
-    </StackPanel>
+    <UserControl.Resources>
+        <DataTemplate DataType="{x:Type models:RecipeStep}">
+            <local:RecipeInstructionView/>
+        </DataTemplate>
+    </UserControl.Resources>
+    <ScrollViewer HorizontalScrollBarVisibility="Auto">
+        <StackPanel>
+            <TextBlock Text="{Binding MainOutput.Name}"/>
+            <GroupBox Header="Inputs: ">
+                <ListView ItemsSource="{Binding Inputs}">
+                    <ListView.ItemTemplate>
+                        <DataTemplate>
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="{Binding FoodType.Name}"/>
+                                <TextBlock Text="{Binding Amount}"/>
+                            </StackPanel>
+                        </DataTemplate>
+                    </ListView.ItemTemplate>
+                </ListView>
+            </GroupBox>
+            <GroupBox Header="Instructions:">
+                <ListView ItemsSource="{Binding RecipeSteps}"/>
+            </GroupBox>
+        </StackPanel>
+    </ScrollViewer>
 </UserControl>

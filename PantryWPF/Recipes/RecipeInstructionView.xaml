@@ -1,0 +1,23 @@
+﻿<UserControl x:Class="PantryWPF.Recipes.RecipeInstructionView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:PantryWPF.Recipes"
+             xmlns:models="clr-namespace:Pantry.Core.Models;assembly=Pantry.Core"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="800">
+    <StackPanel>
+        <TextBlock Text="{Binding (models:RecipeStep.Instruction)}"/>
+        <TextBlock Text="{Binding (models:RecipeStep.TimeCost)}"/>
+        <GroupBox Header="Equipment Required:">
+            <ListView ItemsSource="{Binding (models:RecipeStep.Equipments)}">
+                <ListView.ItemTemplate>
+                    <DataTemplate>
+                        <TextBlock Text="{Binding Name}"/>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
+        </GroupBox>
+    </StackPanel>
+</UserControl>
