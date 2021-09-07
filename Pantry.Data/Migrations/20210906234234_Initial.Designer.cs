@@ -9,7 +9,7 @@ using Pantry.Data;
 namespace Pantry.Data.Migrations
 {
     [DbContext(typeof(DataBase))]
-    [Migration("20210906201201_Initial")]
+    [Migration("20210906234234_Initial")]
     partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -63,6 +63,9 @@ namespace Pantry.Data.Migrations
                         .HasColumnType("TEXT");
 
                     b.HasKey("FoodId");
+
+                    b.HasIndex("Name")
+                        .IsUnique();
 
                     b.ToTable("Foods");
                 });

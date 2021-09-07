@@ -62,6 +62,9 @@ namespace Pantry.Data.Migrations
 
                     b.HasKey("FoodId");
 
+                    b.HasIndex("Name")
+                        .IsUnique();
+
                     b.ToTable("Foods");
                 });
 

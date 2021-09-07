@@ -1,15 +1,47 @@
 ﻿using Pantry.Core.Models;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Pantry.Data
 {
-    public interface IRecipeRepository
+
+    public class HardCodedFoodRepository
     {
-        IList<BetterRecipe> GetRecipes();
+        private readonly Food _frozenChicken = new() { FoodId = 0, Name = "Frozen Chicken", BetterRecipes = null };
+        private readonly Food _rawChicken = new() { FoodId = 1, Name = "Raw Chicken", };
+        private readonly Food _bbqSauce = new() { FoodId = 2, Name = "BBQ Sauce", BetterRecipes = null };
+        private readonly Food _cookedChicken = new() { FoodId = 3, Name = "Cooked Chicken" };
+        private readonly Food _slicedChicken = new() { FoodId = 4, Name = "Sliced Chicken" };
+        private readonly Food _flour = new() { FoodId = 5, Name = "Flour", BetterRecipes = null };
+        private readonly Food _eggs = new() { FoodId = 6, Name = "Eggs", BetterRecipes = null };
+        private readonly Food _milk = new() { FoodId = 7, Name = "Milk", BetterRecipes = null };
+        private readonly Food _bread = new() { FoodId = 8, Name = "Bread" };
+        private readonly Food _slicedBread = new() { FoodId = 9, Name = "Sliced Bread" };
+        private readonly Food _chickenSandwich = new() { FoodId = 10, Name = "Chicken Sandwich" };
+        private List<Food> Foods { get; set; } = new List<Food>();
+
+        public HardCodedFoodRepository()
+        {
+            Foods.Add(_frozenChicken);
+            Foods.Add(_rawChicken);
+            Foods.Add(_bbqSauce);
+            Foods.Add(_cookedChicken);
+            Foods.Add(_slicedChicken);
+            Foods.Add(_flour);
+            Foods.Add(_eggs);
+            Foods.Add(_milk);
+            Foods.Add(_bread);
+            Foods.Add(_slicedBread);
+            Foods.Add(_chickenSandwich);
+        }
+        public IList<Food> GetFoods()
+        {
+            return Foods;
+        }
     }
 
-    public class HardCodedRecipeRepository : IRecipeRepository
+    public class HardCodedRecipeRepository
     {
         private readonly List<BetterRecipe> _recipes = new();
         private List<Equipment> _equipments;
@@ -35,6 +67,8 @@ namespace Pantry.Data
 
         public HardCodedRecipeRepository()
         {
+            HardCodedFoodRepository hcfr = new();
+            var foods = hcfr.GetFoods();
             _recipes.Add(
              new BetterRecipe()
              {
@@ -42,7 +76,7 @@ namespace Pantry.Data
                  MainOutput = _cookedChicken,
                  Inputs = new List<FoodInstance>()
                  {
-                        new() {Amount = 120, FoodType = _rawChicken},
+                        new() {Amount = 120, FoodType = foods.Single(x=>x.Name== "Frozen Chicken")},
                         new() {Amount = 1, FoodType = _bbqSauce}
                  },
                  Outputs = new List<FoodInstance>() { new() { Amount = 120, FoodType = _cookedChicken } },

@@ -143,6 +143,12 @@ namespace Pantry.Data.Migrations
                 column: "FoodTypeFoodId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Foods_Name",
+                table: "Foods",
+                column: "Name",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
                 name: "IX_RecipeStep_BetterRecipeRecipeId",
                 table: "RecipeStep",
                 column: "BetterRecipeRecipeId");
