@@ -2,15 +2,17 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Pantry.Data;
 
 namespace Pantry.Data.Migrations
 {
     [DbContext(typeof(DataBase))]
-    partial class DataBaseModelSnapshot : ModelSnapshot
+    [Migration("20210907115007_test")]
+    partial class test
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -126,26 +128,6 @@ namespace Pantry.Data.Migrations
                     b.HasIndex("BetterRecipeRecipeId");
 
                     b.ToTable("RecipeStep");
-                });
-
-            modelBuilder.Entity("Pantry.Data.BetterRecipeInput", b =>
-                {
-                    b.Property<int>("BetterRecipeInputId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
-
-                    b.Property<double>("Amount")
-                        .HasColumnType("REAL");
-
-                    b.Property<int>("BetterRecipeId")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("FoodId")
-                        .HasColumnType("INTEGER");
-
-                    b.HasKey("BetterRecipeInputId");
-
-                    b.ToTable("BetterRecipeInputs");
                 });
 
             modelBuilder.Entity("Pantry.Core.Models.BetterRecipe", b =>

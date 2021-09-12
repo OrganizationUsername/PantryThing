@@ -19,6 +19,7 @@ namespace PantryWPF.Main
             InventoryNavigationCommand = new NavigationCommand(this, new InventoryViewModel());
             var dbContext = new DataBase();
             var existingFoods = dbContext.Foods.Select(x => x.Name).ToList();
+            //This should all probably be in another project.
             var hardCodedFoodRepository = new HardCodedFoodRepository();
             var hardCodedFoods = hardCodedFoodRepository.GetFoods().Select(x => new Food() { Name = x.Name });
             foreach (var y in hardCodedFoods)
@@ -28,14 +29,13 @@ namespace PantryWPF.Main
                     dbContext.Add(y);
                 }
             }
-            dbContext.SaveChanges();
 
-            //This should all probably be in another project.
+            dbContext.SaveChanges();
             HardCodedRecipeRepository hrr = new HardCodedRecipeRepository();
-            var hardCodedRecipes = hrr.GetRecipes().Select(x=> new BetterRecipe(){});
+            var hardCodedRecipes = hrr.GetRecipes().Select(x => new BetterRecipe() { MainOutput = dbContext.Foods.Single(y => y.Name == x.MainOutput.Name),  });
             foreach (var y in hrr.GetRecipes())
             {
-                //dbContext.Add(y);
+                dbContext.Add(y);
             }
             //dbContext.SaveChanges();
 
