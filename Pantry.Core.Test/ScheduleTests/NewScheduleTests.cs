@@ -44,7 +44,7 @@ namespace Pantry.Core.Test.ScheduleTests
             _recipes.Add(
                 new BetterRecipe()
                 {
-                    RecipeId = 1,
+                    Id = 1,
                     MainOutput = _cookedChicken,
                     Inputs = new List<FoodInstance>()
                     {
@@ -73,7 +73,7 @@ namespace Pantry.Core.Test.ScheduleTests
             _recipes.Add(
                 new BetterRecipe()
                 {
-                    RecipeId = 2,
+                    Id = 2,
                     MainOutput = _rawChicken,
                     Inputs = new List<FoodInstance>() { new() { Amount = 120, FoodType = _frozenChicken } },
                     Outputs = new List<FoodInstance>() { new() { Amount = 120, FoodType = _rawChicken } },
@@ -94,7 +94,7 @@ namespace Pantry.Core.Test.ScheduleTests
             _recipes.Add(
                 new BetterRecipe()
                 {
-                    RecipeId = 3,
+                    Id = 3,
                     MainOutput = _slicedChicken,
                     Inputs = new List<FoodInstance>() { new() { Amount = 120, FoodType = _cookedChicken } },
                     Outputs = new List<FoodInstance>() { new() { Amount = 120, FoodType = _slicedChicken } },
@@ -110,7 +110,7 @@ namespace Pantry.Core.Test.ScheduleTests
             _recipes.Add(
                 new BetterRecipe()
                 {
-                    RecipeId = 4,
+                    Id = 4,
                     MainOutput = _slicedBread,
                     Inputs = new List<FoodInstance>() { new() { Amount = 1, FoodType = _bread } },
                     Outputs = new List<FoodInstance>() { new() { Amount = 10, FoodType = _slicedBread } },
@@ -125,7 +125,7 @@ namespace Pantry.Core.Test.ScheduleTests
             _recipes.Add(
                 new BetterRecipe()
                 {
-                    RecipeId = 5,
+                    Id = 5,
                     MainOutput = _chickenSandwich,
                     Inputs = new List<FoodInstance>()
                     {
@@ -145,7 +145,7 @@ namespace Pantry.Core.Test.ScheduleTests
             _recipes.Add(
                 new BetterRecipe()
                 {
-                    RecipeId = 6,
+                    Id = 6,
                     MainOutput = _bread,
                     Inputs = new List<FoodInstance>()
                     {

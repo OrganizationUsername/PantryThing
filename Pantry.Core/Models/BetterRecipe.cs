@@ -4,7 +4,7 @@ namespace Pantry.Core.Models
 {
     public class BetterRecipe
     {
-        public int RecipeId { get; set; }
+        public int Id { get; set; }
         public List<FoodInstance> Inputs { get; set; }
         public List<FoodInstance> Outputs { get; set; }
         public Food MainOutput { get; set; }

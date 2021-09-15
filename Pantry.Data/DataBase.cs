@@ -23,8 +23,8 @@ namespace Pantry.Data
         public DbSet<BetterRecipe> BetterRecipes { get; set; }
         public DbSet<Food> Foods { get; set; }
         public DbSet<FoodInstance> FoodInstances { get; set; }
-        public DbSet<Equipment> Equipments { get; set; }
-        public DbSet<BetterRecipeInput> BetterRecipeInputs { get; set; }
+        //public DbSet<Equipment> Equipments { get; set; }
+        //public DbSet<BetterRecipeInput> BetterRecipeInputs { get; set; }
 
         public DataBase()
         {
@@ -33,9 +33,9 @@ namespace Pantry.Data
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Equipment>().Ignore(x => x.BookedTimes);
-            modelBuilder.Entity<BetterRecipe>().HasKey(x => x.RecipeId);
-            modelBuilder.Entity<Food>().HasIndex(x => x.Name).IsUnique();
-            modelBuilder.Entity<BetterRecipeInput>().HasKey(x => x.BetterRecipeInputId);
+            //modelBuilder.Entity<BetterRecipe>().HasKey(x => x.Id);
+            //modelBuilder.Entity<Food>().HasIndex(x => x.Name).IsUnique();
+            //modelBuilder.Entity<BetterRecipeInput>().HasKey(x => x.BetterRecipeInputId);
             base.OnModelCreating(modelBuilder);
 
         }
@@ -45,7 +45,7 @@ namespace Pantry.Data
             optionsBuilder.EnableSensitiveDataLogging();
             Assembly asm = Assembly.GetExecutingAssembly();
             string path = System.IO.Path.GetDirectoryName(asm.Location);
-            string fullPath = System.IO.Path.Combine(path, "Pantry.db");
+            string fullPath = System.IO.Path.Combine(path, "Pantry1.db");
             Console.WriteLine(fullPath);
             optionsBuilder.UseSqlite(@$"Data Source={fullPath}");
         }

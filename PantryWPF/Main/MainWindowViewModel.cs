@@ -35,9 +35,11 @@ namespace PantryWPF.Main
             var hardCodedRecipes = hrr.GetRecipes().Select(x => new BetterRecipe() { MainOutput = dbContext.Foods.Single(y => y.Name == x.MainOutput.Name),  });
             foreach (var y in hrr.GetRecipes())
             {
+                foreach (var fi in y.Inputs) { fi.FoodType = null; }
+                foreach (var fi in y.Outputs) { fi.FoodType = null; }
                 dbContext.Add(y);
             }
-            //dbContext.SaveChanges();
+            dbContext.SaveChanges();
 
             var x = dbContext.BetterRecipes.ToListAsync();
         }

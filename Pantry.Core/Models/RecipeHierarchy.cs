@@ -8,6 +8,7 @@ namespace Pantry.Core.Models
         //the top parent is usually "plate and serve the food"
         //then the children are all of the last steps required. iterate and
         //schedule all of them, once they are all scheduled, schedule their children
+        public int Id { get; set; }
         public List<RecipeHierarchy> Dependents { get; set; }
         public string Instruction { get; set; }
         public double TimeCost { get; set; }

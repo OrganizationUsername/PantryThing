@@ -29,7 +29,7 @@ namespace PantryWPF.Recipes
                 _selectedRecipeDetailViewModel = new RecipeDetailViewModel()
                 {
                     RecipeSteps = _selectedBetterRecipe.RecipeSteps,
-                    RecipeId = _selectedBetterRecipe.RecipeId,
+                    Id = _selectedBetterRecipe.Id,
                     Inputs = _selectedBetterRecipe.Inputs,
                     MainOutput = _selectedBetterRecipe.MainOutput,
                     Outputs = _selectedBetterRecipe.Outputs
@@ -50,7 +50,7 @@ namespace PantryWPF.Recipes
                 .Select(x => new RecipeDetailViewModel()
                 {
                     RecipeSteps = x.RecipeSteps,
-                    RecipeId = x.RecipeId,
+                    Id = x.Id,
                     Inputs = x.Inputs,
                     MainOutput = x.MainOutput,
                     Outputs = x.Outputs
