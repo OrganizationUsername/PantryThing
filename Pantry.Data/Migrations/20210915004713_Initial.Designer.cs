@@ -9,7 +9,7 @@ using Pantry.Data;
 namespace Pantry.Data.Migrations
 {
     [DbContext(typeof(DataBase))]
-    [Migration("20210915003311_Initial")]
+    [Migration("20210915004713_Initial")]
     partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

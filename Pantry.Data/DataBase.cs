@@ -33,6 +33,8 @@ namespace Pantry.Data
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Equipment>().Ignore(x => x.BookedTimes);
+            modelBuilder.Entity<BetterRecipe>().HasMany(x => x.Inputs);
+            modelBuilder.Entity<BetterRecipe>().HasMany(x => x.Outputs);
             //modelBuilder.Entity<BetterRecipe>().HasKey(x => x.Id);
             //modelBuilder.Entity<Food>().HasIndex(x => x.Name).IsUnique();
             //modelBuilder.Entity<BetterRecipeInput>().HasKey(x => x.BetterRecipeInputId);
