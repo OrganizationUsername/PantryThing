@@ -9,7 +9,10 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Pantry.Core", "Pantry.Core\
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PantryWPF", "PantryWPF\PantryWPF.csproj", "{65F3A279-AFBA-4427-B5F2-225AA7A161A4}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Pantry.Data", "Pantry.Data\Pantry.Data.csproj", "{41AF3D22-C4F6-4245-91B4-C9248856FA2D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Pantry.Data", "Pantry.Data\Pantry.Data.csproj", "{41AF3D22-C4F6-4245-91B4-C9248856FA2D}"
+	ProjectSection(ProjectDependencies) = postProject
+		{10BA8377-F88A-4902-84F6-776B583AB475} = {10BA8377-F88A-4902-84F6-776B583AB475}
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

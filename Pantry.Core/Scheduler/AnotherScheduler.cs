@@ -82,7 +82,7 @@ namespace Pantry.Core.Scheduler
                             y.BookedTimes.Add(
                                 (_goal.AddMinutes(-(offset + recipeStep.TimeCost)),
                                     _goal.AddMinutes(-offset),
-                                    recipeStep.Instruction + $"_ {dag.MainRecipe.Inputs.First(x=>x.Amount<0).Food.Name}")
+                                    recipeStep.Instruction + $"_ {dag.MainRecipe.RecipeFoods.First(x=>x.Amount<0).Food.Name}")
                             );
                         }
                     }

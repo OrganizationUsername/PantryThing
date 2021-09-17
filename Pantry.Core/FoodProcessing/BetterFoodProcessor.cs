@@ -38,17 +38,7 @@ namespace Pantry.Core.FoodProcessing
                         continue;
                     }
                     onlyPantryUsed = false;
-                    
                     var newRecipe = RecipeFinder(foodInstance.Food.FoodId, recipes);
-                    if (newRecipe is null)
-                    {
-                         //newRecipe = recipes.FirstOrDefault(x => x.Inputs.Any(y => y.Food.FoodId == foodInstance.Food.FoodId));
-                    }
-                    else
-                    {
-                        Trace.WriteLine($"Needed {foodInstance.Food.Name} and found the recipe with mainoutput = {newRecipe.Inputs.First(x=>x.Amount<0).Food.Name}");
-                    }
-
 
                     if (newRecipe is null)
                     {
@@ -59,10 +49,9 @@ namespace Pantry.Core.FoodProcessing
                     if (result.CanMake)
                     {
                         recipeDag.SubordinateBetterRecipes.Add(result.RecipeDag);
-                        totalInput.AddRange(result.TotalInput.Where(x=>x.Amount>0));
+                        totalInput.AddRange(result.TotalInput.Where(x => x.Amount > 0));
                         clonedFoodInventory.AddRange(CloneFoodInstances(result.TotalOutput));
                         totalOutput.AddRange(CloneFoodInstances(result.TotalOutput));
-
                     }
                     else
                     {
@@ -70,7 +59,7 @@ namespace Pantry.Core.FoodProcessing
                     }
                 }
             }
-            totalOutput.AddRange(recipe.Outputs);
+            totalOutput.AddRange(recipe.RecipeFoods.Where(x => x.Amount < 0).Select(x=>new RecipeFood(){Amount = -x.Amount,Food = x.Food}));
 
             return new CookPlan()
             {
@@ -83,25 +72,15 @@ namespace Pantry.Core.FoodProcessing
 
         public static Recipe RecipeFinder(int FoodId, IList<Recipe> recipes)
         {
-            foreach (var r in recipes)
-            {
-                foreach (var fi in r.Inputs)
-                {
-                    if (fi.Food.FoodId == FoodId && fi.Amount < 0)
-                    {
-                        return r;
-                    }
-                }
-            }
-            return null;
+            return recipes.FirstOrDefault(r => r.RecipeFoods.Any(fi => fi.Food.FoodId == FoodId && fi.Amount < 0));
         }
 
         private static RecipeFood[] GetFoodInstancesFromRecipe(Recipe recipe)
         {
-            RecipeFood[] clones = new RecipeFood[recipe.Inputs.Count];
-            for (var index = 0; index < recipe.Inputs.Count; index++)
+            RecipeFood[] clones = new RecipeFood[recipe.RecipeFoods.Count];
+            for (var index = 0; index < recipe.RecipeFoods.Count; index++)
             {
-                RecipeFood fi = recipe.Inputs[index];
+                RecipeFood fi = recipe.RecipeFoods[index];
                 clones[index] = (new RecipeFood()
                 {
                     Food = fi.Food,

@@ -15,8 +15,8 @@
     <ScrollViewer HorizontalScrollBarVisibility="Auto">
         <StackPanel>
             <TextBlock Text="{Binding MainOutput.Name}"/>
-            <GroupBox Header="Inputs: ">
-                <ListView ItemsSource="{Binding Inputs}">
+            <GroupBox Header="RecipeFoods: ">
+                <ListView ItemsSource="{Binding RecipeFoods}">
                     <ListView.ItemTemplate>
                         <DataTemplate>
                             <StackPanel Orientation="Horizontal">

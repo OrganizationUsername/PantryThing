@@ -32,7 +32,7 @@ namespace Pantry.Data
         {
             modelBuilder.Entity<Recipe>().Ignore(x => x.RecipeSteps);
             //modelBuilder.Entity<Equipment>().Ignore(x => x.BookedTimes);
-            //modelBuilder.Entity<Recipe>().HasMany(x => x.Inputs);
+            //modelBuilder.Entity<Recipe>().HasMany(x => x.RecipeFoods);
             //modelBuilder.Entity<Recipe>().HasMany(x => x.Outputs);
             //modelBuilder.Entity<Recipe>().HasKey(x => x.Id);
             //modelBuilder.Entity<Food>().HasIndex(x => x.Name).IsUnique();

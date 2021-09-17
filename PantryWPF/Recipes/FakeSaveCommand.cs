@@ -21,7 +21,7 @@ namespace PantryWPF.Recipes
 
         public void Execute(object parameter)
         {
-            var something = string.Join(Environment.NewLine, _recipeDetailViewModel.Inputs.Select(x => x.Food.Name + ": " + x.Amount));
+            var something = string.Join(Environment.NewLine, _recipeDetailViewModel.RecipeFoods.Select(x => x.Food.Name + ": " + x.Amount));
             MessageBox.Show(something);
         }
 

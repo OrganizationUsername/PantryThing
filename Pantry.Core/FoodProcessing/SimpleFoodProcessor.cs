@@ -107,7 +107,7 @@ namespace Pantry.Core.FoodProcessing
                 CanMake = true,
                 RecipesTouched = recipesTouched,
                 TotalInput = totalInput,
-                TotalOutput = new List<RecipeFood>() { recipe.Outputs.First() },
+                //TotalOutput = new List<RecipeFood>() { recipe.Outputs.First() },
                 RawCost = rawCost,
                 RecipeName = recipe.Description,
             };
@@ -115,10 +115,10 @@ namespace Pantry.Core.FoodProcessing
 
         private static RecipeFood[] GetFoodInstancesFromRecipe(Recipe recipe)
         {
-            RecipeFood[] clones = new RecipeFood[recipe.Inputs.Count];
-            for (var index = 0; index < recipe.Inputs.Count; index++)
+            RecipeFood[] clones = new RecipeFood[recipe.RecipeFoods.Count];
+            for (var index = 0; index < recipe.RecipeFoods.Count; index++)
             {
-                RecipeFood fi = recipe.Inputs[index];
+                RecipeFood fi = recipe.RecipeFoods[index];
                 clones[index] = (new RecipeFood()
                 {
                     Food = fi.Food,

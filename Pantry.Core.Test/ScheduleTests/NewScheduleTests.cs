@@ -45,13 +45,12 @@ namespace Pantry.Core.Test.ScheduleTests
                 new Recipe()
                 {
                     Id = 1,
-                    Inputs = new List<RecipeFood>()
+                    RecipeFoods = new List<RecipeFood>()
                     {
                         new() {Amount = 120, Food = _rawChicken},
                         new() {Amount = 1, Food = _bbqSauce},
                         new() { Amount = -120, Food = _cookedChicken }
                     },
-                    Outputs = new List<RecipeFood>() { new() { Amount = 120, Food = _cookedChicken } },
                     RecipeSteps = new List<RecipeStep>()
                     {
                         new()
@@ -74,12 +73,11 @@ namespace Pantry.Core.Test.ScheduleTests
                 new Recipe()
                 {
                     Id = 2,
-                    Inputs = new List<RecipeFood>()
+                    RecipeFoods = new List<RecipeFood>()
                     {
                         new() { Amount = 120, Food = _frozenChicken },
                         new() { Amount = -120, Food = _rawChicken },
                     },
-                    Outputs = new List<RecipeFood>() { new() { Amount = 120, Food = _rawChicken } },
                     RecipeSteps = new List<RecipeStep>()
                     {
                         new()
@@ -98,12 +96,11 @@ namespace Pantry.Core.Test.ScheduleTests
                 new Recipe()
                 {
                     Id = 3,
-                    Inputs = new List<RecipeFood>()
+                    RecipeFoods = new List<RecipeFood>()
                     {
                         new() { Amount = 120, Food = _cookedChicken },
                         new() { Amount = -120, Food = _slicedChicken },
                     },
-                    Outputs = new List<RecipeFood>() { new() { Amount = 120, Food = _slicedChicken } },
                     RecipeSteps = new List<RecipeStep>()
                     {
                         new()
@@ -117,12 +114,11 @@ namespace Pantry.Core.Test.ScheduleTests
                 new Recipe()
                 {
                     Id = 4,
-                    Inputs = new List<RecipeFood>()
+                    RecipeFoods = new List<RecipeFood>()
                     {
                         new() { Amount = 1, Food = _bread },
                         new() { Amount = -10, Food = _slicedBread },
                     },
-                    Outputs = new List<RecipeFood>() { new() { Amount = 10, Food = _slicedBread } },
                     RecipeSteps = new List<RecipeStep>()
                     {
                         new()
@@ -135,13 +131,12 @@ namespace Pantry.Core.Test.ScheduleTests
                 new Recipe()
                 {
                     Id = 5,
-                    Inputs = new List<RecipeFood>()
+                    RecipeFoods = new List<RecipeFood>()
                     {
                         new() {Amount = 2, Food = _slicedBread},
                         new() {Amount = 120, Food = _slicedChicken},
                         new() { Amount = -1, Food = _chickenSandwich },
                     },
-                    Outputs = new List<RecipeFood>() { new() { Amount = 1, Food = _chickenSandwich } },
                     RecipeSteps = new List<RecipeStep>()
                     {
                         new()
@@ -155,14 +150,13 @@ namespace Pantry.Core.Test.ScheduleTests
                 new Recipe()
                 {
                     Id = 6,
-                    Inputs = new List<RecipeFood>()
+                    RecipeFoods = new List<RecipeFood>()
                     {
                         new() {Amount = 120, Food = _eggs},
                         new() {Amount = 120, Food = _milk},
                         new() {Amount = 120, Food = _flour},
                         new() { Amount = -1, Food = _bread },
                     },
-                    Outputs = new List<RecipeFood>() { new() { Amount = 1, Food = _bread } },
                     RecipeSteps = new List<RecipeStep>()
                     {
                         new()
@@ -213,7 +207,7 @@ namespace Pantry.Core.Test.ScheduleTests
                 new RecipeFood() { Food = _cookedChicken, Amount = 500 },
             };
             PantryProvider pp = new(pantry);
-            var recipe = _recipes.First(x => x.Inputs.First(x => x.Amount < 0).Food == _chickenSandwich);
+            var recipe = _recipes.First(x => x.RecipeFoods.First(x => x.Amount < 0).Food == _chickenSandwich);
             CookPlan canCook = null;
             RecipeDag daggy = null;
             for (var i = 0; i < 4; i++)
@@ -242,7 +236,7 @@ namespace Pantry.Core.Test.ScheduleTests
                 new RecipeFood() { Food = _cookedChicken, Amount = 500 },
             };
             PantryProvider pp = new(pantry);
-            var recipe = _recipes.First(x => x.Inputs.First(x => x.Amount < 0).Food == _chickenSandwich);
+            var recipe = _recipes.First(x => x.RecipeFoods.First(x => x.Amount < 0).Food == _chickenSandwich);
             CookPlan canCook = null;
             List<RecipeDag> dags = new();
             for (var i = 0; i < 4; i++)
@@ -274,7 +268,7 @@ namespace Pantry.Core.Test.ScheduleTests
                 new RecipeFood() { Food = _cookedChicken, Amount = 500 },
             };
             PantryProvider pp = new(pantry);
-            var recipe = _recipes.First(x => x.Inputs.First(x => x.Amount < 0).Food == _chickenSandwich);
+            var recipe = _recipes.First(x => x.RecipeFoods.First(x => x.Amount < 0).Food == _chickenSandwich);
             CookPlan canCook = null;
             List<RecipeDag> dags = new();
             for (var i = 0; i < 4; i++)
@@ -309,7 +303,7 @@ namespace Pantry.Core.Test.ScheduleTests
                 new RecipeFood() { Food = _cookedChicken, Amount = 500 },
             };
             PantryProvider pp = new(pantry);
-            var recipe = _recipes.First(x => x.Inputs.First(x => x.Amount < 0).Food == _chickenSandwich);
+            var recipe = _recipes.First(x => x.RecipeFoods.First(x => x.Amount < 0).Food == _chickenSandwich);
             CookPlan canCook = default;
             var dags = new List<RecipeDag>();
             for (var i = 0; i < 4; i++)
@@ -346,7 +340,7 @@ namespace Pantry.Core.Test.ScheduleTests
                 new RecipeFood() { Food = _bbqSauce, Amount = 500 },
             };
             PantryProvider pp = new(pantry);
-            var recipe = _recipes.First(x => x.Inputs.First(x => x.Amount < 0).Food == _chickenSandwich);
+            var recipe = _recipes.First(x => x.RecipeFoods.First(x => x.Amount < 0).Food == _chickenSandwich);
             CookPlan canCook = default;
             var dags = new List<RecipeDag>();
             for (var i = 0; i < 5; i++)
@@ -388,7 +382,7 @@ namespace Pantry.Core.Test.ScheduleTests
                 new RecipeFood() { Food = _bbqSauce, Amount = 500 },
             };
             PantryProvider pp = new(pantry);
-            var recipe = _recipes.First(x => x.Inputs.First(x => x.Amount < 0).Food == _chickenSandwich);
+            var recipe = _recipes.First(x => x.RecipeFoods.First(x => x.Amount < 0).Food == _chickenSandwich);
             CookPlan canCook = default;
             var dags = new List<RecipeDag>();
             for (var i = 0; i < 5; i++)
@@ -429,7 +423,7 @@ namespace Pantry.Core.Test.ScheduleTests
                 new RecipeFood() { Food = _cookedChicken, Amount = 500 },
             };
             PantryProvider pp = new(pantry);
-            var recipe = _recipes.First(x => x.Inputs.First(x => x.Amount < 0).Food == _chickenSandwich);
+            var recipe = _recipes.First(x => x.RecipeFoods.First(x => x.Amount < 0).Food == _chickenSandwich);
             CookPlan canCook = null;
             List<RecipeDag> dags = new();
             for (var i = 0; i < 4; i++)
@@ -462,7 +456,7 @@ namespace Pantry.Core.Test.ScheduleTests
                 new RecipeFood() { Food = _bbqSauce, Amount = 500 },
             };
             PantryProvider pp = new(pantry);
-            var recipe = _recipes.First(x => x.Inputs.First(x=>x.Amount<0).Food == _chickenSandwich);
+            var recipe = _recipes.First(x => x.RecipeFoods.First(x=>x.Amount<0).Food == _chickenSandwich);
             CookPlan canCook = default;
             var dags = new List<RecipeDag>();
             for (var i = 0; i < 5; i++)

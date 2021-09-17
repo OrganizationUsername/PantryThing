@@ -30,9 +30,9 @@ namespace PantryWPF.Recipes
                 {
                     RecipeSteps = _selectedRecipe.RecipeSteps,
                     Id = _selectedRecipe.Id,
-                    Inputs = _selectedRecipe.Inputs,
+                    RecipeFoods = _selectedRecipe.RecipeFoods,
                     MainOutput = _selectedRecipe.MainOutput,
-                    Outputs = _selectedRecipe.Outputs
+                    //Outputs = _selectedRecipe.Outputs
                 };
                 OnPropertyChanged(nameof(SelectedRecipeDetailViewModel));
             }
@@ -51,9 +51,9 @@ namespace PantryWPF.Recipes
                 {
                     RecipeSteps = x.RecipeSteps,
                     Id = x.Id,
-                    Inputs = x.Inputs,
+                    RecipeFoods = x.RecipeFoods,
                     MainOutput = x.MainOutput,
-                    Outputs = x.Outputs
+                    //Outputs = x.Outputs
                 }).First();
         }
     }
