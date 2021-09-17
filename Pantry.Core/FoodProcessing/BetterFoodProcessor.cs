@@ -98,7 +98,7 @@ namespace Pantry.Core.FoodProcessing
                 RecipeFood fi = foodInstances[index];
                 clones[index] = (new RecipeFood()
                 {
-                    Food = new Food() { Name = fi.Food.Name, FoodId = fi.Food.FoodId },
+                    Food = new Food() { FoodName = fi.Food.FoodName, FoodId = fi.Food.FoodId },
                     Amount = fi.Amount
                 });
             }

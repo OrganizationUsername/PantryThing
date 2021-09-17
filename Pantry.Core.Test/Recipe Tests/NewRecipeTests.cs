@@ -12,27 +12,27 @@ namespace Pantry.Core.Test.Recipe_Tests
     public class NewRecipeTests
     {
         private readonly Equipment _breadMachine = new()
-        { Name = "Bread Machine", BookedTimes = new List<(DateTime startTime, DateTime endTime, string TaskName)>() };
+        { EquipmentName = "Bread Machine", EquipmentCommitments = new List<EquipmentCommitment>() };
         private readonly Equipment _humanMachine = new()
-        { Name = "Human", BookedTimes = new List<(DateTime startTime, DateTime endTime, string TaskName)>() };
+        { EquipmentName = "Human", EquipmentCommitments = new List<EquipmentCommitment>() };
         private readonly Equipment _fridge = new()
-        { Name = "Fridge", BookedTimes = new List<(DateTime startTime, DateTime endTime, string TaskName)>() };
+        { EquipmentName = "Fridge", EquipmentCommitments = new List<EquipmentCommitment>() };
         private readonly Equipment _sousVide = new()
-        { Name = "Sous Vide", BookedTimes = new List<(DateTime startTime, DateTime endTime, string TaskName)>() };
+        { EquipmentName = "Sous Vide", EquipmentCommitments = new List<EquipmentCommitment>() };
 
         private readonly List<Recipe> _recipes = new();
         private readonly BetterFoodProcessor _foodProcessor = new();
-        private readonly Food _frozenChicken = new() { FoodId = 0, Name = "Frozen Chicken", BetterRecipes = null };
-        private readonly Food _rawChicken = new() { FoodId = 1, Name = "Raw Chicken", };
-        private readonly Food _bbqSauce = new() { FoodId = 2, Name = "BBQ Sauce", BetterRecipes = null };
-        private readonly Food _cookedChicken = new() { FoodId = 3, Name = "Cooked Chicken" };
-        private readonly Food _slicedChicken = new() { FoodId = 4, Name = "Sliced Chicken" };
-        private readonly Food _flour = new() { FoodId = 5, Name = "Flour", BetterRecipes = null };
-        private readonly Food _eggs = new() { FoodId = 6, Name = "Eggs", BetterRecipes = null };
-        private readonly Food _milk = new() { FoodId = 7, Name = "Milk", BetterRecipes = null };
-        private readonly Food _bread = new() { FoodId = 8, Name = "Bread" };
-        private readonly Food _slicedBread = new() { FoodId = 9, Name = "Sliced Bread" };
-        private readonly Food _chickenSandwich = new() { FoodId = 10, Name = "Chicken Sandwich" };
+        private readonly Food _frozenChicken = new() { FoodId = 0, FoodName = "Frozen Chicken" };
+        private readonly Food _rawChicken = new() { FoodId = 1, FoodName = "Raw Chicken", };
+        private readonly Food _bbqSauce = new() { FoodId = 2, FoodName = "BBQ Sauce" };
+        private readonly Food _cookedChicken = new() { FoodId = 3, FoodName = "Cooked Chicken" };
+        private readonly Food _slicedChicken = new() { FoodId = 4, FoodName = "Sliced Chicken" };
+        private readonly Food _flour = new() { FoodId = 5, FoodName = "Flour" };
+        private readonly Food _eggs = new() { FoodId = 6, FoodName = "Eggs" };
+        private readonly Food _milk = new() { FoodId = 7, FoodName = "Milk" };
+        private readonly Food _bread = new() { FoodId = 8, FoodName = "Bread" };
+        private readonly Food _slicedBread = new() { FoodId = 9, FoodName = "Sliced Bread" };
+        private readonly Food _chickenSandwich = new() { FoodId = 10, FoodName = "Chicken Sandwich" };
 
         [SetUp]
         public void Setup()
@@ -40,7 +40,7 @@ namespace Pantry.Core.Test.Recipe_Tests
             _recipes.Add(
                 new Recipe()
                 {
-                    Id = 1,
+                    RecipeId = 1,
                     //MainOutput = _cookedChicken,
                     RecipeFoods = new List<RecipeFood>() {
                         new(){Amount = 0120, Food = _rawChicken },
@@ -57,7 +57,7 @@ namespace Pantry.Core.Test.Recipe_Tests
             _recipes.Add(
                 new Recipe()
                 {
-                    Id = 2,
+                    RecipeId = 2,
                     //MainOutput = _rawChicken,
                     RecipeFoods = new List<RecipeFood>()
                     {
@@ -73,8 +73,7 @@ namespace Pantry.Core.Test.Recipe_Tests
             _recipes.Add(
                 new Recipe()
                 {
-                    Id = 3,
-                    MainOutput = _slicedChicken,
+                    RecipeId = 3,
                     RecipeFoods = new List<RecipeFood>()
                     {
                         new() { Amount = 120, Food = _cookedChicken },
@@ -88,7 +87,7 @@ namespace Pantry.Core.Test.Recipe_Tests
             _recipes.Add(
                 new Recipe()
                 {
-                    Id = 4,
+                    RecipeId = 4,
                     RecipeFoods = new List<RecipeFood>()
                     {
                         new() { Amount = 1, Food = _bread },
@@ -102,7 +101,7 @@ namespace Pantry.Core.Test.Recipe_Tests
             _recipes.Add(
                 new Recipe()
                 {
-                    Id = 5,
+                    RecipeId = 5,
                     RecipeFoods = new List<RecipeFood>() {
                         new() { Amount = 2, Food = _slicedBread } ,
                         new() { Amount = 120, Food = _slicedChicken} ,
@@ -116,7 +115,7 @@ namespace Pantry.Core.Test.Recipe_Tests
             _recipes.Add(
                 new Recipe()
                 {
-                    Id = 6,
+                    RecipeId = 6,
                     RecipeFoods = new List<RecipeFood>() {
                         new() { Amount = 120, Food = _eggs } ,
                         new() { Amount = 120, Food = _milk} ,
@@ -125,9 +124,9 @@ namespace Pantry.Core.Test.Recipe_Tests
                     },
                     RecipeSteps = new List<RecipeStep>()
                     {
-                        new() {Instruction = "Insert into Bread Machine.", TimeCost = 1, Equipments = new(){_humanMachine, _breadMachine}},
-                        new() {Instruction = "Bread Machine cooks.", TimeCost = 180, Equipments = new(){ _breadMachine}},
-                        new() {Instruction = "Extract bread from bread machine.", TimeCost = 1, Equipments = new(){_humanMachine, _breadMachine}},
+                        new() {Instruction = "Insert into Bread Machine.", TimeCost = 1, Equipments = new List<Equipment>(){_humanMachine, _breadMachine}},
+                        new() {Instruction = "Bread Machine cooks.", TimeCost = 180, Equipments = new List<Equipment>(){ _breadMachine}},
+                        new() {Instruction = "Extract bread from bread machine.", TimeCost = 1, Equipments = new List<Equipment>(){_humanMachine, _breadMachine}},
                     }
                 });
         }

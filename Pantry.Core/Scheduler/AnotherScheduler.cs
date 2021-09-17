@@ -55,11 +55,13 @@ namespace Pantry.Core.Scheduler
             Console.WriteLine("Equipments:");
             foreach (var equipment in _equipments)
             {
-                if (equipment.BookedTimes is null || !equipment.BookedTimes.Any()) { Console.WriteLine(equipment.Name + "- Nothing."); }
-                else { Console.WriteLine(equipment.Name); }
-                foreach (var (startTime, endTime, stepName) in equipment.BookedTimes.OrderBy(z => z.startTime))
+                if (equipment.EquipmentCommitments is null || !equipment.EquipmentCommitments.Any()) { Console.WriteLine(equipment.EquipmentName + "- Nothing."); }
+                //if (equipment.BookedTimes is null || !equipment.BookedTimes.Any()) { Console.WriteLine(equipment.EquipmentName + "- Nothing."); }
+                else { Console.WriteLine(equipment.EquipmentName); }
+                //foreach (var (startTime, endTime, stepName) in equipment.BookedTimes.OrderBy(z => z.startTime))
+                foreach (var x in equipment.EquipmentCommitments.OrderBy(z => z.StartTime))
                 {
-                    Console.WriteLine($"{startTime.ToShortTimeString()}:{endTime.ToShortTimeString()}: {stepName}");
+                    Console.WriteLine($"{x.StartTime.ToShortTimeString()}:{x.EndTime.ToShortTimeString()}: {x.Description}");
                 }
             }
         }
@@ -79,11 +81,17 @@ namespace Pantry.Core.Scheduler
                         satisfied = true;
                         foreach (var y in recipeStep.Equipments)
                         {
-                            y.BookedTimes.Add(
-                                (_goal.AddMinutes(-(offset + recipeStep.TimeCost)),
-                                    _goal.AddMinutes(-offset),
-                                    recipeStep.Instruction + $"_ {dag.MainRecipe.RecipeFoods.First(x=>x.Amount<0).Food.Name}")
-                            );
+                            y.EquipmentCommitments.Add(new EquipmentCommitment()
+                            {
+                                StartTime = _goal.AddMinutes(-(offset + recipeStep.TimeCost)),
+                                EndTime = _goal.AddMinutes(-offset),
+                                Description = $"_ {dag.MainRecipe.RecipeFoods.First(x => x.Amount < 0).Food.FoodName}"
+                            });
+                            //y.BookedTimes.Add(
+                            //    (_goal.AddMinutes(-(offset + recipeStep.TimeCost)),
+                            //        _goal.AddMinutes(-offset),
+                            //        recipeStep.Instruction + $"_ {dag.MainRecipe.RecipeFoods.First(x => x.Amount < 0).Food.FoodName}")
+                            //);
                         }
                     }
                 }

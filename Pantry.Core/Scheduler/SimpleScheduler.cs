@@ -35,10 +35,16 @@ namespace Pantry.Core.Scheduler
                             satisfied = true;
                             foreach (var y in recipeStep.Equipments)
                             {
-                                y.BookedTimes.Add(
-                                    (goal.AddMinutes(-(offset + recipeStep.TimeCost)),
-                                        goal.AddMinutes(-offset), recipeStep.Instruction + $"_ {scheduledTask.RecipeName}")
-                                );
+                                y.EquipmentCommitments.Add(new EquipmentCommitment()
+                                {
+                                    StartTime = goal.AddMinutes(-(offset + recipeStep.TimeCost)),
+                                    EndTime = goal.AddMinutes(-offset),
+                                    Description = recipeStep.Instruction + $"_ {scheduledTask.RecipeName}"
+                                });
+                                //y.BookedTimes.Add(
+                                //    (goal.AddMinutes(-(offset + recipeStep.TimeCost)),
+                                //        goal.AddMinutes(-offset), recipeStep.Instruction + $"_ {scheduledTask.RecipeName}")
+                                //);
                             }
                         }
                     }
@@ -60,10 +66,10 @@ namespace Pantry.Core.Scheduler
 
             foreach (var equipment in Equipments)
             {
-                Console.WriteLine(equipment.Name);
-                foreach (var (startTime, endTime, stepName) in equipment.BookedTimes.OrderBy(z => z.startTime))
+                Console.WriteLine(equipment.EquipmentName);
+                foreach (var x in equipment.EquipmentCommitments.OrderBy(z => z.StartTime))
                 {
-                    Console.WriteLine($"{startTime.ToShortTimeString()}:{endTime.ToShortTimeString()}: {stepName}");
+                    Console.WriteLine($"{x.StartTime.ToShortTimeString()}:{x.EndTime.ToShortTimeString()}: {x.Description}");
                 }
             }
         }
@@ -97,10 +103,16 @@ namespace Pantry.Core.Scheduler
                             satisfied = true;
                             foreach (var y in recipeStep.Equipments)
                             {
-                                y.BookedTimes.Add(
-                                    (goal.AddMinutes(-(offset + recipeStep.TimeCost)),
-                                        goal.AddMinutes(-offset), recipeStep.Instruction + $"_ {scheduledTask.RecipeName}")
-                                );
+                                y.EquipmentCommitments.Add(new EquipmentCommitment()
+                                {
+                                    StartTime = goal.AddMinutes(-(offset + recipeStep.TimeCost)),
+                                    EndTime = goal.AddMinutes(-offset),
+                                    Description = recipeStep.Instruction + $"_ {scheduledTask.RecipeName}"
+                                });
+                                //y.BookedTimes.Add(
+                                //    (goal.AddMinutes(-(offset + recipeStep.TimeCost)),
+                                //        goal.AddMinutes(-offset), recipeStep.Instruction + $"_ {scheduledTask.RecipeName}")
+                                //);
                             }
                         }
                     }
@@ -122,10 +134,10 @@ namespace Pantry.Core.Scheduler
 
             foreach (var equipment in Equipments)
             {
-                Console.WriteLine(equipment.Name);
-                foreach (var (startTime, endTime, stepName) in equipment.BookedTimes.OrderBy(z => z.startTime))
+                Console.WriteLine(equipment.EquipmentName);
+                foreach (var x in equipment.EquipmentCommitments.OrderBy(z => z.StartTime))
                 {
-                    Console.WriteLine($"{startTime.ToShortTimeString()}:{endTime.ToShortTimeString()}: {stepName}");
+                    Console.WriteLine($"{x.StartTime.ToShortTimeString()}:{x.EndTime.ToShortTimeString()}: {x.Description}");
                 }
             }
         }

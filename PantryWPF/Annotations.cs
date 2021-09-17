@@ -270,7 +270,7 @@ namespace PantryWPF.Annotations
   ///
   ///   string _name;
   /// 
-  ///   public string Name {
+  ///   public string FoodName {
   ///     get { return _name; }
   ///     set { _name = value; NotifyChanged("LastName"); /* Warning */ }
   ///   }
@@ -669,8 +669,8 @@ namespace PantryWPF.Annotations
   /// <code>
   /// [SourceTemplate]
   /// public static void something(this Entity x, [Macro(Expression = "guid()", Editable = -1)] string newguid) {
-  ///   /*$ var $x$Id = "$newguid$" + x.ToString();
-  ///   x.DoSomething($x$Id); */
+  ///   /*$ var $x$RecipeFoodId = "$newguid$" + x.ToString();
+  ///   x.DoSomething($x$RecipeFoodId); */
   /// }
   /// </code>
   /// </example>

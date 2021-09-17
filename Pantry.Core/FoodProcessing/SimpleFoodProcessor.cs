@@ -44,7 +44,7 @@ namespace Pantry.Core.FoodProcessing
                     if (recipes is not null)
                     {
                         var subRecipe = recipes.FirstOrDefault(r =>
-                            r.MainOutput == recipeInputFoodInstance.Food
+                            r.RecipeFoods.First(x=>x.Amount<0).Food == recipeInputFoodInstance.Food
                             && CanCookSomething(clonedFoodInventory, r, recipes).CanMake);
                         if (subRecipe is not null)
                         {

@@ -18,28 +18,12 @@ namespace PantryWPF.Main
             RecipeNavigationCommand = new NavigationCommand(this, new RecipesListViewModel());
             InventoryNavigationCommand = new NavigationCommand(this, new InventoryViewModel());
             var dbContext = new DataBase();
-            var existingFoods = dbContext.Foods.Select(x => x.Name).ToList();
+            var existingFoods = dbContext.Foods.Select(x => x.FoodName).ToList();
             //This should all probably be in another project.
-            var hardCodedFoodRepository = new HardCodedFoodRepository();
-            var hardCodedFoods = hardCodedFoodRepository.GetFoods().Select(x => new Food() { Name = x.Name });
-            foreach (var y in hardCodedFoods)
-            {
-                if (!existingFoods.Contains(y.Name))
-                {
-                    dbContext.Add(y);
-                }
-            }
+    
 
-            dbContext.SaveChanges();
-            HardCodedRecipeRepository hrr = new();
-            var hardCodedRecipes = hrr.GetRecipes().Select(x => new Recipe() { MainOutput = dbContext.Foods.Single(y => y.Name == x.MainOutput.Name),  });
-            foreach (var y in hrr.GetRecipes())
-            {
-                foreach (var fi in y.RecipeFoods) { fi.Food = null; }
-                //foreach (var fi in y.Outputs) { fi.Food = null; }
-                dbContext.Add(y);
-            }
-            dbContext.SaveChanges();
+            
+
 
             var x = dbContext.Recipes.ToListAsync();
         }

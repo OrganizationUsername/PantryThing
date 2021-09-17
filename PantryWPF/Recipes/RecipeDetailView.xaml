@@ -20,7 +20,7 @@
                     <ListView.ItemTemplate>
                         <DataTemplate>
                             <StackPanel Orientation="Horizontal">
-                                <TextBlock Text="{Binding Food.Name}"/>
+                                <TextBlock Text="{Binding Food.FoodName}"/>
                                 <TextBox Text="{Binding Amount}"/>
                             </StackPanel>
                         </DataTemplate>

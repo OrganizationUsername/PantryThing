@@ -15,9 +15,13 @@ namespace Pantry.Data
         public DbSet<Recipe> Recipes { get; set; }
         public DbSet<Food> Foods { get; set; }
         public DbSet<RecipeFood> RecipeFoods { get; set; }
+        public DbSet<RecipeStep> RecipeSteps { get; set; }
+        public DbSet<Equipment> Equipments { get; set; }
+        public DbSet<EquipmentCommitment> EquipmentCommitments { get; set; }
+        public DbSet<Location> Locations { get; set; }
 
-//Wow... This should all be refactored to reflect positive numbers for
-//inputs and negative numbers for outputs.
+        //Wow... This should all be refactored to reflect positive numbers for
+        //inputs and negative numbers for outputs.
 
 
 
@@ -30,12 +34,14 @@ namespace Pantry.Data
         }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<Recipe>().Ignore(x => x.RecipeSteps);
-            //modelBuilder.Entity<Equipment>().Ignore(x => x.BookedTimes);
+            //modelBuilder.Entity<Recipe>().Ignore(x => x.RecipeSteps);
+            modelBuilder.Entity<RecipeStep>()
+                .Ignore(x => x.Equipments)
+                .HasIndex(x => x.Order);
             //modelBuilder.Entity<Recipe>().HasMany(x => x.RecipeFoods);
             //modelBuilder.Entity<Recipe>().HasMany(x => x.Outputs);
-            //modelBuilder.Entity<Recipe>().HasKey(x => x.Id);
-            //modelBuilder.Entity<Food>().HasIndex(x => x.Name).IsUnique();
+            //modelBuilder.Entity<Recipe>().HasKey(x => x.RecipeFoodId);
+            //modelBuilder.Entity<Food>().HasIndex(x => x.FoodName).IsUnique();
             //modelBuilder.Entity<BetterRecipeInput>().HasKey(x => x.BetterRecipeInputId);
             base.OnModelCreating(modelBuilder);
 

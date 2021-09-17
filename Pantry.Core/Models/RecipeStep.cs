@@ -10,6 +10,6 @@ namespace Pantry.Core.Models
         public int Order { get; set; }
         public string Instruction { get; set; }
         public double TimeCost { get; set; }
-        public List<Equipment> Equipments { get; set; }
+        public ICollection<Equipment> Equipments { get; set; }
     }
 }

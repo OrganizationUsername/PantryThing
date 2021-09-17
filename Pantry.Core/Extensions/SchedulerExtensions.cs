@@ -8,19 +8,34 @@ namespace Pantry.Core.Extensions
     {
         public static bool IsAvailable(this Equipment e, DateTime start, DateTime end)
         {
-            if (!e.BookedTimes.Any())
+            if (!e.EquipmentCommitments.Any())
             {
                 return true;
             }
+            //if (!e.BookedTimes.Any())
+            //{
+            //    return true;
+            //}
 
-            foreach (var (startTime, endTime, _) in e.BookedTimes)
+            foreach (var x in e.EquipmentCommitments)
             {
                 if (false
-                    || (startTime < end && endTime >= start))
+                    || (x.StartTime < end && x.EndTime >= start))
                 {
                     return false;
                 }
             }
+
+
+
+            //foreach (var (startTime, endTime, _) in e.BookedTimes)
+            //{
+            //    if (false
+            //        || (startTime < end && endTime >= start))
+            //    {
+            //        return false;
+            //    }
+            //}
             return true;
         }
     }

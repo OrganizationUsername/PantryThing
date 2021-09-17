@@ -26,11 +26,11 @@
 //            foreach (var x in recipes)
 //            {
 //                List<string> temporaryRecipeLines = new();
-//                temporaryRecipeLines.Add($"{x.Name}- {x.RecipeId}");
+//                temporaryRecipeLines.Add($"{x.FoodName}- {x.RecipeId}");
 //                temporaryRecipeLines.Add("Ingredients:");
 //                foreach (var y in x.RecipeFoods)
 //                {
-//                    temporaryRecipeLines.Add($"\t{y.Amount}: {y.Food.Name}");
+//                    temporaryRecipeLines.Add($"\t{y.Amount}: {y.Food.FoodName}");
 //                }
 //                temporaryRecipeLines.Add("Method:");
 //                foreach (var y in x.Steps.OrderBy(x => x.StepId))
@@ -38,7 +38,7 @@
 //                    temporaryRecipeLines.Add($"{y.TimeCost}: {y.Instruction}");
 //                    if (y.EquipmentSteps.Any())
 //                    {
-//                        temporaryRecipeLines.Add($"\t{string.Join(",", y.EquipmentSteps.Select(x => x.Name))}");
+//                        temporaryRecipeLines.Add($"\t{string.Join(",", y.EquipmentSteps.Select(x => x.FoodName))}");
 //                    }
 //                }
 //                recipeLines.Add(string.Join(Environment.NewLine, temporaryRecipeLines));
@@ -54,13 +54,13 @@
 //            {
 //                var foods = new Food[]
 //                {
-//                    new() {Name = "Sandwich"},
-//                    new() {Name = "Cake"},
-//                    new() {Name = "Bread"},
-//                    new() {Name = "Flour"},
-//                    new() {Name = "Meat"},
-//                    new() {Name = "Eggs"},
-//                    new() {Name = "Milk"},
+//                    new() {FoodName = "Sandwich"},
+//                    new() {FoodName = "Cake"},
+//                    new() {FoodName = "Bread"},
+//                    new() {FoodName = "Flour"},
+//                    new() {FoodName = "Meat"},
+//                    new() {FoodName = "Eggs"},
+//                    new() {FoodName = "Milk"},
 //                };
 //                foreach (var s in foods)
 //                {
@@ -72,8 +72,8 @@
 //            {
 //                var recipes = new Recipe[]
 //                {
-//                new(){Name = "Sandwich", RecipeId = 1},
-//                new(){Name = "Cake", RecipeId = 2},
+//                new(){FoodName = "Sandwich", RecipeId = 1},
+//                new(){FoodName = "Cake", RecipeId = 2},
 //                };
 //                foreach (var s in recipes)
 //                {
@@ -116,7 +116,7 @@
 //            {
 //                var equipmentSteps = new EquipmentStep[]
 //                {
-//                    new() {Name = "Bread Machine", StepId = 4},
+//                    new() {FoodName = "Bread Machine", StepId = 4},
 //                };
 //                foreach (var s in equipmentSteps)
 //                {
@@ -132,7 +132,7 @@
 //    public class Food
 //    {
 //        public int FoodId { get; set; }
-//        public string Name { get; set; }
+//        public string FoodName { get; set; }
 
 //        public ICollection<RP> RecipeFoods { get; set; }
 //    }
@@ -150,7 +150,7 @@
 //    public class Recipe
 //    {
 //        public int RecipeId { get; set; }
-//        public string Name { get; set; }
+//        public string FoodName { get; set; }
 //        public ICollection<RP> RecipeFoods { get; set; }
 //        public ICollection<Step> Steps { get; set; }
 //    }
@@ -170,7 +170,7 @@
 //    {
 //        public int EquipmentStepId { get; set; }
 //        public int StepId { get; set; }
-//        public string Name { get; set; }
+//        public string FoodName { get; set; }
 //    }
 
 //    public class SchoolContext : DbContext

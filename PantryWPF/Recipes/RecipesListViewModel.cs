@@ -29,9 +29,8 @@ namespace PantryWPF.Recipes
                 _selectedRecipeDetailViewModel = new RecipeDetailViewModel()
                 {
                     RecipeSteps = _selectedRecipe.RecipeSteps,
-                    Id = _selectedRecipe.Id,
+                    RecipeId = _selectedRecipe.RecipeId,
                     RecipeFoods = _selectedRecipe.RecipeFoods,
-                    MainOutput = _selectedRecipe.MainOutput,
                     //Outputs = _selectedRecipe.Outputs
                 };
                 OnPropertyChanged(nameof(SelectedRecipeDetailViewModel));
@@ -42,19 +41,7 @@ namespace PantryWPF.Recipes
 
         public RecipesListViewModel()
         {
-            //TODO: Replace this with constructor injection and Unity
-            var rr = new HardCodedRecipeRepository();
-            ACollection = new ObservableCollection<Recipe>(
-                rr.GetRecipes());
-            SelectedRecipeDetailViewModel = ACollection
-                .Select(x => new RecipeDetailViewModel()
-                {
-                    RecipeSteps = x.RecipeSteps,
-                    Id = x.Id,
-                    RecipeFoods = x.RecipeFoods,
-                    MainOutput = x.MainOutput,
-                    //Outputs = x.Outputs
-                }).First();
+   
         }
     }
 }
