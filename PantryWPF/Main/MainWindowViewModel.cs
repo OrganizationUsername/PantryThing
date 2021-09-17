@@ -32,16 +32,16 @@ namespace PantryWPF.Main
 
             dbContext.SaveChanges();
             HardCodedRecipeRepository hrr = new HardCodedRecipeRepository();
-            var hardCodedRecipes = hrr.GetRecipes().Select(x => new BetterRecipe() { MainOutput = dbContext.Foods.Single(y => y.Name == x.MainOutput.Name),  });
+            var hardCodedRecipes = hrr.GetRecipes().Select(x => new Recipe() { MainOutput = dbContext.Foods.Single(y => y.Name == x.MainOutput.Name),  });
             foreach (var y in hrr.GetRecipes())
             {
-                foreach (var fi in y.Inputs) { fi.FoodType = null; }
-                foreach (var fi in y.Outputs) { fi.FoodType = null; }
+                foreach (var fi in y.Inputs) { fi.Food = null; }
+                foreach (var fi in y.Outputs) { fi.Food = null; }
                 dbContext.Add(y);
             }
             dbContext.SaveChanges();
 
-            var x = dbContext.BetterRecipes.ToListAsync();
+            var x = dbContext.Recipes.ToListAsync();
         }
     }
 }

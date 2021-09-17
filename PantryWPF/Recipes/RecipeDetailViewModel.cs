@@ -9,7 +9,7 @@ using PantryWPF.Annotations;
 
 namespace PantryWPF.Recipes
 {
-    public class RecipeDetailViewModel : BetterRecipe, INotifyPropertyChanged
+    public class RecipeDetailViewModel : Recipe, INotifyPropertyChanged
     {
         public event PropertyChangedEventHandler PropertyChanged;
 

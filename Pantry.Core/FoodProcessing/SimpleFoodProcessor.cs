@@ -12,11 +12,11 @@ namespace Pantry.Core.FoodProcessing
     public class SimpleFoodProcessor : IFoodProcessor
     {
         public CookPlan
-            CanCookSomething(IList<FoodInstance> foodInventory, Recipe recipe, IList<Recipe> recipes = null)
+            CanCookSomething(IList<RecipeFood> foodInventory, Recipe recipe, IList<Recipe> recipes = null)
         {
             List<Recipe> recipesTouched = new();
-            var totalInput = new List<FoodInstance>();
-            var rawCost = new List<FoodInstance>();
+            var totalInput = new List<RecipeFood>();
+            var rawCost = new List<RecipeFood>();
             var recipeLines = GetFoodInstancesFromRecipe(recipe);
             var clonedFoodInventory = CloneFoodInstances(foodInventory);
             foreach (var recipeInputFoodInstance in recipeLines)
@@ -25,18 +25,18 @@ namespace Pantry.Core.FoodProcessing
                 while (recipeInputFoodInstance.Amount > 0)
                 {
                     var fi = clonedFoodInventory.FirstOrDefault(foodInstance =>
-                        foodInstance.FoodType == recipeInputFoodInstance.FoodType
+                        foodInstance.Food == recipeInputFoodInstance.Food
                         && foodInstance.Amount > 0);
                     if (fi is not null /*&& clonedFoodInventory.Where(foodInstance =>
-                        foodInstance.FoodType == recipeInputFoodInstance.FoodType).Sum(x => x.Amount) >= recipeInputFoodInstance.Amount*/)
+                        foodInstance.Food == recipeInputFoodInstance.Food).Sum(x => x.Amount) >= recipeInputFoodInstance.Amount*/)
                     {
                         double amountUsed = Math.Min(recipeInputFoodInstance.Amount, fi.Amount);
                         recipeInputFoodInstance.Amount -= amountUsed;
                         fi.Amount -= amountUsed;
-                        totalInput.Add(new FoodInstance() { FoodType = fi.FoodType, Amount = amountUsed });
+                        totalInput.Add(new RecipeFood() { Food = fi.Food, Amount = amountUsed });
                         if (usedRaw)
                         {
-                            rawCost.Add(new FoodInstance() { FoodType = recipeInputFoodInstance.FoodType, Amount = amountUsed });
+                            rawCost.Add(new RecipeFood() { Food = recipeInputFoodInstance.Food, Amount = amountUsed });
                         }
                         continue;
                     }
@@ -44,7 +44,7 @@ namespace Pantry.Core.FoodProcessing
                     if (recipes is not null)
                     {
                         var subRecipe = recipes.FirstOrDefault(r =>
-                            r.OutputFoodInstance.FoodType == recipeInputFoodInstance.FoodType
+                            r.MainOutput == recipeInputFoodInstance.Food
                             && CanCookSomething(clonedFoodInventory, r, recipes).CanMake);
                         if (subRecipe is not null)
                         {
@@ -56,11 +56,11 @@ namespace Pantry.Core.FoodProcessing
                             }
                             foreach (var deductions in payload.TotalInput)
                             {
-                                totalInput.Add(new FoodInstance() { FoodType = deductions.FoodType, Amount = deductions.Amount });
+                                totalInput.Add(new RecipeFood() { Food = deductions.Food, Amount = deductions.Amount });
                                 while (deductions.Amount > 0)
                                 {
                                     var fi2 = clonedFoodInventory.FirstOrDefault(foodInstance =>
-                                        foodInstance.FoodType == deductions.FoodType
+                                        foodInstance.Food == deductions.Food
                                         && foodInstance.Amount > 0);
                                     if (fi2 is not null)
                                     {
@@ -77,12 +77,12 @@ namespace Pantry.Core.FoodProcessing
 
                             foreach (var rawDeductions in payload.RawCost)
                             {
-                                rawCost.Add(new FoodInstance() { FoodType = rawDeductions.FoodType, Amount = rawDeductions.Amount });
+                                rawCost.Add(new RecipeFood() { Food = rawDeductions.Food, Amount = rawDeductions.Amount });
                             }
                             foreach (var additions in payload.TotalOutput)
                             {
                                 var fi2 = clonedFoodInventory.FirstOrDefault(foodInstance =>
-                                    foodInstance.FoodType == additions.FoodType);
+                                    foodInstance.Food == additions.Food);
                                 if (fi2 is not null)
                                 {
                                     fi2.Amount += additions.Amount;
@@ -90,7 +90,7 @@ namespace Pantry.Core.FoodProcessing
                                 else
                                 {
                                     var temp = clonedFoodInventory.ToList();
-                                    temp.Add(new FoodInstance() { FoodType = additions.FoodType, Amount = additions.Amount });
+                                    temp.Add(new RecipeFood() { Food = additions.Food, Amount = additions.Amount });
                                     clonedFoodInventory = temp.ToArray();
                                 }
                             }
@@ -107,36 +107,36 @@ namespace Pantry.Core.FoodProcessing
                 CanMake = true,
                 RecipesTouched = recipesTouched,
                 TotalInput = totalInput,
-                TotalOutput = new List<FoodInstance>() { recipe.OutputFoodInstance },
+                TotalOutput = new List<RecipeFood>() { recipe.Outputs.First() },
                 RawCost = rawCost,
                 RecipeName = recipe.Description,
             };
         }
 
-        private static FoodInstance[] GetFoodInstancesFromRecipe(Recipe recipe)
+        private static RecipeFood[] GetFoodInstancesFromRecipe(Recipe recipe)
         {
-            FoodInstance[] clones = new FoodInstance[recipe.InputFoodInstance.Count];
-            for (var index = 0; index < recipe.InputFoodInstance.Count; index++)
+            RecipeFood[] clones = new RecipeFood[recipe.Inputs.Count];
+            for (var index = 0; index < recipe.Inputs.Count; index++)
             {
-                FoodInstance fi = recipe.InputFoodInstance[index];
-                clones[index] = (new FoodInstance()
+                RecipeFood fi = recipe.Inputs[index];
+                clones[index] = (new RecipeFood()
                 {
-                    FoodType = fi.FoodType,
+                    Food = fi.Food,
                     Amount = fi.Amount
                 });
             }
             return clones;
         }
 
-        private static FoodInstance[] CloneFoodInstances(IList<FoodInstance> foodInstances)
+        private static RecipeFood[] CloneFoodInstances(IList<RecipeFood> foodInstances)
         {
-            var clones = new FoodInstance[foodInstances.Count];
+            var clones = new RecipeFood[foodInstances.Count];
             for (var index = 0; index < foodInstances.Count; index++)
             {
-                FoodInstance fi = foodInstances[index];
-                clones[index] = (new FoodInstance()
+                RecipeFood fi = foodInstances[index];
+                clones[index] = (new RecipeFood()
                 {
-                    FoodType = fi.FoodType,
+                    Food = fi.Food,
                     Amount = fi.Amount
                 });
             }

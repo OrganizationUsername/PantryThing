@@ -4,7 +4,7 @@ namespace Pantry.Core.Models
 {
     public interface IPantryProvider
     {
-        List<FoodInstance> GetFoodInstances();
-        List<FoodInstance> AdjustOnHandQuantity(CookPlan canCook);
+        List<RecipeFood> GetFoodInstances();
+        List<RecipeFood> AdjustOnHandQuantity(CookPlan canCook);
     }
 }

@@ -4,15 +4,11 @@ namespace Pantry.Core.Models
 {
     public class Recipe
     {
-        public int RecipeId { get; set; }
-        public string Description { get; set; }
-        public FoodInstance OutputFoodInstance { get; set; }
-        public int OutputFoodInstanceId { get; set; }
-        public List<FoodInstance> InputFoodInstance { get; set; }
-        public int InputFoodInstanceId { get; set; }
+        public int Id { get; set; }
+        public List<RecipeFood> Inputs { get; set; }
+        public List<RecipeFood> Outputs { get; set; }
+        public Food MainOutput { get; set; }
         public List<RecipeStep> RecipeSteps { get; set; }
-        public int RecipeStepsId { get; set; }
-        public RecipeHierarchy RecipeHierarchy { get; set; }
-        public double TimeCost { get; set; }
+        public string Description { get; set; }
     }
 }

@@ -6,17 +6,17 @@ namespace Pantry.Core.Models
 {
     public class PantryProvider : IPantryProvider
     {
-        private List<FoodInstance> _foodInstances;
-        public PantryProvider(List<FoodInstance> foodInstances)
+        private List<RecipeFood> _foodInstances;
+        public PantryProvider(List<RecipeFood> foodInstances)
         {
             _foodInstances = foodInstances;
         }
-        public List<FoodInstance> GetFoodInstances()
+        public List<RecipeFood> GetFoodInstances()
         {
             return _foodInstances;
         }
 
-        public List<FoodInstance> AdjustOnHandQuantity(CookPlan canCook)
+        public List<RecipeFood> AdjustOnHandQuantity(CookPlan canCook)
         {
             if (!canCook.CanMake)
             {
@@ -32,7 +32,7 @@ namespace Pantry.Core.Models
                 while (rawCost.Amount > 0)
                 {
                     var pantryItem =
-                        _foodInstances.First(pantry => pantry.FoodType == rawCost.FoodType && pantry.Amount > 0);
+                        _foodInstances.First(pantry => pantry.Food == rawCost.Food && pantry.Amount > 0);
                     var amountToDeduct = Math.Min(pantryItem.Amount, rawCost.Amount);
                     pantryItem.Amount -= amountToDeduct;
                     rawCost.Amount -= amountToDeduct;
@@ -42,14 +42,14 @@ namespace Pantry.Core.Models
             return _foodInstances;
         }
 
-        private List<FoodInstance> AdjustQuantity(CookPlan canCook)
+        private List<RecipeFood> AdjustQuantity(CookPlan canCook)
         {
             foreach (var rawCost in canCook.TotalInput)
             {
                 while (rawCost.Amount > 0)
                 {
                     var pantryItem =
-                        _foodInstances.First(pantry => pantry.FoodType == rawCost.FoodType && pantry.Amount > 0);
+                        _foodInstances.First(pantry => pantry.Food == rawCost.Food && pantry.Amount > 0);
                     var amountToDeduct = Math.Min(pantryItem.Amount, rawCost.Amount);
                     pantryItem.Amount -= amountToDeduct;
                     rawCost.Amount -= amountToDeduct;

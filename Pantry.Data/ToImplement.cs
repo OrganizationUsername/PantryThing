@@ -22,10 +22,10 @@ namespace EFConsole
             var context = new SchoolContext();
             var recipes = await context.Recipes.Include(x => x.Steps).ThenInclude(x => x.EquipmentSteps).Include(x => x.RecipeFoods).ThenInclude(x => x.Food).ToListAsync();
 
-            List<String> recipeLines = new();
+            List<string> recipeLines = new();
             foreach (var x in recipes)
             {
-                List<String> temporaryRecipeLines = new();
+                List<string> temporaryRecipeLines = new();
                 temporaryRecipeLines.Add($"{x.Name}- {x.RecipeId}");
                 temporaryRecipeLines.Add("Ingredients:");
                 foreach (var y in x.RecipeFoods)
@@ -83,7 +83,7 @@ namespace EFConsole
 
             if (!context.RecipeFoods.AnyAsync().Result)
             {
-                var recipeFoods = new RecipeFood[]
+                var recipeFoods = new RP[]
                 {
                     new() {Amount = 002, RecipeId = 1, FoodId = 3},
                     new() {Amount = 001, RecipeId = 1, FoodId = 5},
@@ -134,10 +134,10 @@ namespace EFConsole
         public int FoodId { get; set; }
         public string Name { get; set; }
 
-        public ICollection<RecipeFood> RecipeFoods { get; set; }
+        public ICollection<RP> RecipeFoods { get; set; }
     }
 
-    public class RecipeFood
+    public class RP
     {
         public int RecipeFoodId { get; set; }
         public int FoodId { get; set; }
@@ -151,7 +151,7 @@ namespace EFConsole
     {
         public int RecipeId { get; set; }
         public string Name { get; set; }
-        public ICollection<RecipeFood> RecipeFoods { get; set; }
+        public ICollection<RP> RecipeFoods { get; set; }
         public ICollection<Step> Steps { get; set; }
     }
 
@@ -176,7 +176,7 @@ namespace EFConsole
     public class SchoolContext : DbContext
     {
         public DbSet<Food> Foods { get; set; }
-        public DbSet<RecipeFood> RecipeFoods { get; set; }
+        public DbSet<RP> RecipeFoods { get; set; }
         public DbSet<Recipe> Recipes { get; set; }
         public DbSet<Step> Steps { get; set; }
         public DbSet<EquipmentStep> EquipmentSteps { get; set; }

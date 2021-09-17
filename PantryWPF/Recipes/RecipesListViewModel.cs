@@ -19,32 +19,32 @@ namespace PantryWPF.Recipes
             }
         }
 
-        private BetterRecipe _selectedBetterRecipe;
-        public BetterRecipe SelectedBetterRecipe
+        private Recipe _selectedRecipe;
+        public Recipe SelectedRecipe
         {
-            get => _selectedBetterRecipe;
+            get => _selectedRecipe;
             set
             {
-                _selectedBetterRecipe = value;
+                _selectedRecipe = value;
                 _selectedRecipeDetailViewModel = new RecipeDetailViewModel()
                 {
-                    RecipeSteps = _selectedBetterRecipe.RecipeSteps,
-                    Id = _selectedBetterRecipe.Id,
-                    Inputs = _selectedBetterRecipe.Inputs,
-                    MainOutput = _selectedBetterRecipe.MainOutput,
-                    Outputs = _selectedBetterRecipe.Outputs
+                    RecipeSteps = _selectedRecipe.RecipeSteps,
+                    Id = _selectedRecipe.Id,
+                    Inputs = _selectedRecipe.Inputs,
+                    MainOutput = _selectedRecipe.MainOutput,
+                    Outputs = _selectedRecipe.Outputs
                 };
                 OnPropertyChanged(nameof(SelectedRecipeDetailViewModel));
             }
         }
 
-        public ObservableCollection<BetterRecipe> ACollection { get; set; }
+        public ObservableCollection<Recipe> ACollection { get; set; }
 
         public RecipesListViewModel()
         {
             //TODO: Replace this with constructor injection and Unity
             var rr = new HardCodedRecipeRepository();
-            ACollection = new ObservableCollection<BetterRecipe>(
+            ACollection = new ObservableCollection<Recipe>(
                 rr.GetRecipes());
             SelectedRecipeDetailViewModel = ACollection
                 .Select(x => new RecipeDetailViewModel()

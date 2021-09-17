@@ -43,7 +43,7 @@ namespace Pantry.Data
 
     public class HardCodedRecipeRepository
     {
-        private readonly List<BetterRecipe> _recipes = new();
+        private readonly List<Recipe> _recipes = new();
         private List<Equipment> _equipments;
         private readonly Equipment _breadMachine = new()
         { Name = "Bread Machine", BookedTimes = new List<(DateTime startTime, DateTime endTime, string TaskName)>() };
@@ -70,16 +70,16 @@ namespace Pantry.Data
             HardCodedFoodRepository hcfr = new();
             var foods = hcfr.GetFoods();
             _recipes.Add(
-             new BetterRecipe()
+             new Recipe()
              {
                  Id = 1,
                  MainOutput = _cookedChicken,
-                 Inputs = new List<FoodInstance>()
+                 Inputs = new List<RecipeFood>()
                  {
-                        new() {Amount = 120, FoodType = _frozenChicken, Id = _frozenChicken.FoodId},
-                        new() {Amount = 1, FoodType = _bbqSauce , Id = _bbqSauce.FoodId },
+                        new() {Amount = 120, Food = _frozenChicken, Id = _frozenChicken.FoodId},
+                        new() {Amount = 1, Food = _bbqSauce , Id = _bbqSauce.FoodId },
                  },
-                 Outputs = new List<FoodInstance>() { new() { Amount = 120, FoodType = _cookedChicken, Id = _cookedChicken.FoodId }, },
+                 Outputs = new List<RecipeFood>() { new() { Amount = 120, Food = _cookedChicken, Id = _cookedChicken.FoodId }, },
                  RecipeSteps = new List<RecipeStep>()
                  {
                         new()
@@ -99,12 +99,12 @@ namespace Pantry.Data
                  }
              });
             _recipes.Add(
-                new BetterRecipe()
+                new Recipe()
                 {
                     Id = 2,
                     MainOutput = _rawChicken,
-                    Inputs = new List<FoodInstance>() { new() { Amount = 120, FoodType = _frozenChicken, Id = _frozenChicken.FoodId }, },
-                    Outputs = new List<FoodInstance>() { new() { Amount = 120, FoodType = _rawChicken, Id = _rawChicken.FoodId }, },
+                    Inputs = new List<RecipeFood>() { new() { Amount = 120, Food = _frozenChicken, Id = _frozenChicken.FoodId }, },
+                    Outputs = new List<RecipeFood>() { new() { Amount = 120, Food = _rawChicken, Id = _rawChicken.FoodId }, },
                     RecipeSteps = new List<RecipeStep>()
                     {
                         new()
@@ -120,12 +120,12 @@ namespace Pantry.Data
                     }
                 });
             _recipes.Add(
-                new BetterRecipe()
+                new Recipe()
                 {
                     Id = 3,
                     MainOutput = _slicedChicken,
-                    Inputs = new List<FoodInstance>() { new() { Amount = 120, FoodType = _cookedChicken, Id = _cookedChicken.FoodId }, },
-                    Outputs = new List<FoodInstance>() { new() { Amount = 120, FoodType = _slicedChicken, Id = _slicedChicken.FoodId }, },
+                    Inputs = new List<RecipeFood>() { new() { Amount = 120, Food = _cookedChicken, Id = _cookedChicken.FoodId }, },
+                    Outputs = new List<RecipeFood>() { new() { Amount = 120, Food = _slicedChicken, Id = _slicedChicken.FoodId }, },
                     RecipeSteps = new List<RecipeStep>()
                     {
                         new()
@@ -136,12 +136,12 @@ namespace Pantry.Data
                     }
                 });
             _recipes.Add(
-                new BetterRecipe()
+                new Recipe()
                 {
                     Id = 4,
                     MainOutput = _slicedBread,
-                    Inputs = new List<FoodInstance>() { new() { Amount = 1, FoodType = _bread, Id = _bread.FoodId }, },
-                    Outputs = new List<FoodInstance>() { new() { Amount = 10, FoodType = _slicedBread, Id = _slicedBread.FoodId }, },
+                    Inputs = new List<RecipeFood>() { new() { Amount = 1, Food = _bread, Id = _bread.FoodId }, },
+                    Outputs = new List<RecipeFood>() { new() { Amount = 10, Food = _slicedBread, Id = _slicedBread.FoodId }, },
                     RecipeSteps = new List<RecipeStep>()
                     {
                         new()
@@ -151,18 +151,18 @@ namespace Pantry.Data
                     }
                 });
             _recipes.Add(
-                new BetterRecipe()
+                new Recipe()
                 {
                     Id = 5,
                     MainOutput = _chickenSandwich,
-                    Inputs = new List<FoodInstance>()
+                    Inputs = new List<RecipeFood>()
                     {
-                        new() {Amount = 2, FoodType = _slicedBread, Id = _slicedBread.FoodId},
-                        new() {Amount = 120, FoodType = _slicedChicken, Id = _slicedChicken.FoodId}
+                        new() {Amount = 2, Food = _slicedBread, Id = _slicedBread.FoodId},
+                        new() {Amount = 120, Food = _slicedChicken, Id = _slicedChicken.FoodId}
                     },
-                    Outputs = new List<FoodInstance>()
+                    Outputs = new List<RecipeFood>()
                     {
-                        new() { Amount = 1, FoodType = _chickenSandwich , Id = _chickenSandwich.FoodId}
+                        new() { Amount = 1, Food = _chickenSandwich , Id = _chickenSandwich.FoodId}
 
                     },
                     RecipeSteps = new List<RecipeStep>()
@@ -175,17 +175,17 @@ namespace Pantry.Data
                     }
                 });
             _recipes.Add(
-                new BetterRecipe()
+                new Recipe()
                 {
                     Id = 6,
                     MainOutput = _bread,
-                    Inputs = new List<FoodInstance>()
+                    Inputs = new List<RecipeFood>()
                     {
-                        new() {Amount = 120, FoodType = _eggs, Id = _eggs.FoodId},
-                        new() {Amount = 120, FoodType = _milk, Id = _milk.FoodId},
-                        new() {Amount = 120, FoodType = _flour, Id = _flour.FoodId},
+                        new() {Amount = 120, Food = _eggs, Id = _eggs.FoodId},
+                        new() {Amount = 120, Food = _milk, Id = _milk.FoodId},
+                        new() {Amount = 120, Food = _flour, Id = _flour.FoodId},
                     },
-                    Outputs = new List<FoodInstance>() { new() { Amount = 1, FoodType = _bread, Id = _bread.FoodId }, },
+                    Outputs = new List<RecipeFood>() { new() { Amount = 1, Food = _bread, Id = _bread.FoodId }, },
                     RecipeSteps = new List<RecipeStep>()
                     {
                         new()
@@ -208,7 +208,7 @@ namespace Pantry.Data
 
         }
 
-        public IList<BetterRecipe> GetRecipes()
+        public IList<Recipe> GetRecipes()
         {
             return _recipes;
         }

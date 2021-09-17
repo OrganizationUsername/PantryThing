@@ -24,7 +24,7 @@ namespace Pantry.Core.Test.ScheduleTests
         { Name = "Sous Vide", BookedTimes = new List<(DateTime startTime, DateTime endTime, string TaskName)>() };
         private List<Equipment> _equipments;
 
-        private readonly List<BetterRecipe> _recipes = new();
+        private readonly List<Recipe> _recipes = new();
         private readonly BetterFoodProcessor _foodProcessor = new();
         private readonly Food _frozenChicken = new() { FoodId = 0, Name = "Frozen Chicken", BetterRecipes = null };
         private readonly Food _rawChicken = new() { FoodId = 1, Name = "Raw Chicken", };
@@ -42,16 +42,16 @@ namespace Pantry.Core.Test.ScheduleTests
         public void Setup()
         {
             _recipes.Add(
-                new BetterRecipe()
+                new Recipe()
                 {
                     Id = 1,
                     MainOutput = _cookedChicken,
-                    Inputs = new List<FoodInstance>()
+                    Inputs = new List<RecipeFood>()
                     {
-                        new() {Amount = 120, FoodType = _rawChicken},
-                        new() {Amount = 1, FoodType = _bbqSauce}
+                        new() {Amount = 120, Food = _rawChicken},
+                        new() {Amount = 1, Food = _bbqSauce}
                     },
-                    Outputs = new List<FoodInstance>() { new() { Amount = 120, FoodType = _cookedChicken } },
+                    Outputs = new List<RecipeFood>() { new() { Amount = 120, Food = _cookedChicken } },
                     RecipeSteps = new List<RecipeStep>()
                     {
                         new()
@@ -71,12 +71,12 @@ namespace Pantry.Core.Test.ScheduleTests
                     }
                 });
             _recipes.Add(
-                new BetterRecipe()
+                new Recipe()
                 {
                     Id = 2,
                     MainOutput = _rawChicken,
-                    Inputs = new List<FoodInstance>() { new() { Amount = 120, FoodType = _frozenChicken } },
-                    Outputs = new List<FoodInstance>() { new() { Amount = 120, FoodType = _rawChicken } },
+                    Inputs = new List<RecipeFood>() { new() { Amount = 120, Food = _frozenChicken } },
+                    Outputs = new List<RecipeFood>() { new() { Amount = 120, Food = _rawChicken } },
                     RecipeSteps = new List<RecipeStep>()
                     {
                         new()
@@ -92,12 +92,12 @@ namespace Pantry.Core.Test.ScheduleTests
                     }
                 });
             _recipes.Add(
-                new BetterRecipe()
+                new Recipe()
                 {
                     Id = 3,
                     MainOutput = _slicedChicken,
-                    Inputs = new List<FoodInstance>() { new() { Amount = 120, FoodType = _cookedChicken } },
-                    Outputs = new List<FoodInstance>() { new() { Amount = 120, FoodType = _slicedChicken } },
+                    Inputs = new List<RecipeFood>() { new() { Amount = 120, Food = _cookedChicken } },
+                    Outputs = new List<RecipeFood>() { new() { Amount = 120, Food = _slicedChicken } },
                     RecipeSteps = new List<RecipeStep>()
                     {
                         new()
@@ -108,12 +108,12 @@ namespace Pantry.Core.Test.ScheduleTests
                     }
                 });
             _recipes.Add(
-                new BetterRecipe()
+                new Recipe()
                 {
                     Id = 4,
                     MainOutput = _slicedBread,
-                    Inputs = new List<FoodInstance>() { new() { Amount = 1, FoodType = _bread } },
-                    Outputs = new List<FoodInstance>() { new() { Amount = 10, FoodType = _slicedBread } },
+                    Inputs = new List<RecipeFood>() { new() { Amount = 1, Food = _bread } },
+                    Outputs = new List<RecipeFood>() { new() { Amount = 10, Food = _slicedBread } },
                     RecipeSteps = new List<RecipeStep>()
                     {
                         new()
@@ -123,16 +123,16 @@ namespace Pantry.Core.Test.ScheduleTests
                     }
                 });
             _recipes.Add(
-                new BetterRecipe()
+                new Recipe()
                 {
                     Id = 5,
                     MainOutput = _chickenSandwich,
-                    Inputs = new List<FoodInstance>()
+                    Inputs = new List<RecipeFood>()
                     {
-                        new() {Amount = 2, FoodType = _slicedBread},
-                        new() {Amount = 120, FoodType = _slicedChicken}
+                        new() {Amount = 2, Food = _slicedBread},
+                        new() {Amount = 120, Food = _slicedChicken}
                     },
-                    Outputs = new List<FoodInstance>() { new() { Amount = 1, FoodType = _chickenSandwich } },
+                    Outputs = new List<RecipeFood>() { new() { Amount = 1, Food = _chickenSandwich } },
                     RecipeSteps = new List<RecipeStep>()
                     {
                         new()
@@ -143,17 +143,17 @@ namespace Pantry.Core.Test.ScheduleTests
                     }
                 });
             _recipes.Add(
-                new BetterRecipe()
+                new Recipe()
                 {
                     Id = 6,
                     MainOutput = _bread,
-                    Inputs = new List<FoodInstance>()
+                    Inputs = new List<RecipeFood>()
                     {
-                        new() {Amount = 120, FoodType = _eggs},
-                        new() {Amount = 120, FoodType = _milk},
-                        new() {Amount = 120, FoodType = _flour},
+                        new() {Amount = 120, Food = _eggs},
+                        new() {Amount = 120, Food = _milk},
+                        new() {Amount = 120, Food = _flour},
                     },
-                    Outputs = new List<FoodInstance>() { new() { Amount = 1, FoodType = _bread } },
+                    Outputs = new List<RecipeFood>() { new() { Amount = 1, Food = _bread } },
                     RecipeSteps = new List<RecipeStep>()
                     {
                         new()
@@ -196,12 +196,12 @@ namespace Pantry.Core.Test.ScheduleTests
             //If I were cooking more than one thing, I could also have the opportunity of checking
             //whether or not pushing back a long-running process allows to fit in something else speeds
             //up overall flow.
-            List<FoodInstance> pantry = new()
+            List<RecipeFood> pantry = new()
             {
-                new FoodInstance() { FoodType = _eggs, Amount = 120 },
-                new FoodInstance() { FoodType = _flour, Amount = 210 },
-                new FoodInstance() { FoodType = _milk, Amount = 210 },
-                new FoodInstance() { FoodType = _cookedChicken, Amount = 500 },
+                new RecipeFood() { Food = _eggs, Amount = 120 },
+                new RecipeFood() { Food = _flour, Amount = 210 },
+                new RecipeFood() { Food = _milk, Amount = 210 },
+                new RecipeFood() { Food = _cookedChicken, Amount = 500 },
             };
             PantryProvider pp = new(pantry);
             var recipe = _recipes.First(x => x.MainOutput == _chickenSandwich);
@@ -225,12 +225,12 @@ namespace Pantry.Core.Test.ScheduleTests
         [Test]
         public void GetLongestDag()
         {
-            List<FoodInstance> pantry = new()
+            List<RecipeFood> pantry = new()
             {
-                new FoodInstance() { FoodType = _eggs, Amount = 120 },
-                new FoodInstance() { FoodType = _flour, Amount = 210 },
-                new FoodInstance() { FoodType = _milk, Amount = 210 },
-                new FoodInstance() { FoodType = _cookedChicken, Amount = 500 },
+                new RecipeFood() { Food = _eggs, Amount = 120 },
+                new RecipeFood() { Food = _flour, Amount = 210 },
+                new RecipeFood() { Food = _milk, Amount = 210 },
+                new RecipeFood() { Food = _cookedChicken, Amount = 500 },
             };
             PantryProvider pp = new(pantry);
             var recipe = _recipes.First(x => x.MainOutput == _chickenSandwich);
@@ -257,12 +257,12 @@ namespace Pantry.Core.Test.ScheduleTests
         [Test]
         public void GetLongestDagText()
         {
-            List<FoodInstance> pantry = new()
+            List<RecipeFood> pantry = new()
             {
-                new FoodInstance() { FoodType = _eggs, Amount = 120 },
-                new FoodInstance() { FoodType = _flour, Amount = 210 },
-                new FoodInstance() { FoodType = _milk, Amount = 210 },
-                new FoodInstance() { FoodType = _cookedChicken, Amount = 500 },
+                new RecipeFood() { Food = _eggs, Amount = 120 },
+                new RecipeFood() { Food = _flour, Amount = 210 },
+                new RecipeFood() { Food = _milk, Amount = 210 },
+                new RecipeFood() { Food = _cookedChicken, Amount = 500 },
             };
             PantryProvider pp = new(pantry);
             var recipe = _recipes.First(x => x.MainOutput == _chickenSandwich);
@@ -291,13 +291,13 @@ namespace Pantry.Core.Test.ScheduleTests
         [Test]
         public void GetLongestDagTextWithLimitedBread()
         {
-            List<FoodInstance> pantry = new()
+            List<RecipeFood> pantry = new()
             {
-                new FoodInstance() { FoodType = _slicedBread, Amount = 2 },
-                new FoodInstance() { FoodType = _eggs, Amount = 120 },
-                new FoodInstance() { FoodType = _flour, Amount = 210 },
-                new FoodInstance() { FoodType = _milk, Amount = 210 },
-                new FoodInstance() { FoodType = _cookedChicken, Amount = 500 },
+                new RecipeFood() { Food = _slicedBread, Amount = 2 },
+                new RecipeFood() { Food = _eggs, Amount = 120 },
+                new RecipeFood() { Food = _flour, Amount = 210 },
+                new RecipeFood() { Food = _milk, Amount = 210 },
+                new RecipeFood() { Food = _cookedChicken, Amount = 500 },
             };
             PantryProvider pp = new(pantry);
             var recipe = _recipes.First(x => x.MainOutput == _chickenSandwich);
@@ -326,15 +326,15 @@ namespace Pantry.Core.Test.ScheduleTests
         [Test]
         public void GetSecondLongestDagText()
         {
-            List<FoodInstance> pantry = new()
+            List<RecipeFood> pantry = new()
             {
-                new FoodInstance() { FoodType = _slicedBread, Amount = 2 },
-                new FoodInstance() { FoodType = _eggs, Amount = 120 },
-                new FoodInstance() { FoodType = _flour, Amount = 210 },
-                new FoodInstance() { FoodType = _milk, Amount = 210 },
-                new FoodInstance() { FoodType = _cookedChicken, Amount = 500 },
-                new FoodInstance() { FoodType = _rawChicken, Amount = 500 },
-                new FoodInstance() { FoodType = _bbqSauce, Amount = 500 },
+                new RecipeFood() { Food = _slicedBread, Amount = 2 },
+                new RecipeFood() { Food = _eggs, Amount = 120 },
+                new RecipeFood() { Food = _flour, Amount = 210 },
+                new RecipeFood() { Food = _milk, Amount = 210 },
+                new RecipeFood() { Food = _cookedChicken, Amount = 500 },
+                new RecipeFood() { Food = _rawChicken, Amount = 500 },
+                new RecipeFood() { Food = _bbqSauce, Amount = 500 },
             };
             PantryProvider pp = new(pantry);
             var recipe = _recipes.First(x => x.MainOutput == _chickenSandwich);
@@ -368,15 +368,15 @@ namespace Pantry.Core.Test.ScheduleTests
         [Test]
         public void GetSecondLongestDagText_Bad()
         {
-            List<FoodInstance> pantry = new()
+            List<RecipeFood> pantry = new()
             {
-                new FoodInstance() { FoodType = _slicedBread, Amount = 2 },
-                new FoodInstance() { FoodType = _eggs, Amount = 120 },
-                new FoodInstance() { FoodType = _flour, Amount = 210 },
-                new FoodInstance() { FoodType = _milk, Amount = 210 },
-                new FoodInstance() { FoodType = _cookedChicken, Amount = 500 },
-                new FoodInstance() { FoodType = _rawChicken, Amount = 500 },
-                new FoodInstance() { FoodType = _bbqSauce, Amount = 500 },
+                new RecipeFood() { Food = _slicedBread, Amount = 2 },
+                new RecipeFood() { Food = _eggs, Amount = 120 },
+                new RecipeFood() { Food = _flour, Amount = 210 },
+                new RecipeFood() { Food = _milk, Amount = 210 },
+                new RecipeFood() { Food = _cookedChicken, Amount = 500 },
+                new RecipeFood() { Food = _rawChicken, Amount = 500 },
+                new RecipeFood() { Food = _bbqSauce, Amount = 500 },
             };
             PantryProvider pp = new(pantry);
             var recipe = _recipes.First(x => x.MainOutput == _chickenSandwich);
@@ -412,12 +412,12 @@ namespace Pantry.Core.Test.ScheduleTests
         [Test]
         public void CheckLastDagText()
         {
-            List<FoodInstance> pantry = new()
+            List<RecipeFood> pantry = new()
             {
-                new FoodInstance() { FoodType = _eggs, Amount = 120 },
-                new FoodInstance() { FoodType = _flour, Amount = 210 },
-                new FoodInstance() { FoodType = _milk, Amount = 210 },
-                new FoodInstance() { FoodType = _cookedChicken, Amount = 500 },
+                new RecipeFood() { Food = _eggs, Amount = 120 },
+                new RecipeFood() { Food = _flour, Amount = 210 },
+                new RecipeFood() { Food = _milk, Amount = 210 },
+                new RecipeFood() { Food = _cookedChicken, Amount = 500 },
             };
             PantryProvider pp = new(pantry);
             var recipe = _recipes.First(x => x.MainOutput == _chickenSandwich);
@@ -442,15 +442,15 @@ namespace Pantry.Core.Test.ScheduleTests
         [Test]
         public void AnActualSchedulingTest()
         {
-            List<FoodInstance> pantry = new()
+            List<RecipeFood> pantry = new()
             {
-                new FoodInstance() { FoodType = _slicedBread, Amount = 2 },
-                new FoodInstance() { FoodType = _eggs, Amount = 120 },
-                new FoodInstance() { FoodType = _flour, Amount = 210 },
-                new FoodInstance() { FoodType = _milk, Amount = 210 },
-                new FoodInstance() { FoodType = _cookedChicken, Amount = 500 },
-                new FoodInstance() { FoodType = _rawChicken, Amount = 500 },
-                new FoodInstance() { FoodType = _bbqSauce, Amount = 500 },
+                new RecipeFood() { Food = _slicedBread, Amount = 2 },
+                new RecipeFood() { Food = _eggs, Amount = 120 },
+                new RecipeFood() { Food = _flour, Amount = 210 },
+                new RecipeFood() { Food = _milk, Amount = 210 },
+                new RecipeFood() { Food = _cookedChicken, Amount = 500 },
+                new RecipeFood() { Food = _rawChicken, Amount = 500 },
+                new RecipeFood() { Food = _bbqSauce, Amount = 500 },
             };
             PantryProvider pp = new(pantry);
             var recipe = _recipes.First(x => x.MainOutput == _chickenSandwich);

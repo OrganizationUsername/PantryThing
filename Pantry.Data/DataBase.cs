@@ -10,32 +10,31 @@ namespace Pantry.Data
     //dotnet ef migrations add foodConstraint
     //dotnet ef database update foodConstraint
 
-    public class BetterRecipeInput
-    {
-        public int BetterRecipeInputId { get; set; }
-        public int BetterRecipeId { get; set; }
-        public int FoodId { get; set; }
-        public double Amount { get; set; }
-    }
-
     public class DataBase : DbContext
     {
-        public DbSet<BetterRecipe> BetterRecipes { get; set; }
+        public DbSet<Recipe> Recipes { get; set; }
         public DbSet<Food> Foods { get; set; }
-        public DbSet<FoodInstance> FoodInstances { get; set; }
+        public DbSet<RecipeFood> RecipeFoods { get; set; }
+
+//Wow... This should all be refactored to reflect positive numbers for
+//inputs and negative numbers for outputs.
+
+
+
         //public DbSet<Equipment> Equipments { get; set; }
         //public DbSet<BetterRecipeInput> BetterRecipeInputs { get; set; }
 
         public DataBase()
         {
-            this.Database.EnsureCreated();
+            //this.Database.EnsureCreated();
         }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<Equipment>().Ignore(x => x.BookedTimes);
-            modelBuilder.Entity<BetterRecipe>().HasMany(x => x.Inputs);
-            modelBuilder.Entity<BetterRecipe>().HasMany(x => x.Outputs);
-            //modelBuilder.Entity<BetterRecipe>().HasKey(x => x.Id);
+            modelBuilder.Entity<Recipe>().Ignore(x => x.RecipeSteps);
+            //modelBuilder.Entity<Equipment>().Ignore(x => x.BookedTimes);
+            //modelBuilder.Entity<Recipe>().HasMany(x => x.Inputs);
+            //modelBuilder.Entity<Recipe>().HasMany(x => x.Outputs);
+            //modelBuilder.Entity<Recipe>().HasKey(x => x.Id);
             //modelBuilder.Entity<Food>().HasIndex(x => x.Name).IsUnique();
             //modelBuilder.Entity<BetterRecipeInput>().HasKey(x => x.BetterRecipeInputId);
             base.OnModelCreating(modelBuilder);

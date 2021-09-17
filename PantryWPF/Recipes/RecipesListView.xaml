@@ -12,7 +12,7 @@
         <recipes:RecipesListViewModel />
     </UserControl.DataContext>
     <UserControl.Resources>
-        <DataTemplate DataType="{x:Type models:BetterRecipe}">
+        <DataTemplate DataType="{x:Type models:Recipe}">
             <TextBlock Text="{Binding MainOutput.Name}"/>
         </DataTemplate>
         <DataTemplate DataType="{x:Type recipes:RecipeDetailViewModel}">
@@ -21,7 +21,7 @@
     </UserControl.Resources>
     <DockPanel>
         <ListView ItemsSource="{Binding ACollection}" DockPanel.Dock="Left" 
-                  SelectedItem="{Binding SelectedBetterRecipe}"/>
+                  SelectedItem="{Binding SelectedRecipe}"/>
         <ContentControl Content="{Binding SelectedRecipeDetailViewModel}" DockPanel.Dock="Right"/>
     </DockPanel>
 </UserControl>
