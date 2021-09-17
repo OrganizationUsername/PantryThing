@@ -10,8 +10,8 @@ namespace Pantry.Core.Extensions
 
         public static string GetDagString(RecipeDag dag)
         {
-            if (dag.SubordinateBetterRecipes.Count == 0) { return dag.MainRecipe.MainOutput.Name.ToString(); }
-            return string.Join(Environment.NewLine, dag.SubordinateBetterRecipes.Select(x => dag.MainRecipe.MainOutput.Name.ToString() + "->" + GetDagString(x)));
+            if (dag.SubordinateBetterRecipes.Count == 0) { return dag.MainRecipe.Inputs.First(x => x.Amount < 0).Food.Name.ToString(); }
+            return string.Join(Environment.NewLine, dag.SubordinateBetterRecipes.Select(x => dag.MainRecipe.Inputs.First(x => x.Amount < 0).Food.Name.ToString() + "->" + GetDagString(x)));
         }
 
         public static void ConsoleResult(this CookPlan canCook)

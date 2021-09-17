@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using Pantry.Core.Models;
 
@@ -37,7 +38,18 @@ namespace Pantry.Core.FoodProcessing
                         continue;
                     }
                     onlyPantryUsed = false;
-                    var newRecipe = recipes.FirstOrDefault(x => x.MainOutput.FoodId == foodInstance.Food.FoodId);
+                    
+                    var newRecipe = RecipeFinder(foodInstance.Food.FoodId, recipes);
+                    if (newRecipe is null)
+                    {
+                         //newRecipe = recipes.FirstOrDefault(x => x.Inputs.Any(y => y.Food.FoodId == foodInstance.Food.FoodId));
+                    }
+                    else
+                    {
+                        Trace.WriteLine($"Needed {foodInstance.Food.Name} and found the recipe with mainoutput = {newRecipe.Inputs.First(x=>x.Amount<0).Food.Name}");
+                    }
+
+
                     if (newRecipe is null)
                     {
                         return new CookPlan() { CanMake = false };
@@ -47,9 +59,10 @@ namespace Pantry.Core.FoodProcessing
                     if (result.CanMake)
                     {
                         recipeDag.SubordinateBetterRecipes.Add(result.RecipeDag);
-                        totalInput.AddRange(result.TotalInput);
+                        totalInput.AddRange(result.TotalInput.Where(x=>x.Amount>0));
                         clonedFoodInventory.AddRange(CloneFoodInstances(result.TotalOutput));
                         totalOutput.AddRange(CloneFoodInstances(result.TotalOutput));
+
                     }
                     else
                     {
@@ -66,6 +79,21 @@ namespace Pantry.Core.FoodProcessing
                 TotalInput = totalInput,
                 RecipeDag = recipeDag
             };
+        }
+
+        public static Recipe RecipeFinder(int FoodId, IList<Recipe> recipes)
+        {
+            foreach (var r in recipes)
+            {
+                foreach (var fi in r.Inputs)
+                {
+                    if (fi.Food.FoodId == FoodId && fi.Amount < 0)
+                    {
+                        return r;
+                    }
+                }
+            }
+            return null;
         }
 
         private static RecipeFood[] GetFoodInstancesFromRecipe(Recipe recipe)
