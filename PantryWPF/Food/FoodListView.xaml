@@ -19,8 +19,13 @@
             <TextBlock Text="{Binding FoodName}"/>
         </DataTemplate>
     </UserControl.Resources>
-    <StackPanel>
+    <DockPanel>
+        <TextBlock Text="Yo" DockPanel.Dock="Top"/>
+        <DockPanel DockPanel.Dock="Left">
+            <Button Content="Add Food" DockPanel.Dock="Top" Command="{Binding AddRecipeCommand}"/>
+            <ListView ItemsSource="{Binding Foods}"/>
+        </DockPanel>
         <TextBlock Text="Yo"/>
-        <ListView ItemsSource="{Binding Foods}"/>
-    </StackPanel>
+
+    </DockPanel>
 </UserControl>
