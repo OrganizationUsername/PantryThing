@@ -14,7 +14,7 @@
     </UserControl.DataContext>
     <UserControl.Resources>
         <DataTemplate DataType="{x:Type models:Recipe}">
-            <TextBlock Text="{Binding MainOutput.Name}"/>
+            <TextBlock Text="{Binding Description}"/>
         </DataTemplate>
         <DataTemplate DataType="{x:Type recipes:RecipeDetailViewModel}">
             <recipes:RecipeDetailView />
@@ -28,7 +28,8 @@
             <TextBlock Text="Recipes"/>
             <ListView ItemsSource="{Binding ACollection}" 
                       SelectedItem="{Binding SelectedRecipe}"/>
-            <Button Content="Add Recipe"/>
+            <TextBox Text="{Binding NewRecipeName}"/>
+            <Button Content="Add Recipe" Command="{Binding AddRecipeCommand}"/>
         </StackPanel>
         <StackPanel DockPanel.Dock="Right">
             <TextBlock Text="Recipe Details"/>

@@ -12,25 +12,48 @@
             <local:RecipeInstructionView/>
         </DataTemplate>
     </UserControl.Resources>
-    <ScrollViewer HorizontalScrollBarVisibility="Auto">
-        <StackPanel>
-            <TextBlock Text="{Binding MainOutput.Name}"/>
-            <GroupBox Header="RecipeFoods: ">
-                <ListView ItemsSource="{Binding RecipeFoods}">
-                    <ListView.ItemTemplate>
-                        <DataTemplate>
-                            <StackPanel Orientation="Horizontal">
-                                <TextBlock Text="{Binding Food.FoodName}"/>
-                                <TextBox Text="{Binding Amount}"/>
-                            </StackPanel>
-                        </DataTemplate>
-                    </ListView.ItemTemplate>
-                </ListView>
-            </GroupBox>
-            <GroupBox Header="Instructions:">
-                <ListView ItemsSource="{Binding RecipeSteps}"/>
-            </GroupBox>
-            <Button Content="Simulate Save" Command="{Binding FakeSaveCommand}"/>
-        </StackPanel>
-    </ScrollViewer>
+    <DockPanel>
+        <ScrollViewer HorizontalScrollBarVisibility="Auto" DockPanel.Dock="Top">
+            <StackPanel>
+                <TextBlock Text="{Binding Description}"/>
+                <GroupBox Header="RecipeFoods: ">
+                    <ListView ItemsSource="{Binding RecipeFoods}">
+                        <ListView.ItemTemplate>
+                            <DataTemplate>
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBlock Text="{Binding Food.FoodName}"/>
+                                    <TextBox Text="{Binding Amount}"/>
+                                </StackPanel>
+                            </DataTemplate>
+                        </ListView.ItemTemplate>
+                    </ListView>
+                </GroupBox>
+                <GroupBox Header="Instructions:">
+                    <ListView ItemsSource="{Binding RecipeSteps}"/>
+                </GroupBox>
+                <Button Content="Simulate Save" Command="{Binding FakeSaveCommand}"/>
+            </StackPanel>
+        </ScrollViewer>
+        <GroupBox Header="Add new Step">
+            <StackPanel DockPanel.Dock="Bottom">
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock Text="Food:"/>
+                    <ComboBox ItemsSource="{Binding Foods}" DisplayMemberPath="FoodName" />
+                </StackPanel>
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock Text="Equipment used:"/>
+                    <ListBox />
+                </StackPanel>
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock Text="Amount: "/>
+                    <TextBox Width="50"/>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock Text="Duration: "/>
+                    <TextBox Width="50"/>
+                </StackPanel>
+                <Button Content="Add new step"/>
+            </StackPanel>
+        </GroupBox>
+    </DockPanel>
 </UserControl>

@@ -20,12 +20,27 @@
         </DataTemplate>
     </UserControl.Resources>
     <DockPanel>
-        <DockPanel DockPanel.Dock="Left" Width="100" LastChildFill="False">
-            <TextBox Text="{Binding NewFoodName}" DockPanel.Dock="Top"/>
-            <Button Content="Add Food" Command="{Binding AddRecipeCommand}" DockPanel.Dock="Top"/>
-            <ListView ItemsSource="{Binding Foods}" DockPanel.Dock="Top"/>
-        </DockPanel>
-        <TextBlock Text="Yo"/>
+        <ScrollViewer HorizontalScrollBarVisibility="Auto">
+            <DockPanel DockPanel.Dock="Left" Width="100">
+                <TextBox Text="{Binding NewFoodName}" DockPanel.Dock="Top"/>
+                <Button Content="Add Food" Command="{Binding AddRecipeCommand}" DockPanel.Dock="Top"/>
 
+                <ListView 
+                DockPanel.Dock="Top" 
+                ItemsSource="{Binding Foods}" 
+                SelectedValue="{Binding SelectedFood, Mode=TwoWay}"/>
+            </DockPanel>
+        </ScrollViewer>
+
+        <StackPanel Width="150">
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Text="ID" Width="75"/>
+                <TextBlock Text="{Binding SelectedFood.FoodId}"/>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Text="Name" Width="75"/>
+                <TextBlock Text="{Binding SelectedFood.FoodName}"/>
+            </StackPanel>
+        </StackPanel>
     </DockPanel>
 </UserControl>
