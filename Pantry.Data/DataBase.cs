@@ -10,7 +10,19 @@ namespace Pantry.Data
     //dotnet ef migrations add foodConstraint
     //dotnet ef database update foodConstraint
 
-    public class DataBase : DbContext
+    public interface IDataBase
+    {
+        DbSet<Recipe> Recipes { get; set; }
+        DbSet<Food> Foods { get; set; }
+        DbSet<RecipeFood> RecipeFoods { get; set; }
+        DbSet<RecipeStep> RecipeSteps { get; set; }
+        DbSet<Equipment> Equipments { get; set; }
+        DbSet<EquipmentCommitment> EquipmentCommitments { get; set; }
+        DbSet<Location> Locations { get; set; }
+        int SaveChanges();
+    }
+
+    public class DataBase : DbContext, IDataBase
     {
         public DbSet<Recipe> Recipes { get; set; }
         public DbSet<Food> Foods { get; set; }
@@ -58,11 +70,7 @@ namespace Pantry.Data
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             optionsBuilder.EnableSensitiveDataLogging();
-            Assembly asm = Assembly.GetExecutingAssembly();
-            string path = System.IO.Path.GetDirectoryName(asm.Location);
-            string fullPath = System.IO.Path.Combine(path, "Pantry1.db");
-            Console.WriteLine(fullPath);
-            optionsBuilder.UseSqlite(@$"Data Source={fullPath}");
+            optionsBuilder.UseSqlite(@"Data Source=C:\Programming\EFTesting\EFConsole\testDb.db");
         }
     }
 }

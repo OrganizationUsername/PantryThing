@@ -8,6 +8,7 @@ namespace PantryWPF.Recipes
 {
     public class RecipesListViewModel : VmBase
     {
+        private readonly IDataBase _dataBase;
         private RecipeDetailViewModel _selectedRecipeDetailViewModel;
         public RecipeDetailViewModel SelectedRecipeDetailViewModel
         {
@@ -39,9 +40,10 @@ namespace PantryWPF.Recipes
 
         public ObservableCollection<Recipe> ACollection { get; set; }
 
-        public RecipesListViewModel()
+        public RecipesListViewModel(/*IDataBase dataBase*/)
         {
-   
+            //_dataBase = dataBase;
+            
         }
     }
 }

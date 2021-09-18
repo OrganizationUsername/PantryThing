@@ -20,8 +20,15 @@
         </DataTemplate>
     </UserControl.Resources>
     <DockPanel>
-        <ListView ItemsSource="{Binding ACollection}" DockPanel.Dock="Left" 
-                  SelectedItem="{Binding SelectedRecipe}"/>
-        <ContentControl Content="{Binding SelectedRecipeDetailViewModel}" DockPanel.Dock="Right"/>
+        <StackPanel DockPanel.Dock="Left" >
+            <TextBlock Text="Recipes"/>
+            <ListView ItemsSource="{Binding ACollection}" 
+                      SelectedItem="{Binding SelectedRecipe}"/>
+            <Button Content="Add Recipe"/>
+        </StackPanel>
+        <StackPanel DockPanel.Dock="Right">
+            <TextBlock Text="Recipe Details"/>
+            <ContentControl Content="{Binding SelectedRecipeDetailViewModel}"/>
+        </StackPanel>
     </DockPanel>
 </UserControl>
