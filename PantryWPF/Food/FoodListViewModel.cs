@@ -14,11 +14,12 @@ namespace PantryWPF.Food
     {
         private readonly IDataBase _dataBase;
         public ObservableCollection<Pantry.Core.Models.Food> Foods { get; set; }
-
+        public string NewFoodName { get; set; }
         public DelegateCommand AddRecipeCommand { get; set; }
         public FoodListViewModel()
         {
             _dataBase = new DataBase();
+
             LoadFoods();
             AddRecipeCommand = new DelegateCommand(AddFood);
         }
@@ -45,13 +46,13 @@ namespace PantryWPF.Food
 
         public void AddFood()
         {
-            _dataBase.Foods.Add(new Pantry.Core.Models.Food() { FoodName = "Something. " });
+            if (string.IsNullOrWhiteSpace(NewFoodName)) { return; }
+            _dataBase.Foods.Add(new Pantry.Core.Models.Food() { FoodName = NewFoodName });
             _dataBase.SaveChanges();
+            NewFoodName = "";
+            OnPropertyChanged(nameof(NewFoodName));
+            LoadFoods();
         }
 
     }
-
-
-
-
 }

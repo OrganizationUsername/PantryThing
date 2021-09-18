@@ -20,10 +20,10 @@
         </DataTemplate>
     </UserControl.Resources>
     <DockPanel>
-        <TextBlock Text="Yo" DockPanel.Dock="Top"/>
-        <DockPanel DockPanel.Dock="Left">
-            <Button Content="Add Food" DockPanel.Dock="Top" Command="{Binding AddRecipeCommand}"/>
-            <ListView ItemsSource="{Binding Foods}"/>
+        <DockPanel DockPanel.Dock="Left" Width="100" LastChildFill="False">
+            <TextBox Text="{Binding NewFoodName}" DockPanel.Dock="Top"/>
+            <Button Content="Add Food" Command="{Binding AddRecipeCommand}" DockPanel.Dock="Top"/>
+            <ListView ItemsSource="{Binding Foods}" DockPanel.Dock="Top"/>
         </DockPanel>
         <TextBlock Text="Yo"/>
 
