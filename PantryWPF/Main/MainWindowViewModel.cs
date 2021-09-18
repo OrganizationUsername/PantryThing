@@ -1,7 +1,7 @@
 ﻿using System.Linq;
 using Microsoft.EntityFrameworkCore;
-using Pantry.Core.Models;
 using Pantry.Data;
+using PantryWPF.Food;
 using PantryWPF.Inventory;
 using PantryWPF.Recipes;
 using Unity;
@@ -13,6 +13,7 @@ namespace PantryWPF.Main
         public VmBase MainView { get; set; }
         public NavigationCommand RecipeNavigationCommand { get; set; }
         public NavigationCommand InventoryNavigationCommand { get; set; }
+        public NavigationCommand FoodNavigationCommand { get; set; }
         public MainWindowViewModel()
         {
             IUnityContainer container = new UnityContainer();
@@ -22,6 +23,7 @@ namespace PantryWPF.Main
             MainView = new RecipesListViewModel();
             RecipeNavigationCommand = new NavigationCommand(this, new RecipesListViewModel());
             InventoryNavigationCommand = new NavigationCommand(this, new InventoryViewModel());
+            FoodNavigationCommand = new NavigationCommand(this, new FoodListViewModel());
             var existingFoods = dbContext.Foods.Select(x => x.FoodName).ToList();
             //This should all probably be in another project.
     
@@ -31,5 +33,7 @@ namespace PantryWPF.Main
 
             var x = dbContext.Recipes.ToListAsync();
         }
+
+        
     }
 }

@@ -5,19 +5,20 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Pantry.Data;
+using PantryWPF.Main;
 
 namespace PantryWPF.Food
 {
-    public class FoodListViewModel
+    public class FoodListViewModel : VmBase
     {
         private readonly IDataBase _dataBase;
         public ObservableCollection<Pantry.Core.Models.Food> Foods { get; set; }
 
-        public FoodListViewModel(IDataBase dataBase)
+        public FoodListViewModel()
         {
-            _dataBase = dataBase;
-            dataBase.Foods.Add(new Pantry.Core.Models.Food() { FoodName = "Bread" });
-            Foods = new ObservableCollection<Pantry.Core.Models.Food>(dataBase.Foods.ToList());
+            _dataBase = new DataBase();
+            _dataBase.Foods.Add(new Pantry.Core.Models.Food() { FoodName = "Bread" });
+            Foods = new ObservableCollection<Pantry.Core.Models.Food>(_dataBase.Foods.ToList());
         }
 
 

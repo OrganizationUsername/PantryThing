@@ -19,5 +19,8 @@
             <TextBlock Text="{Binding FoodName}"/>
         </DataTemplate>
     </UserControl.Resources>
-    <ListView ItemsSource="{Binding Foods}"/>
+    <StackPanel>
+        <TextBlock Text="Yo"/>
+        <ListView ItemsSource="{Binding Foods}"/>
+    </StackPanel>
 </UserControl>

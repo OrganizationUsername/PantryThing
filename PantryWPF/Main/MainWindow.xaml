@@ -7,6 +7,7 @@
         xmlns:inventory="clr-namespace:PantryWPF.Inventory"
         xmlns:main="clr-namespace:PantryWPF.Main"
         xmlns:recipes="clr-namespace:PantryWPF.Recipes"
+        xmlns:food="clr-namespace:PantryWPF.Food"
         mc:Ignorable="d"
         Title="MainWindow" Height="500" Width="800">
 
@@ -20,12 +21,16 @@
         <DataTemplate DataType="{x:Type inventory:InventoryViewModel}">
             <inventory:InventoryView/>
         </DataTemplate>
+        <DataTemplate DataType="{x:Type food:FoodListViewModel}">
+            <food:FoodListView/>
+        </DataTemplate>
     </Window.Resources>
 
     <DockPanel LastChildFill="True">
         <StackPanel>
             <Button Content="Recipes" Command="{Binding RecipeNavigationCommand}" />
             <Button Content="Inventory" Command="{Binding InventoryNavigationCommand}" />
+            <Button Content="Food" Command="{Binding FoodNavigationCommand}" />
         </StackPanel>
         <ContentControl Content="{Binding MainView}" DockPanel.Dock="Left"/>
     </DockPanel>

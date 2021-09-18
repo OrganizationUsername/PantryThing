@@ -6,6 +6,7 @@
              xmlns:local="clr-namespace:PantryWPF.Inventory"
              xmlns:recipes="clr-namespace:PantryWPF.Recipes"
              xmlns:models="clr-namespace:Pantry.Core.Models;assembly=Pantry.Core"
+             xmlns:food="clr-namespace:PantryWPF.Food"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
     <UserControl.DataContext >
@@ -17,6 +18,9 @@
         </DataTemplate>
         <DataTemplate DataType="{x:Type recipes:RecipeDetailViewModel}">
             <recipes:RecipeDetailView />
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type food:FoodListView}">
+            <food:FoodListView/>
         </DataTemplate>
     </UserControl.Resources>
     <DockPanel>

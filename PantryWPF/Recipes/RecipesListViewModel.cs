@@ -40,10 +40,11 @@ namespace PantryWPF.Recipes
 
         public ObservableCollection<Recipe> ACollection { get; set; }
 
-        public RecipesListViewModel(/*IDataBase dataBase*/)
+        public RecipesListViewModel()
         {
-            //_dataBase = dataBase;
-            
+
+            _dataBase = new DataBase();
+
         }
     }
 }
