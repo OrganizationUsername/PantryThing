@@ -13,29 +13,49 @@ namespace PantryWPF.Food
         private readonly DataBase _dataBase;
         private Pantry.Core.Models.Food _selectedFood;
 
-        public ObservableCollection<Pantry.Core.Models.Food> Foods { get; set; } = new ObservableCollection<Pantry.Core.Models.Food>();
-        public ObservableCollection<Recipe> Recipes { get; set; } = new ObservableCollection<Recipe>();
+        public ObservableCollection<Pantry.Core.Models.Food> Foods { get; set; } = new();
+        public ObservableCollection<Recipe> Recipes { get; set; } = new();
         public string NewFoodName { get; set; }
         public Pantry.Core.Models.Food SelectedFood
         {
             get => _selectedFood;
-            set { _selectedFood = value;
+            set
+            {
+                _selectedFood = value;
                 OnPropertyChanged(nameof(SelectedFood));
                 GetSelectedRecipes();
             }
         }
 
         public DelegateCommand AddRecipeCommand { get; set; }
+        public DelegateCommand DeleteFoodCommand { get; set; }
         public FoodListViewModel()
         {
             _dataBase = new DataBase();
             KeepOnlyUniqueFoodNames();
             LoadFoods();
             AddRecipeCommand = new DelegateCommand(AddFood);
+            DeleteFoodCommand = new DelegateCommand(DeleteSelectedFood);
+        }
+
+        public void DeleteSelectedFood()
+        {
+            if (_selectedFood is not null)
+            {
+                var foodToDelete = _dataBase.Foods.First(x => x.FoodId == _selectedFood.FoodId);
+                _dataBase.Foods.Remove(foodToDelete);
+                _dataBase.SaveChanges();
+                LoadFoods();
+            }
         }
 
         public void GetSelectedRecipes()
         {
+            if (_selectedFood is null || _selectedFood.RecipeFoods is null)
+            {
+                Recipes = new();
+                return;
+            }
             var tempList = _selectedFood.RecipeFoods.Select(x => x.Recipe).Distinct().ToList();
             Recipes.Clear();
             foreach (var x in tempList)

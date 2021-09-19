@@ -67,7 +67,6 @@ namespace PantryWPF.Recipes
             DeleteStepCommand = new DelegateCommand(DeleteSelectedStep);
             DeleteFoodCommand = new DelegateCommand(DeleteSelectedFood);
 
-
             LoadRecipeDetailData();
         }
 
