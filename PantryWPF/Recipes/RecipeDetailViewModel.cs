@@ -18,16 +18,16 @@ namespace PantryWPF.Recipes
 
     public static class HelperStuff
     {
-        public static void ReplaceWith<T>(this ObservableCollection<T> a, IEnumerable<T> B)
+        public static void ReplaceWith<T>(this ObservableCollection<T> a, IEnumerable<T> b)
         {
             if (a is null)
             {
-                a = new ObservableCollection<T>(B);
+                a = new ObservableCollection<T>(b);
             }
             else
             {
                 a.Clear();
-                foreach (var x in B)
+                foreach (var x in b)
                 {
                     a.Add(x);
                 }
@@ -43,15 +43,18 @@ namespace PantryWPF.Recipes
         public DelegateCommand SaveStepCommand { get; set; }
         public DelegateCommand SaveFoodCommand { get; set; }
         public DelegateCommand DeleteStepCommand { get; set; }
+        public DelegateCommand DeleteFoodCommand { get; set; }
+
         public string NewDescription { get; set; }
         public string NewDuration { get; set; }
         public Pantry.Core.Models.Food NewFood { get; set; }
         public string NewFoodAmount { get; set; }
 
         public RecipeStep SelectedRecipeStep { get; set; }
+        public RecipeFood SelectedRecipeFood { get; set; }
         private readonly DataBase _dataBase;
-        public ObservableCollection<RecipeStep> RecipeStepsList { get; set; }
-        public ObservableCollection<RecipeFood> RecipeFoodsList { get; set; }
+        public ObservableCollection<RecipeStep> RecipeStepsList { get; set; } = new ObservableCollection<RecipeStep>();
+        public ObservableCollection<RecipeFood> RecipeFoodsList { get; set; } = new ObservableCollection<RecipeFood>();
         public RecipeDetailViewModel(Recipe selectedRecipe)
         {
             _dataBase = new DataBase();
@@ -62,19 +65,26 @@ namespace PantryWPF.Recipes
             SaveStepCommand = new DelegateCommand(SaveNewStep);
             SaveFoodCommand = new DelegateCommand(SaveNewFood);
             DeleteStepCommand = new DelegateCommand(DeleteSelectedStep);
+            DeleteFoodCommand = new DelegateCommand(DeleteSelectedFood);
 
 
             LoadRecipeDetailData();
         }
 
+        private void DeleteSelectedFood()
+        {
+            if (SelectedRecipeFood is null) return;
+            _dataBase.RecipeFoods.Remove(SelectedRecipeFood);
+            _dataBase.SaveChanges();
+            LoadRecipeDetailData();
+        }
+
         private void DeleteSelectedStep()
         {
-            if (SelectedRecipeStep is not null)
-            {
-                _dataBase.RecipeSteps.Remove(SelectedRecipeStep);
-                _dataBase.SaveChanges();
-                LoadRecipeDetailData();
-            }
+            if (SelectedRecipeStep is null) return;
+            _dataBase.RecipeSteps.Remove(SelectedRecipeStep);
+            _dataBase.SaveChanges();
+            LoadRecipeDetailData();
         }
 
         private void SaveNewFood()
@@ -107,60 +117,40 @@ namespace PantryWPF.Recipes
 
         private void LoadFoodInstances()
         {
-
             if (_dataBase.RecipeFoods is null)
             {
                 RecipeFoodsList = new ObservableCollection<RecipeFood>();
                 return;
             }
-
             var newList = _dataBase.RecipeFoods.Where(x => x.RecipeId == _selectedRecipe.RecipeId).ToList();
+            RecipeFoodsList.Clear();
 
-            if (RecipeFoodsList is null)
+            foreach (var x in newList)
             {
-                RecipeFoodsList = new ObservableCollection<RecipeFood>(newList);
-            }
-            else
-            {
-                RecipeFoodsList.Clear();
-
-                foreach (var x in newList)
-                {
-                    RecipeFoodsList.Add(x);
-                }
+                RecipeFoodsList.Add(x);
             }
             OnPropertyChanged(nameof(RecipeFoodsList));
-
         }
 
         private void LoadSteps()
         {
             var newList = _dataBase.RecipeSteps.Where(x => x.RecipeId == _selectedRecipe.RecipeId).ToList();
 
-            RecipeStepsList.ReplaceWith(newList);
+            RecipeStepsList.Clear();
 
+            foreach (var x in newList)
+            {
+                RecipeStepsList.Add(x);
+            }
 
-            //if (RecipeStepsList is null)
-            //{
-            //    RecipeStepsList = new ObservableCollection<RecipeStep>(newList);
-            //}
-            //else
-            //{
-            //    RecipeStepsList.Clear();
-
-            //    foreach (var x in newList)
-            //    {
-            //        RecipeStepsList.Add(x);
-            //    }
-            //}
             OnPropertyChanged(nameof(RecipeStepsList));
         }
 
         private void SaveNewStep()
         {
-            bool GoodNumber = int.TryParse(NewDuration, out int tempDuration);
+            bool goodNumber = int.TryParse(NewDuration, out int tempDuration);
 
-            if (!GoodNumber || string.IsNullOrWhiteSpace(NewDescription)) { return; }
+            if (!goodNumber || string.IsNullOrWhiteSpace(NewDescription)) { return; }
 
             _dataBase.RecipeSteps.Add(new RecipeStep() { Instruction = NewDescription, RecipeId = _selectedRecipe.RecipeId, TimeCost = tempDuration });
             _dataBase.SaveChanges();

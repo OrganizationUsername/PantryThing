@@ -1,6 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using Microsoft.EntityFrameworkCore;
+using Pantry.Core.Models;
 using Pantry.Data;
 using PantryWPF.Main;
 
@@ -12,11 +14,15 @@ namespace PantryWPF.Food
         private Pantry.Core.Models.Food _selectedFood;
 
         public ObservableCollection<Pantry.Core.Models.Food> Foods { get; set; } = new ObservableCollection<Pantry.Core.Models.Food>();
+        public ObservableCollection<Recipe> Recipes { get; set; } = new ObservableCollection<Recipe>();
         public string NewFoodName { get; set; }
         public Pantry.Core.Models.Food SelectedFood
         {
             get => _selectedFood;
-            set { _selectedFood = value; OnPropertyChanged(nameof(SelectedFood)); }
+            set { _selectedFood = value;
+                OnPropertyChanged(nameof(SelectedFood));
+                GetSelectedRecipes();
+            }
         }
 
         public DelegateCommand AddRecipeCommand { get; set; }
@@ -26,6 +32,17 @@ namespace PantryWPF.Food
             KeepOnlyUniqueFoodNames();
             LoadFoods();
             AddRecipeCommand = new DelegateCommand(AddFood);
+        }
+
+        public void GetSelectedRecipes()
+        {
+            var tempList = _selectedFood.RecipeFoods.Select(x => x.Recipe).Distinct().ToList();
+            Recipes.Clear();
+            foreach (var x in tempList)
+            {
+                Recipes.Add(x);
+            }
+            OnPropertyChanged(nameof(Recipes));
         }
 
         public void KeepOnlyUniqueFoodNames()
@@ -49,7 +66,7 @@ namespace PantryWPF.Food
         public void LoadFoods()
         {
 
-            if (_dataBase.Foods is null )
+            if (_dataBase.Foods is null)
             {
                 Foods = new ObservableCollection<Pantry.Core.Models.Food>();
                 OnPropertyChanged(nameof(Foods));
@@ -58,7 +75,7 @@ namespace PantryWPF.Food
 
             Foods.Clear();
 
-            foreach (var x in _dataBase.Foods)
+            foreach (var x in _dataBase.Foods.Include(x => x.RecipeFoods).ThenInclude(x => x.Recipe))
             {
                 Foods.Add(x);
             }

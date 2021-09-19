@@ -15,28 +15,34 @@
     <StackPanel>
         <TextBlock Text="{Binding Description}"/>
         <GroupBox Header="RecipeFoods: ">
-            <ListView ItemsSource="{Binding RecipeFoodsList}">
-                <ListView.ItemTemplate>
-                    <DataTemplate>
-                        <StackPanel Orientation="Horizontal">
-                            <TextBlock Text="{Binding Food.FoodName}"/>
-                            <TextBox Text="{Binding Amount}"/>
-                        </StackPanel>
-                    </DataTemplate>
-                </ListView.ItemTemplate>
-            </ListView>
+            <StackPanel>
+                <ListView ItemsSource="{Binding RecipeFoodsList}" SelectedItem="{Binding SelectedRecipeFood}">
+                    <ListView.ItemTemplate>
+                        <DataTemplate>
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="{Binding Food.FoodName}"/>
+                                <TextBox Text="{Binding Amount}"/>
+                            </StackPanel>
+                        </DataTemplate>
+                    </ListView.ItemTemplate>
+                </ListView>
+                <Button Content="Delete Selected Food" Command="{Binding DeleteFoodCommand}"/>
+            </StackPanel>
         </GroupBox>
         <GroupBox Header="Instructions:">
-            <ListView ItemsSource="{Binding RecipeStepsList}" SelectedItem="{Binding SelectedRecipeStep}">
-                <ListView.ItemTemplate>
-                    <DataTemplate>
-                        <StackPanel Orientation="Horizontal">
-                            <TextBlock Text="{Binding Instruction}"/>
-                            <TextBox Text="{Binding TimeCost}"/>
-                        </StackPanel>
-                    </DataTemplate>
-                </ListView.ItemTemplate>
-            </ListView>
+            <StackPanel>
+                <ListView ItemsSource="{Binding RecipeStepsList}" SelectedItem="{Binding SelectedRecipeStep}">
+                    <ListView.ItemTemplate>
+                        <DataTemplate>
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="{Binding Instruction}"/>
+                                <TextBox Text="{Binding TimeCost}"/>
+                            </StackPanel>
+                        </DataTemplate>
+                    </ListView.ItemTemplate>
+                </ListView>
+                <Button Content="Delete Selected Step" Command="{Binding DeleteStepCommand}"/>
+            </StackPanel>
         </GroupBox>
         <GroupBox Header="Add new Step" DockPanel.Dock="Top">
             <StackPanel>
@@ -48,7 +54,7 @@
                     <TextBlock Text="Amount:"/>
                     <TextBox Width="100" Text="{Binding NewFoodAmount}"/>
                 </StackPanel>
-                <Button Content="Delete Selected Step" Command="{Binding DeleteStepCommand}"/>
+
                 <Button Content="Save Food" Command="{Binding SaveFoodCommand}"/>
 
             </StackPanel>

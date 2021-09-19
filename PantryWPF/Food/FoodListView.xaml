@@ -41,6 +41,9 @@
                 <TextBlock Text="Name" Width="75"/>
                 <TextBlock Text="{Binding SelectedFood.FoodName}"/>
             </StackPanel>
+            <GroupBox Header="Used In:">
+                <ListView ItemsSource="{Binding Recipes}" DisplayMemberPath="Description"/>
+            </GroupBox>
         </StackPanel>
     </DockPanel>
 </UserControl>
