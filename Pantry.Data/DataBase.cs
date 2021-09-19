@@ -22,7 +22,7 @@ namespace Pantry.Data
         int SaveChanges();
     }
 
-    public class DataBase : DbContext, IDataBase
+    public class DataBase : DbContext
     {
         public DbSet<Recipe> Recipes { get; set; }
         public DbSet<Food> Foods { get; set; }

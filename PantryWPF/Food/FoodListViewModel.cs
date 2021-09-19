@@ -8,9 +8,10 @@ namespace PantryWPF.Food
 {
     public class FoodListViewModel : VmBase
     {
-        private readonly IDataBase _dataBase;
+        private readonly DataBase _dataBase;
         private Pantry.Core.Models.Food _selectedFood;
-        public ObservableCollection<Pantry.Core.Models.Food> Foods { get; set; }
+
+        public ObservableCollection<Pantry.Core.Models.Food> Foods { get; set; } = new ObservableCollection<Pantry.Core.Models.Food>();
         public string NewFoodName { get; set; }
         public Pantry.Core.Models.Food SelectedFood
         {
@@ -47,18 +48,15 @@ namespace PantryWPF.Food
 
         public void LoadFoods()
         {
-            if (Foods is null || Foods.Count == 0)
+
+            if (_dataBase.Foods is null )
             {
-                Foods = new ObservableCollection<Pantry.Core.Models.Food>(_dataBase.Foods.ToList());
+                Foods = new ObservableCollection<Pantry.Core.Models.Food>();
                 OnPropertyChanged(nameof(Foods));
                 return;
             }
 
-            for (var index = 0; index < Foods.Count; index++)
-            {
-                var x = Foods[index];
-                Foods.Remove(x);
-            }
+            Foods.Clear();
 
             foreach (var x in _dataBase.Foods)
             {

@@ -17,7 +17,7 @@ namespace PantryWPF.Main
         public MainWindowViewModel()
         {
             IUnityContainer container = new UnityContainer();
-            container.RegisterType<IDataBase, DataBase>();
+            container.RegisterType<DataBase, DataBase>();
             var dbContext = new DataBase();
 
             MainView = new RecipesListViewModel();
