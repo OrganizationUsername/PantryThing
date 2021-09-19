@@ -29,7 +29,16 @@
                     </ListView>
                 </GroupBox>
                 <GroupBox Header="Instructions:">
-                    <ListView ItemsSource="{Binding RecipeSteps}"/>
+                    <ListView ItemsSource="{Binding RecipeStepsList}">
+                        <ListView.ItemTemplate>
+                            <DataTemplate>
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBlock Text="{Binding Instruction}"/>
+                                    <TextBox Text="{Binding TimeCost}"/>
+                                </StackPanel>
+                            </DataTemplate>
+                        </ListView.ItemTemplate>
+                    </ListView>
                 </GroupBox>
                 <Button Content="Simulate Save" Command="{Binding FakeSaveCommand}"/>
             </StackPanel>
@@ -38,21 +47,21 @@
             <StackPanel DockPanel.Dock="Bottom">
                 <StackPanel Orientation="Horizontal">
                     <TextBlock Text="Food:"/>
-                    <ComboBox ItemsSource="{Binding Foods}" DisplayMemberPath="FoodName" />
+                    <ComboBox ItemsSource="{Binding Foods}" DisplayMemberPath="FoodName"  Width="100"/>
                 </StackPanel>
                 <StackPanel Orientation="Horizontal">
                     <TextBlock Text="Equipment used:"/>
-                    <ListBox />
+                    <ListBox  Width="100"/>
                 </StackPanel>
                 <StackPanel Orientation="Horizontal">
-                    <TextBlock Text="Amount: "/>
-                    <TextBox Width="50"/>
+                    <TextBlock Text="Description: "/>
+                    <TextBox Width="100" Text="{Binding NewDescription}"/>
                 </StackPanel>
                 <StackPanel Orientation="Horizontal">
                     <TextBlock Text="Duration: "/>
-                    <TextBox Width="50"/>
+                    <TextBox Width="100" Text="{Binding NewDuration}"/>
                 </StackPanel>
-                <Button Content="Add new step"/>
+                <Button Content="Add new step" Command="{Binding SaveCommand}"/>
             </StackPanel>
         </GroupBox>
     </DockPanel>

@@ -36,12 +36,7 @@ namespace PantryWPF.Recipes
             set
             {
                 _selectedRecipe = value;
-                _selectedRecipeDetailViewModel = new RecipeDetailViewModel()
-                {
-                    RecipeSteps = _selectedRecipe.RecipeSteps,
-                    RecipeId = _selectedRecipe.RecipeId,
-                    RecipeFoods = _selectedRecipe.RecipeFoods,
-                };
+                _selectedRecipeDetailViewModel = new RecipeDetailViewModel(_selectedRecipe);
                 OnPropertyChanged(nameof(SelectedRecipeDetailViewModel));
             }
         }
