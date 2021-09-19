@@ -99,7 +99,7 @@ namespace PantryWPF.Food
             {
                 Foods.Add(x);
             }
-            SelectedFood = Foods.First();
+            SelectedFood = Foods.FirstOrDefault();
         }
 
         public void AddFood()

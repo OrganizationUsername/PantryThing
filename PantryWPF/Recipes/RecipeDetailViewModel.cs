@@ -16,7 +16,7 @@ using PantryWPF.Main;
 namespace PantryWPF.Recipes
 {
 
-    public static class HelperStuff
+    public static class HelperStuff //doesn't work with things stored as properties.
     {
         public static void ReplaceWith<T>(this ObservableCollection<T> a, IEnumerable<T> b)
         {
@@ -44,7 +44,7 @@ namespace PantryWPF.Recipes
         public DelegateCommand SaveFoodCommand { get; set; }
         public DelegateCommand DeleteStepCommand { get; set; }
         public DelegateCommand DeleteFoodCommand { get; set; }
-
+        public DelegateCommand DeleteThisRecipeCommand { get; set; }
         public string NewDescription { get; set; }
         public string NewDuration { get; set; }
         public Pantry.Core.Models.Food NewFood { get; set; }
@@ -57,22 +57,38 @@ namespace PantryWPF.Recipes
         public ObservableCollection<RecipeFood> RecipeFoodsList { get; set; } = new ObservableCollection<RecipeFood>();
         public RecipeDetailViewModel(Recipe selectedRecipe)
         {
-            _dataBase = new DataBase();
-            _selectedRecipe = _dataBase.Recipes.First(x => x.RecipeId == selectedRecipe.RecipeId); ;
-
-            Foods = _dataBase.Foods.ToList();
-
             SaveStepCommand = new DelegateCommand(SaveNewStep);
             SaveFoodCommand = new DelegateCommand(SaveNewFood);
             DeleteStepCommand = new DelegateCommand(DeleteSelectedStep);
             DeleteFoodCommand = new DelegateCommand(DeleteSelectedFood);
+            DeleteThisRecipeCommand = new DelegateCommand(DeleteThisRecipe);
 
+
+
+            _dataBase = new DataBase();
+            _selectedRecipe = _dataBase.Recipes.FirstOrDefault(x => x.RecipeId == selectedRecipe.RecipeId);
+
+            Foods = _dataBase.Foods.ToList();
+
+
+            LoadRecipeDetailData();
+        }
+
+        private void DeleteThisRecipe()
+        {
+            Recipe thisRecipe = _dataBase.Recipes.FirstOrDefault(x => x.RecipeId == _selectedRecipe.RecipeId);
+            if (thisRecipe is null || _selectedRecipe is null)
+            {
+                return;
+            }
+            _dataBase.Recipes.Remove(thisRecipe);
+            _dataBase.SaveChanges();
             LoadRecipeDetailData();
         }
 
         private void DeleteSelectedFood()
         {
-            if (SelectedRecipeFood is null) return;
+            if (SelectedRecipeFood is null || _selectedRecipe is null) return;
             _dataBase.RecipeFoods.Remove(SelectedRecipeFood);
             _dataBase.SaveChanges();
             LoadRecipeDetailData();
@@ -80,7 +96,7 @@ namespace PantryWPF.Recipes
 
         private void DeleteSelectedStep()
         {
-            if (SelectedRecipeStep is null) return;
+            if (SelectedRecipeStep is null || _selectedRecipe is null) return;
             _dataBase.RecipeSteps.Remove(SelectedRecipeStep);
             _dataBase.SaveChanges();
             LoadRecipeDetailData();
@@ -88,6 +104,7 @@ namespace PantryWPF.Recipes
 
         private void SaveNewFood()
         {
+            if (_selectedRecipe is null) { return; }
             if (NewFood is not null && double.TryParse(NewFoodAmount, out double FoodAmount) && FoodAmount != 0)
             {
                 var recipe = _dataBase.Recipes.Include(x => x.RecipeFoods).First(x => x.RecipeId == _selectedRecipe.RecipeId);
@@ -116,6 +133,8 @@ namespace PantryWPF.Recipes
 
         private void LoadFoodInstances()
         {
+            if (_selectedRecipe is null) { return; }
+
             if (_dataBase.RecipeFoods is null)
             {
                 RecipeFoodsList = new ObservableCollection<RecipeFood>();
@@ -133,7 +152,17 @@ namespace PantryWPF.Recipes
 
         private void LoadSteps()
         {
-            var newList = _dataBase.RecipeSteps.Where(x => x.RecipeId == _selectedRecipe.RecipeId).ToList();
+            List<RecipeStep> newList = default;
+            if (!_dataBase.RecipeSteps.Any() || !_dataBase.RecipeSteps.Any(x => x.RecipeId == _selectedRecipe.RecipeId))
+            {
+                newList = new List<RecipeStep>();
+            }
+            else
+            {
+                newList = _dataBase.RecipeSteps.Where(x => x.RecipeId == _selectedRecipe.RecipeId).ToList();
+            }
+
+            
 
             RecipeStepsList.Clear();
 
@@ -147,6 +176,8 @@ namespace PantryWPF.Recipes
 
         private void SaveNewStep()
         {
+            if (_selectedRecipe is null) { return; }
+
             bool goodNumber = int.TryParse(NewDuration, out int tempDuration);
 
             if (!goodNumber || string.IsNullOrWhiteSpace(NewDescription)) { return; }

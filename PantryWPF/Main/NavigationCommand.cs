@@ -21,6 +21,8 @@ namespace PantryWPF.Main
         public void Execute(object parameter)
         {
             _vm.MainView = _vmBase;
+            _vm.VmName = _vmBase.GetType().ToString();
+            _vm.OnPropertyChanged(nameof(_vm.VmName));
             _vm.OnPropertyChanged(nameof(_vm.MainView));
         }
 

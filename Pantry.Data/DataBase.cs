@@ -50,7 +50,7 @@ namespace Pantry.Data
 
         public DataBase()
         {
-            //this.Database.EnsureCreated();
+            this.Database.EnsureCreated();
         }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -70,7 +70,7 @@ namespace Pantry.Data
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             optionsBuilder.EnableSensitiveDataLogging();
-            optionsBuilder.UseSqlite(@"Data Source=C:\Programming\EFTesting\EFConsole\testDb.db");
+            optionsBuilder.UseSqlite(@"Data Source=C:\Programming\TotallyNewThing\Pantry\testDb.db");
         }
     }
 }

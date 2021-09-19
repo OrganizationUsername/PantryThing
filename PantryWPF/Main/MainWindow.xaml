@@ -26,13 +26,17 @@
         </DataTemplate>
     </Window.Resources>
     <DockPanel LastChildFill="True">
-        <StackPanel>
-            <Button Content="Recipes" Command="{Binding RecipeNavigationCommand}" />
-            <Button Content="Inventory" Command="{Binding InventoryNavigationCommand}" />
-            <Button Content="Food" Command="{Binding FoodNavigationCommand}" />
-        </StackPanel>
-        <ScrollViewer HorizontalScrollBarVisibility="Auto">
-            <ContentControl Content="{Binding MainView}" DockPanel.Dock="Left"/>
-        </ScrollViewer>
+        <GroupBox Header="MainWindow Nav">
+            <StackPanel>
+                <Button Content="Recipes" Command="{Binding RecipeNavigationCommand}" />
+                <Button Content="Inventory" Command="{Binding InventoryNavigationCommand}" />
+                <Button Content="Food" Command="{Binding FoodNavigationCommand}" />
+            </StackPanel>
+        </GroupBox>
+        <GroupBox Header="{Binding VmName}">
+            <ScrollViewer HorizontalScrollBarVisibility="Auto">
+                <ContentControl Content="{Binding MainView}" DockPanel.Dock="Left"/>
+            </ScrollViewer>
+        </GroupBox>
     </DockPanel>
 </Window>

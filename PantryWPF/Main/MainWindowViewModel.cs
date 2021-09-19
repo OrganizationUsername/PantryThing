@@ -11,6 +11,7 @@ namespace PantryWPF.Main
     public class MainWindowViewModel : VmBase
     {
         public VmBase MainView { get; set; }
+        public string VmName { get; set; }
         public NavigationCommand RecipeNavigationCommand { get; set; }
         public NavigationCommand InventoryNavigationCommand { get; set; }
         public NavigationCommand FoodNavigationCommand { get; set; }
@@ -25,7 +26,6 @@ namespace PantryWPF.Main
             InventoryNavigationCommand = new NavigationCommand(this, new InventoryViewModel());
             FoodNavigationCommand = new NavigationCommand(this, new FoodListViewModel());
             var existingFoods = dbContext.Foods.Select(x => x.FoodName).ToList();
-            //This should all probably be in another project.
     
 
             
