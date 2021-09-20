@@ -69,7 +69,7 @@ namespace Pantry.Core.Scheduler
                 Console.WriteLine(equipment.EquipmentName);
                 foreach (var x in equipment.EquipmentCommitments.OrderBy(z => z.StartTime))
                 {
-                    Console.WriteLine($"{x.StartTime.ToShortTimeString()}:{x.EndTime.ToShortTimeString()}: {x.Description}");
+                    Console.WriteLine($"{x.StartTime.ToShortTimeString()}:{x.EndTime.ToShortTimeString()}: {x.Description} {x.RecipeStep.Instruction}");
                 }
             }
         }

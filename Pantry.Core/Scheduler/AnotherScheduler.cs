@@ -56,12 +56,10 @@ namespace Pantry.Core.Scheduler
             foreach (var equipment in _equipments)
             {
                 if (equipment.EquipmentCommitments is null || !equipment.EquipmentCommitments.Any()) { Console.WriteLine(equipment.EquipmentName + "- Nothing."); }
-                //if (equipment.BookedTimes is null || !equipment.BookedTimes.Any()) { Console.WriteLine(equipment.EquipmentName + "- Nothing."); }
-                else { Console.WriteLine(equipment.EquipmentName); }
-                //foreach (var (startTime, endTime, stepName) in equipment.BookedTimes.OrderBy(z => z.startTime))
+                else { Console.WriteLine($"{equipment.EquipmentName}"); }
                 foreach (var x in equipment.EquipmentCommitments.OrderBy(z => z.StartTime))
                 {
-                    Console.WriteLine($"{x.StartTime.ToShortTimeString()}:{x.EndTime.ToShortTimeString()}: {x.Description}");
+                    Console.WriteLine($"{x.StartTime.ToShortTimeString()}:{x.EndTime.ToShortTimeString()}: {x.Description} {x.RecipeStep.Instruction}");
                 }
             }
         }
@@ -85,13 +83,9 @@ namespace Pantry.Core.Scheduler
                             {
                                 StartTime = _goal.AddMinutes(-(offset + recipeStep.TimeCost)),
                                 EndTime = _goal.AddMinutes(-offset),
-                                Description = $"_ {dag.MainRecipe.RecipeFoods.First(x => x.Amount < 0).Food.FoodName}"
+                                Description = $"_ {dag.MainRecipe.RecipeFoods.First(x => x.Amount < 0).Food.FoodName}",
+                                RecipeStep = recipeStep
                             });
-                            //y.BookedTimes.Add(
-                            //    (_goal.AddMinutes(-(offset + recipeStep.TimeCost)),
-                            //        _goal.AddMinutes(-offset),
-                            //        recipeStep.Instruction + $"_ {dag.MainRecipe.RecipeFoods.First(x => x.Amount < 0).Food.FoodName}")
-                            //);
                         }
                     }
                 }

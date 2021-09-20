@@ -188,17 +188,6 @@ namespace Pantry.Core.Test.ScheduleTests
         [Test]
         public void GetDagLength()
         {
-            //This is way too long. At some point I have to create some abstractions to cut this down.
-
-            //One heuristic is to get the longest path and schedule that first.
-            //If we got the length of the
-            //Chicken Sandwich->Sliced Bread->Bread
-            //path, then I would know it's the correct one to schedule first to 
-
-            //I could create an object that holds all of the jobs, maybe even assigns them GUIDs.
-            //If I were cooking more than one thing, I could also have the opportunity of checking
-            //whether or not pushing back a long-running process allows to fit in something else speeds
-            //up overall flow.
             List<RecipeFood> pantry = new()
             {
                 new RecipeFood() { Food = _eggs, Amount = 120 },
@@ -472,6 +461,5 @@ namespace Pantry.Core.Test.ScheduleTests
             var another = new AnotherScheduler(DateTime.Parse("2021/08/15 18:00"), dags, _equipments);
             another.TrySchedule();
         }
-
     }
 }
