@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Reflection;
 using System.Security.Cryptography.X509Certificates;
 using Microsoft.EntityFrameworkCore;
@@ -22,6 +23,60 @@ namespace Pantry.Data
         int SaveChanges();
     }
 
+
+    public class LocationFoods
+    {
+        public int LocationFoodsId { get; set; }
+        public Food Food { get; set; }
+        public int FoodId { get; set; }
+        public Location Location { get; set; }
+        public int LocationId { get; set; }
+        public double Quantity { get; set; }
+        public DateTime Birth { get; set; }
+        public DateTime Expiry { get; set; }
+        public bool Exists { get; set; }
+    }
+
+    public enum TemperatureState
+    {
+        RoomTemperature = 0,
+        Refrigerated = 1,
+        Frozen = 2,
+    }
+
+    public class ExpiryInformation : DbContext
+    {
+        public FoodInfo FoodInfo { get; set; }
+        public int FoodInfoId { get; set; }
+        public TemperatureState TemperatureState { get; set; }
+        public TimeSpan TimeSpan { get; set; }
+    }
+
+    public class Item : DbContext
+    {
+        public int ItemId { get; set; }
+        public Food Food { get; set; }
+        public int FoodId { get; set; }
+
+    }
+
+
+
+    public class Manufacturer : DbContext
+    {
+        public int ManufacturerId { get; set; }
+        public string Name { get; set; }
+    }
+
+    public class FoodInfo : DbContext
+    {
+        public int FoodInfoId { get; set; }
+        public ICollection<ExpiryInformation> ExpiryInformations { get; set; }
+        public string UnitName { get; set; }
+        public double UnitConversion { get; set; }
+    }
+
+
     public class DataBase : DbContext
     {
         public DbSet<Recipe> Recipes { get; set; }
@@ -31,6 +86,7 @@ namespace Pantry.Data
         public DbSet<Equipment> Equipments { get; set; }
         public DbSet<EquipmentCommitment> EquipmentCommitments { get; set; }
         public DbSet<Location> Locations { get; set; }
+        public DbSet<LocationFoods> LocationFoods { get; set; }
 
         /*
         Another simple recipe is just putting stuff in plastic storage containers.
