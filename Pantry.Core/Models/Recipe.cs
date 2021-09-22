@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace Pantry.Core.Models
 {
@@ -7,6 +8,7 @@ namespace Pantry.Core.Models
         public int RecipeId { get; set; }
         public List<RecipeFood> RecipeFoods { get; set; }
         public List<RecipeStep> RecipeSteps { get; set; }
+        public ICollection<RecipeRecipeTag> RecipeRecipeTags { get; set; }
         public string Description { get; set; }
     }
 }

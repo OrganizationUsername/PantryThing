@@ -84,9 +84,50 @@ namespace Pantry.Data.Migrations
                     b.Property<string>("FoodName")
                         .HasColumnType("TEXT");
 
+                    b.Property<bool>("IsEdible")
+                        .HasColumnType("INTEGER");
+
                     b.HasKey("FoodId");
 
                     b.ToTable("Foods");
+                });
+
+            modelBuilder.Entity("Pantry.Core.Models.FoodFoodTag", b =>
+                {
+                    b.Property<int>("FoodFoodTagId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("FoodId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("FoodTagId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("TagName")
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("FoodFoodTagId");
+
+                    b.HasIndex("FoodId");
+
+                    b.HasIndex("FoodTagId");
+
+                    b.ToTable("FoodFoodTags");
+                });
+
+            modelBuilder.Entity("Pantry.Core.Models.FoodTag", b =>
+                {
+                    b.Property<int>("FoodTagId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("FoodTagName")
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("FoodTagId");
+
+                    b.ToTable("FoodTags");
                 });
 
             modelBuilder.Entity("Pantry.Core.Models.Location", b =>
@@ -141,6 +182,27 @@ namespace Pantry.Data.Migrations
                     b.ToTable("RecipeFoods");
                 });
 
+            modelBuilder.Entity("Pantry.Core.Models.RecipeRecipeTag", b =>
+                {
+                    b.Property<int>("RecipeRecipeTagId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("RecipeId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("RecipeTagId")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("RecipeRecipeTagId");
+
+                    b.HasIndex("RecipeId");
+
+                    b.HasIndex("RecipeTagId");
+
+                    b.ToTable("RecipeRecipeTags");
+                });
+
             modelBuilder.Entity("Pantry.Core.Models.RecipeStep", b =>
                 {
                     b.Property<int>("RecipeStepId")
@@ -166,6 +228,20 @@ namespace Pantry.Data.Migrations
                     b.HasIndex("RecipeId");
 
                     b.ToTable("RecipeSteps");
+                });
+
+            modelBuilder.Entity("Pantry.Core.Models.RecipeTag", b =>
+                {
+                    b.Property<int>("RecipeTagId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("RecipeTagName")
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("RecipeTagId");
+
+                    b.ToTable("RecipeTags");
                 });
 
             modelBuilder.Entity("Pantry.Data.LocationFoods", b =>
@@ -243,6 +319,25 @@ namespace Pantry.Data.Migrations
                     b.Navigation("RecipeStep");
                 });
 
+            modelBuilder.Entity("Pantry.Core.Models.FoodFoodTag", b =>
+                {
+                    b.HasOne("Pantry.Core.Models.Food", "Food")
+                        .WithMany("FoodFoodTags")
+                        .HasForeignKey("FoodId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Pantry.Core.Models.FoodTag", "FoodTag")
+                        .WithMany("FoodFoodTags")
+                        .HasForeignKey("FoodTagId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Food");
+
+                    b.Navigation("FoodTag");
+                });
+
             modelBuilder.Entity("Pantry.Core.Models.RecipeFood", b =>
                 {
                     b.HasOne("Pantry.Core.Models.Food", "Food")
@@ -260,6 +355,25 @@ namespace Pantry.Data.Migrations
                     b.Navigation("Food");
 
                     b.Navigation("Recipe");
+                });
+
+            modelBuilder.Entity("Pantry.Core.Models.RecipeRecipeTag", b =>
+                {
+                    b.HasOne("Pantry.Core.Models.Recipe", "Recipe")
+                        .WithMany("RecipeRecipeTags")
+                        .HasForeignKey("RecipeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Pantry.Core.Models.RecipeTag", "RecipeTag")
+                        .WithMany("RecipeRecipeTags")
+                        .HasForeignKey("RecipeTagId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Recipe");
+
+                    b.Navigation("RecipeTag");
                 });
 
             modelBuilder.Entity("Pantry.Core.Models.RecipeStep", b =>
@@ -299,7 +413,14 @@ namespace Pantry.Data.Migrations
 
             modelBuilder.Entity("Pantry.Core.Models.Food", b =>
                 {
+                    b.Navigation("FoodFoodTags");
+
                     b.Navigation("RecipeFoods");
+                });
+
+            modelBuilder.Entity("Pantry.Core.Models.FoodTag", b =>
+                {
+                    b.Navigation("FoodFoodTags");
                 });
 
             modelBuilder.Entity("Pantry.Core.Models.Location", b =>
@@ -311,12 +432,19 @@ namespace Pantry.Data.Migrations
                 {
                     b.Navigation("RecipeFoods");
 
+                    b.Navigation("RecipeRecipeTags");
+
                     b.Navigation("RecipeSteps");
                 });
 
             modelBuilder.Entity("Pantry.Core.Models.RecipeStep", b =>
                 {
                     b.Navigation("Equipments");
+                });
+
+            modelBuilder.Entity("Pantry.Core.Models.RecipeTag", b =>
+                {
+                    b.Navigation("RecipeRecipeTags");
                 });
 #pragma warning restore 612, 618
         }

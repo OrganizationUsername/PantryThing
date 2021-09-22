@@ -13,11 +13,25 @@ namespace Pantry.Data.Migrations
                 {
                     FoodId = table.Column<int>(type: "INTEGER", nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
-                    FoodName = table.Column<string>(type: "TEXT", nullable: true)
+                    FoodName = table.Column<string>(type: "TEXT", nullable: true),
+                    IsEdible = table.Column<bool>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Foods", x => x.FoodId);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "FoodTags",
+                columns: table => new
+                {
+                    FoodTagId = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    FoodTagName = table.Column<string>(type: "TEXT", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_FoodTags", x => x.FoodTagId);
                 });
 
             migrationBuilder.CreateTable(
@@ -44,6 +58,76 @@ namespace Pantry.Data.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Recipes", x => x.RecipeId);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "RecipeTags",
+                columns: table => new
+                {
+                    RecipeTagId = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    RecipeTagName = table.Column<string>(type: "TEXT", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_RecipeTags", x => x.RecipeTagId);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "FoodFoodTags",
+                columns: table => new
+                {
+                    FoodFoodTagId = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    FoodId = table.Column<int>(type: "INTEGER", nullable: false),
+                    FoodTagId = table.Column<int>(type: "INTEGER", nullable: false),
+                    TagName = table.Column<string>(type: "TEXT", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_FoodFoodTags", x => x.FoodFoodTagId);
+                    table.ForeignKey(
+                        name: "FK_FoodFoodTags_Foods_FoodId",
+                        column: x => x.FoodId,
+                        principalTable: "Foods",
+                        principalColumn: "FoodId",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_FoodFoodTags_FoodTags_FoodTagId",
+                        column: x => x.FoodTagId,
+                        principalTable: "FoodTags",
+                        principalColumn: "FoodTagId",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "LocationFoods",
+                columns: table => new
+                {
+                    LocationFoodsId = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    FoodId = table.Column<int>(type: "INTEGER", nullable: false),
+                    LocationId = table.Column<int>(type: "INTEGER", nullable: false),
+                    Quantity = table.Column<double>(type: "REAL", nullable: false),
+                    Birth = table.Column<DateTime>(type: "TEXT", nullable: false),
+                    Expiry = table.Column<DateTime>(type: "TEXT", nullable: false),
+                    Exists = table.Column<bool>(type: "INTEGER", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_LocationFoods", x => x.LocationFoodsId);
+                    table.ForeignKey(
+                        name: "FK_LocationFoods_Foods_FoodId",
+                        column: x => x.FoodId,
+                        principalTable: "Foods",
+                        principalColumn: "FoodId",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_LocationFoods_Locations_LocationId",
+                        column: x => x.LocationId,
+                        principalTable: "Locations",
+                        principalColumn: "LocationId",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -92,6 +176,32 @@ namespace Pantry.Data.Migrations
                         column: x => x.RecipeId,
                         principalTable: "Recipes",
                         principalColumn: "RecipeId",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "RecipeRecipeTags",
+                columns: table => new
+                {
+                    RecipeRecipeTagId = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    RecipeId = table.Column<int>(type: "INTEGER", nullable: false),
+                    RecipeTagId = table.Column<int>(type: "INTEGER", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_RecipeRecipeTags", x => x.RecipeRecipeTagId);
+                    table.ForeignKey(
+                        name: "FK_RecipeRecipeTags_Recipes_RecipeId",
+                        column: x => x.RecipeId,
+                        principalTable: "Recipes",
+                        principalColumn: "RecipeId",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_RecipeRecipeTags_RecipeTags_RecipeTagId",
+                        column: x => x.RecipeTagId,
+                        principalTable: "RecipeTags",
+                        principalColumn: "RecipeTagId",
                         onDelete: ReferentialAction.Cascade);
                 });
 
@@ -184,6 +294,26 @@ namespace Pantry.Data.Migrations
                 column: "RecipeStepId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_FoodFoodTags_FoodId",
+                table: "FoodFoodTags",
+                column: "FoodId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_FoodFoodTags_FoodTagId",
+                table: "FoodFoodTags",
+                column: "FoodTagId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_LocationFoods_FoodId",
+                table: "LocationFoods",
+                column: "FoodId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_LocationFoods_LocationId",
+                table: "LocationFoods",
+                column: "LocationId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_RecipeFoods_FoodId",
                 table: "RecipeFoods",
                 column: "FoodId");
@@ -192,6 +322,16 @@ namespace Pantry.Data.Migrations
                 name: "IX_RecipeFoods_RecipeId",
                 table: "RecipeFoods",
                 column: "RecipeId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_RecipeRecipeTags_RecipeId",
+                table: "RecipeRecipeTags",
+                column: "RecipeId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_RecipeRecipeTags_RecipeTagId",
+                table: "RecipeRecipeTags",
+                column: "RecipeTagId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_RecipeSteps_Order",
@@ -210,13 +350,28 @@ namespace Pantry.Data.Migrations
                 name: "EquipmentCommitments");
 
             migrationBuilder.DropTable(
+                name: "FoodFoodTags");
+
+            migrationBuilder.DropTable(
+                name: "LocationFoods");
+
+            migrationBuilder.DropTable(
                 name: "RecipeFoods");
+
+            migrationBuilder.DropTable(
+                name: "RecipeRecipeTags");
 
             migrationBuilder.DropTable(
                 name: "Equipments");
 
             migrationBuilder.DropTable(
+                name: "FoodTags");
+
+            migrationBuilder.DropTable(
                 name: "Foods");
+
+            migrationBuilder.DropTable(
+                name: "RecipeTags");
 
             migrationBuilder.DropTable(
                 name: "Locations");

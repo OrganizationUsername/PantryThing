@@ -11,19 +11,6 @@ namespace Pantry.Data
     //dotnet ef migrations add foodConstraint
     //dotnet ef database update foodConstraint
 
-    public interface IDataBase
-    {
-        DbSet<Recipe> Recipes { get; set; }
-        DbSet<Food> Foods { get; set; }
-        DbSet<RecipeFood> RecipeFoods { get; set; }
-        DbSet<RecipeStep> RecipeSteps { get; set; }
-        DbSet<Equipment> Equipments { get; set; }
-        DbSet<EquipmentCommitment> EquipmentCommitments { get; set; }
-        DbSet<Location> Locations { get; set; }
-        int SaveChanges();
-    }
-
-
     public class LocationFoods
     {
         public int LocationFoodsId { get; set; }
@@ -39,12 +26,13 @@ namespace Pantry.Data
 
     public enum TemperatureState
     {
-        RoomTemperature = 0,
-        Refrigerated = 1,
-        Frozen = 2,
+        Unopened = 1,
+        RoomTemperature = 2,
+        Refrigerated = 4,
+        Frozen = 6,
     }
 
-    public class ExpiryInformation : DbContext
+    public class ExpiryInformation
     {
         public FoodInfo FoodInfo { get; set; }
         public int FoodInfoId { get; set; }
@@ -52,23 +40,22 @@ namespace Pantry.Data
         public TimeSpan TimeSpan { get; set; }
     }
 
-    public class Item : DbContext
+    public class Item
     {
         public int ItemId { get; set; }
         public Food Food { get; set; }
         public int FoodId { get; set; }
-
     }
 
 
 
-    public class Manufacturer : DbContext
+    public class Manufacturer
     {
         public int ManufacturerId { get; set; }
         public string Name { get; set; }
     }
 
-    public class FoodInfo : DbContext
+    public class FoodInfo
     {
         public int FoodInfoId { get; set; }
         public ICollection<ExpiryInformation> ExpiryInformations { get; set; }
@@ -87,6 +74,10 @@ namespace Pantry.Data
         public DbSet<EquipmentCommitment> EquipmentCommitments { get; set; }
         public DbSet<Location> Locations { get; set; }
         public DbSet<LocationFoods> LocationFoods { get; set; }
+        public DbSet<FoodTag> FoodTags { get; set; }
+        public DbSet<FoodFoodTag> FoodFoodTags { get; set; }
+        public DbSet<RecipeTag> RecipeTags { get; set; }
+        public DbSet<RecipeRecipeTag> RecipeRecipeTags { get; set; }
 
         /*
         Another simple recipe is just putting stuff in plastic storage containers.
@@ -106,7 +97,7 @@ namespace Pantry.Data
 
         public DataBase()
         {
-            this.Database.EnsureCreated();
+            //this.Database.EnsureCreated();
         }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

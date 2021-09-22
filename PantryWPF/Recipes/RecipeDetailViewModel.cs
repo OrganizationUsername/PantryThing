@@ -15,26 +15,6 @@ using PantryWPF.Main;
 
 namespace PantryWPF.Recipes
 {
-
-    public static class HelperStuff //doesn't work with things stored as properties.
-    {
-        public static void ReplaceWith<T>(this ObservableCollection<T> a, IEnumerable<T> b)
-        {
-            if (a is null)
-            {
-                a = new ObservableCollection<T>(b);
-            }
-            else
-            {
-                a.Clear();
-                foreach (var x in b)
-                {
-                    a.Add(x);
-                }
-            }
-        }
-    }
-
     public class RecipeDetailViewModel : Recipe, INotifyPropertyChanged
     {
         private readonly Recipe _selectedRecipe;
