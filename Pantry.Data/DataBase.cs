@@ -40,15 +40,6 @@ namespace Pantry.Data
         public TimeSpan TimeSpan { get; set; }
     }
 
-    public class Item
-    {
-        public int ItemId { get; set; }
-        public Food Food { get; set; }
-        public int FoodId { get; set; }
-    }
-
-
-
     public class Manufacturer
     {
         public int ManufacturerId { get; set; }
@@ -78,6 +69,11 @@ namespace Pantry.Data
         public DbSet<FoodFoodTag> FoodFoodTags { get; set; }
         public DbSet<RecipeTag> RecipeTags { get; set; }
         public DbSet<RecipeRecipeTag> RecipeRecipeTags { get; set; }
+        public DbSet<Item> Items { get; set; }
+        public DbSet<Unit> Units { get; set; }
+        public DbSet<Inventory> Inventorys { get; set; }
+
+        
 
         /*
         Another simple recipe is just putting stuff in plastic storage containers.

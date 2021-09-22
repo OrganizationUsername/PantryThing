@@ -74,6 +74,20 @@ namespace Pantry.Data.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Units",
+                columns: table => new
+                {
+                    UnitId = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    UnitType = table.Column<string>(type: "TEXT", nullable: true),
+                    UnitWeight = table.Column<double>(type: "REAL", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Units", x => x.UnitId);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "FoodFoodTags",
                 columns: table => new
                 {
@@ -206,6 +220,34 @@ namespace Pantry.Data.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Items",
+                columns: table => new
+                {
+                    ItemId = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    FoodId = table.Column<int>(type: "INTEGER", nullable: false),
+                    Weight = table.Column<double>(type: "REAL", nullable: false),
+                    UPC = table.Column<string>(type: "TEXT", nullable: true),
+                    UnitId = table.Column<int>(type: "INTEGER", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Items", x => x.ItemId);
+                    table.ForeignKey(
+                        name: "FK_Items_Foods_FoodId",
+                        column: x => x.FoodId,
+                        principalTable: "Foods",
+                        principalColumn: "FoodId",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Items_Units_UnitId",
+                        column: x => x.UnitId,
+                        principalTable: "Units",
+                        principalColumn: "UnitId",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Equipments",
                 columns: table => new
                 {
@@ -230,6 +272,35 @@ namespace Pantry.Data.Migrations
                         principalTable: "RecipeSteps",
                         principalColumn: "RecipeStepId",
                         onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Inventorys",
+                columns: table => new
+                {
+                    InventoryId = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    ItemId = table.Column<int>(type: "INTEGER", nullable: false),
+                    LocationId = table.Column<int>(type: "INTEGER", nullable: false),
+                    DateOpened = table.Column<DateTime>(type: "TEXT", nullable: false),
+                    DateExpired = table.Column<DateTime>(type: "TEXT", nullable: false),
+                    Remaining = table.Column<double>(type: "REAL", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Inventorys", x => x.InventoryId);
+                    table.ForeignKey(
+                        name: "FK_Inventorys_Items_ItemId",
+                        column: x => x.ItemId,
+                        principalTable: "Items",
+                        principalColumn: "ItemId",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Inventorys_Locations_LocationId",
+                        column: x => x.LocationId,
+                        principalTable: "Locations",
+                        principalColumn: "LocationId",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -304,6 +375,26 @@ namespace Pantry.Data.Migrations
                 column: "FoodTagId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Inventorys_ItemId",
+                table: "Inventorys",
+                column: "ItemId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Inventorys_LocationId",
+                table: "Inventorys",
+                column: "LocationId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Items_FoodId",
+                table: "Items",
+                column: "FoodId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Items_UnitId",
+                table: "Items",
+                column: "UnitId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_LocationFoods_FoodId",
                 table: "LocationFoods",
                 column: "FoodId");
@@ -353,6 +444,9 @@ namespace Pantry.Data.Migrations
                 name: "FoodFoodTags");
 
             migrationBuilder.DropTable(
+                name: "Inventorys");
+
+            migrationBuilder.DropTable(
                 name: "LocationFoods");
 
             migrationBuilder.DropTable(
@@ -368,7 +462,7 @@ namespace Pantry.Data.Migrations
                 name: "FoodTags");
 
             migrationBuilder.DropTable(
-                name: "Foods");
+                name: "Items");
 
             migrationBuilder.DropTable(
                 name: "RecipeTags");
@@ -378,6 +472,12 @@ namespace Pantry.Data.Migrations
 
             migrationBuilder.DropTable(
                 name: "RecipeSteps");
+
+            migrationBuilder.DropTable(
+                name: "Foods");
+
+            migrationBuilder.DropTable(
+                name: "Units");
 
             migrationBuilder.DropTable(
                 name: "Recipes");

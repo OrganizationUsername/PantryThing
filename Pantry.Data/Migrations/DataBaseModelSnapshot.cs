@@ -130,6 +130,63 @@ namespace Pantry.Data.Migrations
                     b.ToTable("FoodTags");
                 });
 
+            modelBuilder.Entity("Pantry.Core.Models.Inventory", b =>
+                {
+                    b.Property<int>("InventoryId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<DateTime>("DateExpired")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("DateOpened")
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("ItemId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("LocationId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<double>("Remaining")
+                        .HasColumnType("REAL");
+
+                    b.HasKey("InventoryId");
+
+                    b.HasIndex("ItemId");
+
+                    b.HasIndex("LocationId");
+
+                    b.ToTable("Inventorys");
+                });
+
+            modelBuilder.Entity("Pantry.Core.Models.Item", b =>
+                {
+                    b.Property<int>("ItemId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("FoodId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("UPC")
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("UnitId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<double>("Weight")
+                        .HasColumnType("REAL");
+
+                    b.HasKey("ItemId");
+
+                    b.HasIndex("FoodId");
+
+                    b.HasIndex("UnitId");
+
+                    b.ToTable("Items");
+                });
+
             modelBuilder.Entity("Pantry.Core.Models.Location", b =>
                 {
                     b.Property<int>("LocationId")
@@ -244,6 +301,23 @@ namespace Pantry.Data.Migrations
                     b.ToTable("RecipeTags");
                 });
 
+            modelBuilder.Entity("Pantry.Core.Models.Unit", b =>
+                {
+                    b.Property<int>("UnitId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("UnitType")
+                        .HasColumnType("TEXT");
+
+                    b.Property<double>("UnitWeight")
+                        .HasColumnType("REAL");
+
+                    b.HasKey("UnitId");
+
+                    b.ToTable("Units");
+                });
+
             modelBuilder.Entity("Pantry.Data.LocationFoods", b =>
                 {
                     b.Property<int>("LocationFoodsId")
@@ -338,6 +412,44 @@ namespace Pantry.Data.Migrations
                     b.Navigation("FoodTag");
                 });
 
+            modelBuilder.Entity("Pantry.Core.Models.Inventory", b =>
+                {
+                    b.HasOne("Pantry.Core.Models.Item", "Item")
+                        .WithMany()
+                        .HasForeignKey("ItemId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Pantry.Core.Models.Location", "Location")
+                        .WithMany()
+                        .HasForeignKey("LocationId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Item");
+
+                    b.Navigation("Location");
+                });
+
+            modelBuilder.Entity("Pantry.Core.Models.Item", b =>
+                {
+                    b.HasOne("Pantry.Core.Models.Food", "Food")
+                        .WithMany("Items")
+                        .HasForeignKey("FoodId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Pantry.Core.Models.Unit", "Unit")
+                        .WithMany()
+                        .HasForeignKey("UnitId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Food");
+
+                    b.Navigation("Unit");
+                });
+
             modelBuilder.Entity("Pantry.Core.Models.RecipeFood", b =>
                 {
                     b.HasOne("Pantry.Core.Models.Food", "Food")
@@ -414,6 +526,8 @@ namespace Pantry.Data.Migrations
             modelBuilder.Entity("Pantry.Core.Models.Food", b =>
                 {
                     b.Navigation("FoodFoodTags");
+
+                    b.Navigation("Items");
 
                     b.Navigation("RecipeFoods");
                 });
