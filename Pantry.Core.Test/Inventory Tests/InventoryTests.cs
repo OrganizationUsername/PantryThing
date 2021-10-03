@@ -61,6 +61,8 @@ namespace Pantry.Core.Test.Inventory_Tests
                 _now + TimeSpan.FromDays(-8))).ToList().Count);
             Assert.AreEqual(1, locationFoods.Where(x => x.IsOkayAtTime(
                 _now)).ToList().Count);
+            Assert.AreEqual(0, locationFoods.Where(x => x.IsOkayAtTime(
+                _now + TimeSpan.FromDays(9))).ToList().Count);
         }
     }
 }

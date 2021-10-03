@@ -11,10 +11,10 @@
         <TextBlock Text="{Binding (models:RecipeStep.Instruction)}"/>
         <TextBlock Text="{Binding (models:RecipeStep.TimeCost)}"/>
         <GroupBox Header="Equipment Required:">
-            <ListView ItemsSource="{Binding (models:RecipeStep.Equipments)}">
+            <ListView ItemsSource="{Binding (models:RecipeStep.RecipeStepEquipment)}">
                 <ListView.ItemTemplate>
                     <DataTemplate>
-                        <TextBlock Text="{Binding EquipmentName}"/>
+                        <TextBlock Text="{Binding Equipment.EquipmentName}" />
                     </DataTemplate>
                 </ListView.ItemTemplate>
             </ListView>

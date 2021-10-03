@@ -29,11 +29,11 @@ namespace Pantry.Core.Scheduler
                     bool satisfied = false;
                     for (; !satisfied; offset++)
                     {
-                        if (recipeStep.Equipments.All(y =>
+                        if (recipeStep.RecipeStepEquipment.Select(x => x.Equipment).All(y =>
                             y.IsAvailable(goal.AddMinutes(-(offset + recipeStep.TimeCost)), goal.AddMinutes(-offset))))
                         {
                             satisfied = true;
-                            foreach (var y in recipeStep.Equipments)
+                            foreach (var y in recipeStep.RecipeStepEquipment.Select(x => x.Equipment))
                             {
                                 y.EquipmentCommitments.Add(new EquipmentCommitment()
                                 {
@@ -97,11 +97,11 @@ namespace Pantry.Core.Scheduler
                     bool satisfied = false;
                     for (; !satisfied; offset++)
                     {
-                        if (recipeStep.Equipments.All(y =>
+                        if (recipeStep.RecipeStepEquipment.Select(x => x.Equipment).All(y =>
                             y.IsAvailable(goal.AddMinutes(-(offset + recipeStep.TimeCost)), goal.AddMinutes(-offset))))
                         {
                             satisfied = true;
-                            foreach (var y in recipeStep.Equipments)
+                            foreach (var y in recipeStep.RecipeStepEquipment.Select(x => x.Equipment))
                             {
                                 y.EquipmentCommitments.Add(new EquipmentCommitment()
                                 {
@@ -109,10 +109,6 @@ namespace Pantry.Core.Scheduler
                                     EndTime = goal.AddMinutes(-offset),
                                     Description = recipeStep.Instruction + $"_ {scheduledTask.RecipeName}"
                                 });
-                                //y.BookedTimes.Add(
-                                //    (goal.AddMinutes(-(offset + recipeStep.TimeCost)),
-                                //        goal.AddMinutes(-offset), recipeStep.Instruction + $"_ {scheduledTask.RecipeName}")
-                                //);
                             }
                         }
                     }

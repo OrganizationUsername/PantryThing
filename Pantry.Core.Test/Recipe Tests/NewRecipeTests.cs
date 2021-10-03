@@ -49,9 +49,9 @@ namespace Pantry.Core.Test.Recipe_Tests
                     },
                     RecipeSteps = new List<RecipeStep>()
                     {
-                        new() {Instruction = "Put chicken in Sous Vide.", TimeCost = 1, Equipments = new List<Equipment>() {_sousVide, _humanMachine}},
-                        new() {Instruction = "Let it cook.", TimeCost = 120, Equipments = new List<Equipment>() { _sousVide }},
-                        new() {Instruction = "Take chicken out.", TimeCost = 1, Equipments = new List<Equipment>() {_sousVide, _humanMachine}},
+                        new() {Instruction = "Put chicken in Sous Vide.", TimeCost = 1, },
+                        new() {Instruction = "Let it cook.", TimeCost = 120, },
+                        new() {Instruction = "Take chicken out.", TimeCost = 1,},
                     }
                 });
             _recipes.Add(
@@ -66,8 +66,8 @@ namespace Pantry.Core.Test.Recipe_Tests
                     },
                     RecipeSteps = new List<RecipeStep>()
                     {
-                        new() {Instruction = "Put chicken in fridge.", TimeCost = 1,Equipments = new List<Equipment>() {_fridge, _humanMachine}},
-                        new() {Instruction = "Let it defrost.", TimeCost = 1440, Equipments = new List<Equipment>() {_fridge}}
+                        new() {Instruction = "Put chicken in fridge.", TimeCost = 1,},
+                        new() {Instruction = "Let it defrost.", TimeCost = 1440, }
                     }
                 });
             _recipes.Add(
@@ -81,7 +81,7 @@ namespace Pantry.Core.Test.Recipe_Tests
                     },
                     RecipeSteps = new List<RecipeStep>()
                     {
-                        new() {Instruction = "Cut chicken with a knife.", TimeCost = 3, Equipments = new List<Equipment>(){_humanMachine}},
+                        new() {Instruction = "Cut chicken with a knife.", TimeCost = 3, },
                     }
                 });
             _recipes.Add(
@@ -95,7 +95,7 @@ namespace Pantry.Core.Test.Recipe_Tests
                     },
                     RecipeSteps = new List<RecipeStep>()
                     {
-                        new() {Instruction = "Cut Bread", TimeCost = 2, Equipments = new List<Equipment>(){_humanMachine}},
+                        new() {Instruction = "Cut Bread", TimeCost = 2, },
                     }
                 });
             _recipes.Add(
@@ -109,8 +109,7 @@ namespace Pantry.Core.Test.Recipe_Tests
                     },
                     RecipeSteps = new List<RecipeStep>()
                     {
-                        new() {Instruction = "Assemble Sandwich", TimeCost = 1, Equipments = new List<Equipment>(){_humanMachine}},
-                    }
+                        new() {Instruction = "Assemble Sandwich", TimeCost = 1, }, }
                 });
             _recipes.Add(
                 new Recipe()
@@ -124,9 +123,12 @@ namespace Pantry.Core.Test.Recipe_Tests
                     },
                     RecipeSteps = new List<RecipeStep>()
                     {
-                        new() {Instruction = "Insert into Bread Machine.", TimeCost = 1, Equipments = new List<Equipment>(){_humanMachine, _breadMachine}},
-                        new() {Instruction = "Bread Machine cooks.", TimeCost = 180, Equipments = new List<Equipment>(){ _breadMachine}},
-                        new() {Instruction = "Extract bread from bread machine.", TimeCost = 1, Equipments = new List<Equipment>(){_humanMachine, _breadMachine}},
+                        new() {Instruction = "Insert into Bread Machine.", TimeCost = 1,
+                        },
+                        new() {Instruction = "Bread Machine cooks.", TimeCost = 180,
+                           },
+                        new() {Instruction = "Extract bread from bread machine.", TimeCost = 1,
+                    },
                     }
                 });
         }

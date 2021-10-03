@@ -8,7 +8,8 @@ namespace Pantry.Core.Models
         public string EquipmentName { get; set; }
         public Location Location { get; set; }
         public int LocationId { get; set; }
-        //public List<(DateTime startTime, DateTime endTime, string StepName)> BookedTimes { get; set; }
         public ICollection<EquipmentCommitment> EquipmentCommitments { get; set; }
+        public ICollection<RecipeStepEquipment> RecipeStepEquipment { get; set; }
+
     }
 }

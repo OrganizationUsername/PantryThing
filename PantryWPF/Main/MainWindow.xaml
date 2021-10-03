@@ -31,6 +31,7 @@
                 <Button Content="Recipes" Command="{Binding RecipeNavigationCommand}" />
                 <Button Content="Inventory" Command="{Binding InventoryNavigationCommand}" />
                 <Button Content="Food" Command="{Binding FoodNavigationCommand}" />
+                <Button Content="Seed" Command="{Binding SeedDatabaseCommand}"/>
             </StackPanel>
         </GroupBox>
         <GroupBox Header="{Binding VmName}">

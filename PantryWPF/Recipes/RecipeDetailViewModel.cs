@@ -43,14 +43,9 @@ namespace PantryWPF.Recipes
             DeleteFoodCommand = new DelegateCommand(DeleteSelectedFood);
             DeleteThisRecipeCommand = new DelegateCommand(DeleteThisRecipe);
 
-
-
             _dataBase = new DataBase();
             _selectedRecipe = _dataBase.Recipes.FirstOrDefault(x => x.RecipeId == selectedRecipe.RecipeId);
-
             Foods = _dataBase.Foods.ToList();
-
-
             LoadRecipeDetailData();
         }
 
@@ -133,16 +128,20 @@ namespace PantryWPF.Recipes
         private void LoadSteps()
         {
             List<RecipeStep> newList = default;
-            if (!_dataBase.RecipeSteps.Any() || !_dataBase.RecipeSteps.Any(x => x.RecipeId == _selectedRecipe.RecipeId))
+            if (_selectedRecipe is null && (!_dataBase.RecipeSteps.Any() ||
+                                        !_dataBase.RecipeSteps.Any(x => x.RecipeId == _selectedRecipe.RecipeId)))
             {
                 newList = new List<RecipeStep>();
             }
             else
             {
-                newList = _dataBase.RecipeSteps.Where(x => x.RecipeId == _selectedRecipe.RecipeId).ToList();
+                newList = _dataBase.RecipeSteps.Where(x => x.RecipeId == _selectedRecipe.RecipeId)
+                    .Include(y => y.RecipeStepEquipment)
+                    .Include(y => y.RecipeStepEquipment)
+                    .ThenInclude(y => y.Equipment).ToList();
             }
 
-            
+
 
             RecipeStepsList.Clear();
 

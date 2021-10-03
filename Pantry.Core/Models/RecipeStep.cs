@@ -10,6 +10,18 @@ namespace Pantry.Core.Models
         public int Order { get; set; }
         public string Instruction { get; set; }
         public double TimeCost { get; set; }
-        public ICollection<Equipment> Equipments { get; set; }
+        //public ICollection<Equipment> Equipments { get; set; } //I need to get rid of this one.
+        public ICollection<RecipeStepEquipment> RecipeStepEquipment { get; set; }
     }
+
+    public class RecipeStepEquipment
+    {
+        public int RecipeStepEquipmentId { get; set; }
+        public RecipeStep RecipeStep { get; set; }
+        public int RecipeStepId { get; set; }
+        public Equipment Equipment { get; set; }
+        public int EquipmentId { get; set; }
+
+    }
+
 }

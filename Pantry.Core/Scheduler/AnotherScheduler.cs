@@ -73,11 +73,11 @@ namespace Pantry.Core.Scheduler
                 var satisfied = false;
                 for (; !satisfied; offset++)
                 {
-                    if (recipeStep.Equipments.All(y =>
+                    if (recipeStep.RecipeStepEquipment.Select(x => x.Equipment).All(y =>
                         y.IsAvailable(_goal.AddMinutes(-(offset + recipeStep.TimeCost)), _goal.AddMinutes(-offset))))
                     {
                         satisfied = true;
-                        foreach (var y in recipeStep.Equipments)
+                        foreach (var y in recipeStep.RecipeStepEquipment.Select(x => x.Equipment))
                         {
                             y.EquipmentCommitments.Add(new EquipmentCommitment()
                             {

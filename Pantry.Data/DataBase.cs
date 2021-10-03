@@ -11,8 +11,6 @@ namespace Pantry.Data
     //dotnet ef migrations add foodConstraint
     //dotnet ef database update foodConstraint
 
-   
-
     public enum TemperatureState
     {
         Unopened = 1,
