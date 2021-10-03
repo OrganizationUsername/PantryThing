@@ -11,18 +11,7 @@ namespace Pantry.Data
     //dotnet ef migrations add foodConstraint
     //dotnet ef database update foodConstraint
 
-    public class LocationFoods
-    {
-        public int LocationFoodsId { get; set; }
-        public Food Food { get; set; }
-        public int FoodId { get; set; }
-        public Location Location { get; set; }
-        public int LocationId { get; set; }
-        public double Quantity { get; set; }
-        public DateTime Birth { get; set; }
-        public DateTime Expiry { get; set; }
-        public bool Exists { get; set; }
-    }
+   
 
     public enum TemperatureState
     {
@@ -48,6 +37,7 @@ namespace Pantry.Data
 
     public class FoodInfo
     {
+        private IEnumerable<string> asdf;
         public int FoodInfoId { get; set; }
         public ICollection<ExpiryInformation> ExpiryInformations { get; set; }
         public string UnitName { get; set; }
@@ -72,8 +62,6 @@ namespace Pantry.Data
         public DbSet<Item> Items { get; set; }
         public DbSet<Unit> Units { get; set; }
         public DbSet<Inventory> Inventorys { get; set; }
-
-        
 
         /*
         Another simple recipe is just putting stuff in plastic storage containers.
