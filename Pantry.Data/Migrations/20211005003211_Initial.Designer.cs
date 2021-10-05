@@ -9,7 +9,7 @@ using Pantry.Data;
 namespace Pantry.Data.Migrations
 {
     [DbContext(typeof(DataBase))]
-    [Migration("20211003200538_Initial")]
+    [Migration("20211005003211_Initial")]
     partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -139,9 +139,6 @@ namespace Pantry.Data.Migrations
                     b.Property<DateTime>("DateOpened")
                         .HasColumnType("TEXT");
 
-                    b.Property<int>("ItemId")
-                        .HasColumnType("INTEGER");
-
                     b.Property<int>("LocationId")
                         .HasColumnType("INTEGER");
 
@@ -149,8 +146,6 @@ namespace Pantry.Data.Migrations
                         .HasColumnType("REAL");
 
                     b.HasKey("InventoryId");
-
-                    b.HasIndex("ItemId");
 
                     b.HasIndex("LocationId");
 
@@ -166,11 +161,14 @@ namespace Pantry.Data.Migrations
                     b.Property<int>("FoodId")
                         .HasColumnType("INTEGER");
 
-                    b.Property<string>("UPC")
-                        .HasColumnType("TEXT");
-
-                    b.Property<int>("UnitId")
+                    b.Property<int?>("InventoryId")
                         .HasColumnType("INTEGER");
+
+                    b.Property<int?>("UnitId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Upc")
+                        .HasColumnType("TEXT");
 
                     b.Property<double>("Weight")
                         .HasColumnType("REAL");
@@ -178,6 +176,8 @@ namespace Pantry.Data.Migrations
                     b.HasKey("ItemId");
 
                     b.HasIndex("FoodId");
+
+                    b.HasIndex("InventoryId");
 
                     b.HasIndex("UnitId");
 
@@ -210,7 +210,7 @@ namespace Pantry.Data.Migrations
                     b.Property<DateTime>("ExpiryDate")
                         .HasColumnType("TEXT");
 
-                    b.Property<int>("FoodId")
+                    b.Property<int>("ItemId")
                         .HasColumnType("INTEGER");
 
                     b.Property<int>("LocationId")
@@ -227,7 +227,7 @@ namespace Pantry.Data.Migrations
 
                     b.HasKey("LocationFoodsId");
 
-                    b.HasIndex("FoodId");
+                    b.HasIndex("ItemId");
 
                     b.HasIndex("LocationId");
 
@@ -431,6 +431,38 @@ namespace Pantry.Data.Migrations
 
             modelBuilder.Entity("Pantry.Core.Models.Inventory", b =>
                 {
+                    b.HasOne("Pantry.Core.Models.Location", "Location")
+                        .WithMany()
+                        .HasForeignKey("LocationId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Location");
+                });
+
+            modelBuilder.Entity("Pantry.Core.Models.Item", b =>
+                {
+                    b.HasOne("Pantry.Core.Models.Food", "Food")
+                        .WithMany("Items")
+                        .HasForeignKey("FoodId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Pantry.Core.Models.Inventory", null)
+                        .WithMany("Items")
+                        .HasForeignKey("InventoryId");
+
+                    b.HasOne("Pantry.Core.Models.Unit", "Unit")
+                        .WithMany()
+                        .HasForeignKey("UnitId");
+
+                    b.Navigation("Food");
+
+                    b.Navigation("Unit");
+                });
+
+            modelBuilder.Entity("Pantry.Core.Models.LocationFoods", b =>
+                {
                     b.HasOne("Pantry.Core.Models.Item", "Item")
                         .WithMany()
                         .HasForeignKey("ItemId")
@@ -444,44 +476,6 @@ namespace Pantry.Data.Migrations
                         .IsRequired();
 
                     b.Navigation("Item");
-
-                    b.Navigation("Location");
-                });
-
-            modelBuilder.Entity("Pantry.Core.Models.Item", b =>
-                {
-                    b.HasOne("Pantry.Core.Models.Food", "Food")
-                        .WithMany("Items")
-                        .HasForeignKey("FoodId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Pantry.Core.Models.Unit", "Unit")
-                        .WithMany()
-                        .HasForeignKey("UnitId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Food");
-
-                    b.Navigation("Unit");
-                });
-
-            modelBuilder.Entity("Pantry.Core.Models.LocationFoods", b =>
-                {
-                    b.HasOne("Pantry.Core.Models.Food", "Food")
-                        .WithMany()
-                        .HasForeignKey("FoodId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Pantry.Core.Models.Location", "Location")
-                        .WithMany()
-                        .HasForeignKey("LocationId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Food");
 
                     b.Navigation("Location");
                 });
@@ -573,6 +567,11 @@ namespace Pantry.Data.Migrations
             modelBuilder.Entity("Pantry.Core.Models.FoodTag", b =>
                 {
                     b.Navigation("FoodFoodTags");
+                });
+
+            modelBuilder.Entity("Pantry.Core.Models.Inventory", b =>
+                {
+                    b.Navigation("Items");
                 });
 
             modelBuilder.Entity("Pantry.Core.Models.Recipe", b =>

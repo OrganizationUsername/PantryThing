@@ -1,9 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using System.Runtime.InteropServices.ComTypes;
-using System.Windows.Documents;
-using System.Windows.Media.Animation;
 using Pantry.Core.Models;
 using Pantry.Data;
 using PantryWPF.Main;

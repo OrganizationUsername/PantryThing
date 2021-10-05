@@ -19,14 +19,20 @@ namespace Pantry.Core.Test.Inventory_Tests
             var x = new LocationFoods()
             {
                 Location = fridge,
-                Food = _slicedBread,
+                Item = new Item()
+                {
+                    Food = _slicedBread,
+                },
                 OpenDate = _now,
                 ExpiryDate = _now + TimeSpan.FromDays(7)
             };
             var y = new LocationFoods()
             {
                 Location = fridge,
-                Food = _slicedBread,
+                Item = new Item()
+                {
+                    Food = _slicedBread,
+                },
                 OpenDate = _now + TimeSpan.FromDays(-8),
                 ExpiryDate = _now + TimeSpan.FromDays(-1)
             };
@@ -44,14 +50,20 @@ namespace Pantry.Core.Test.Inventory_Tests
                 new ()
                 {
                     Location = fridge,
-                    Food = _slicedBread,
+                    Item = new Item()
+                    {
+                        Food = _slicedBread,
+                    },
                     PurchaseDate = _now,
                     ExpiryDate = _now + TimeSpan.FromDays(7)
                 },
                 new()
                 {
                     Location = fridge,
-                    Food = _slicedBread,
+                    Item = new Item()
+                    {
+                        Food = _slicedBread,
+                    },
                     PurchaseDate = _now + TimeSpan.FromDays(-8),
                     ExpiryDate = _now + TimeSpan.FromDays(-1)
                 }
@@ -61,8 +73,20 @@ namespace Pantry.Core.Test.Inventory_Tests
                 _now + TimeSpan.FromDays(-8))).ToList().Count);
             Assert.AreEqual(1, locationFoods.Where(x => x.IsOkayAtTime(
                 _now)).ToList().Count);
+            Assert.AreEqual(1, locationFoods.Where(x => x.IsOkayAtTime(
+                _now + TimeSpan.FromDays(-2))).ToList().Count);
             Assert.AreEqual(0, locationFoods.Where(x => x.IsOkayAtTime(
                 _now + TimeSpan.FromDays(9))).ToList().Count);
+        }
+
+        [Test]
+        public void doSomething()
+        {
+            var x = new Inventory();
+            x.Items = new List<Item>();
+
+
+
         }
     }
 }

@@ -5,8 +5,8 @@ namespace Pantry.Core.Models
     public class LocationFoods
     {
         public int LocationFoodsId { get; set; }
-        public Food Food { get; set; }
-        public int FoodId { get; set; }
+        public Item Item { get; set; }
+        public int ItemId { get; set; }
         public Location Location { get; set; }
         public int LocationId { get; set; }
         public double Quantity { get; set; }
@@ -22,7 +22,7 @@ namespace Pantry.Core.Models
                 return false;
             }
 
-            return (ExpiryDate + TimeSpan.FromDays(1) <= check);
+            return ExpiryDate + TimeSpan.FromDays(1) <= check;
         }
 
         public bool IsOkayAtTime(DateTime check)

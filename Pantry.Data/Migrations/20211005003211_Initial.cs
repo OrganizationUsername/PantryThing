@@ -135,30 +135,21 @@ namespace Pantry.Data.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "LocationFoods",
+                name: "Inventorys",
                 columns: table => new
                 {
-                    LocationFoodsId = table.Column<int>(type: "INTEGER", nullable: false)
+                    InventoryId = table.Column<int>(type: "INTEGER", nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
-                    FoodId = table.Column<int>(type: "INTEGER", nullable: false),
                     LocationId = table.Column<int>(type: "INTEGER", nullable: false),
-                    Quantity = table.Column<double>(type: "REAL", nullable: false),
-                    PurchaseDate = table.Column<DateTime>(type: "TEXT", nullable: false),
-                    OpenDate = table.Column<DateTime>(type: "TEXT", nullable: false),
-                    ExpiryDate = table.Column<DateTime>(type: "TEXT", nullable: false),
-                    Exists = table.Column<bool>(type: "INTEGER", nullable: false)
+                    DateOpened = table.Column<DateTime>(type: "TEXT", nullable: false),
+                    DateExpired = table.Column<DateTime>(type: "TEXT", nullable: false),
+                    Remaining = table.Column<double>(type: "REAL", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_LocationFoods", x => x.LocationFoodsId);
+                    table.PrimaryKey("PK_Inventorys", x => x.InventoryId);
                     table.ForeignKey(
-                        name: "FK_LocationFoods_Foods_FoodId",
-                        column: x => x.FoodId,
-                        principalTable: "Foods",
-                        principalColumn: "FoodId",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_LocationFoods_Locations_LocationId",
+                        name: "FK_Inventorys_Locations_LocationId",
                         column: x => x.LocationId,
                         principalTable: "Locations",
                         principalColumn: "LocationId",
@@ -248,8 +239,9 @@ namespace Pantry.Data.Migrations
                         .Annotation("Sqlite:Autoincrement", true),
                     FoodId = table.Column<int>(type: "INTEGER", nullable: false),
                     Weight = table.Column<double>(type: "REAL", nullable: false),
-                    UPC = table.Column<string>(type: "TEXT", nullable: true),
-                    UnitId = table.Column<int>(type: "INTEGER", nullable: false)
+                    Upc = table.Column<string>(type: "TEXT", nullable: true),
+                    UnitId = table.Column<int>(type: "INTEGER", nullable: true),
+                    InventoryId = table.Column<int>(type: "INTEGER", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -261,11 +253,17 @@ namespace Pantry.Data.Migrations
                         principalColumn: "FoodId",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
+                        name: "FK_Items_Inventorys_InventoryId",
+                        column: x => x.InventoryId,
+                        principalTable: "Inventorys",
+                        principalColumn: "InventoryId",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
                         name: "FK_Items_Units_UnitId",
                         column: x => x.UnitId,
                         principalTable: "Units",
                         principalColumn: "UnitId",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -331,28 +329,30 @@ namespace Pantry.Data.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Inventorys",
+                name: "LocationFoods",
                 columns: table => new
                 {
-                    InventoryId = table.Column<int>(type: "INTEGER", nullable: false)
+                    LocationFoodsId = table.Column<int>(type: "INTEGER", nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
                     ItemId = table.Column<int>(type: "INTEGER", nullable: false),
                     LocationId = table.Column<int>(type: "INTEGER", nullable: false),
-                    DateOpened = table.Column<DateTime>(type: "TEXT", nullable: false),
-                    DateExpired = table.Column<DateTime>(type: "TEXT", nullable: false),
-                    Remaining = table.Column<double>(type: "REAL", nullable: false)
+                    Quantity = table.Column<double>(type: "REAL", nullable: false),
+                    PurchaseDate = table.Column<DateTime>(type: "TEXT", nullable: false),
+                    OpenDate = table.Column<DateTime>(type: "TEXT", nullable: false),
+                    ExpiryDate = table.Column<DateTime>(type: "TEXT", nullable: false),
+                    Exists = table.Column<bool>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Inventorys", x => x.InventoryId);
+                    table.PrimaryKey("PK_LocationFoods", x => x.LocationFoodsId);
                     table.ForeignKey(
-                        name: "FK_Inventorys_Items_ItemId",
+                        name: "FK_LocationFoods_Items_ItemId",
                         column: x => x.ItemId,
                         principalTable: "Items",
                         principalColumn: "ItemId",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_Inventorys_Locations_LocationId",
+                        name: "FK_LocationFoods_Locations_LocationId",
                         column: x => x.LocationId,
                         principalTable: "Locations",
                         principalColumn: "LocationId",
@@ -390,11 +390,6 @@ namespace Pantry.Data.Migrations
                 column: "FoodTagId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Inventorys_ItemId",
-                table: "Inventorys",
-                column: "ItemId");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_Inventorys_LocationId",
                 table: "Inventorys",
                 column: "LocationId");
@@ -405,14 +400,19 @@ namespace Pantry.Data.Migrations
                 column: "FoodId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Items_InventoryId",
+                table: "Items",
+                column: "InventoryId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Items_UnitId",
                 table: "Items",
                 column: "UnitId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_LocationFoods_FoodId",
+                name: "IX_LocationFoods_ItemId",
                 table: "LocationFoods",
-                column: "FoodId");
+                column: "ItemId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_LocationFoods_LocationId",
@@ -469,9 +469,6 @@ namespace Pantry.Data.Migrations
                 name: "FoodFoodTags");
 
             migrationBuilder.DropTable(
-                name: "Inventorys");
-
-            migrationBuilder.DropTable(
                 name: "LocationFoods");
 
             migrationBuilder.DropTable(
@@ -502,13 +499,16 @@ namespace Pantry.Data.Migrations
                 name: "Foods");
 
             migrationBuilder.DropTable(
+                name: "Inventorys");
+
+            migrationBuilder.DropTable(
                 name: "Units");
 
             migrationBuilder.DropTable(
-                name: "Locations");
+                name: "Recipes");
 
             migrationBuilder.DropTable(
-                name: "Recipes");
+                name: "Locations");
         }
     }
 }

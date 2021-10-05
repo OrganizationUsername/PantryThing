@@ -1,6 +1,4 @@
-﻿using System.Windows.Controls;
-
-namespace PantryWPF.Recipes
+﻿namespace PantryWPF.Recipes
 {
     /// <summary>
     /// Interaction logic for RecipeDetailView.xaml

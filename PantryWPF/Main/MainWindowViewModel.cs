@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
 using Pantry.Core.Models;
@@ -37,6 +38,66 @@ namespace PantryWPF.Main
             PopulateLocations();
             PopulateEquipment();
             PopulateRecipes();
+            PopulateItems();
+            PopulateInventory();
+        }
+
+        public void PopulateItems()
+        {
+            using (var dbContext = new DataBase())
+            {
+                _ = dbContext.Database.ExecuteSqlRaw("DELETE FROM Items;");
+                dbContext.Items.Add(new Item() { Food = dbContext.Foods.First(x => x.FoodName == "Frozen Chicken"), Weight = 4540, Upc = "100Chicken" });
+                dbContext.Items.Add(new Item() { Food = dbContext.Foods.First(x => x.FoodName == "BBQ Sauce"), Weight = 454, Upc = "200BBQ" });
+                dbContext.Items.Add(new Item() { Food = dbContext.Foods.First(x => x.FoodName == "Milk"), Weight = 3900, Upc = "1GalMilk" });
+                _ = dbContext.SaveChanges();
+            }
+        }
+
+        public void PopulateInventory()
+        {
+            using (var dbContext = new DataBase())
+            {
+                _ = dbContext.Database.ExecuteSqlRaw("DELETE FROM LocationFoodsCollection;");
+
+                var location = dbContext.Locations.First(x => x.LocationName == "Default");
+                var now = DateTime.Now;
+
+                dbContext.LocationFoods.Add(new LocationFoods()
+                {
+                    Item = dbContext.Items.First(x => x.Upc == "1GalMilk"),
+                    ExpiryDate = now + TimeSpan.FromDays(14),
+                    Quantity = 3900,
+                    Location = location,
+                });
+
+                dbContext.LocationFoods.Add(new LocationFoods()
+                {
+                    Item = dbContext.Items.First(x => x.Upc == "1GalMilk"),
+                    OpenDate = now + TimeSpan.FromDays(-7),
+                    ExpiryDate = now + TimeSpan.FromDays(1),
+                    Quantity = 3900,
+                    Location = location,
+                });
+
+                dbContext.LocationFoods.Add(new LocationFoods()
+                {
+                    Item = dbContext.Items.First(x => x.Upc == "100Chicken"),
+                    ExpiryDate = now + TimeSpan.FromDays(180),
+                    Quantity = 4540 / 2.0,
+                    Location = location,
+                });
+
+                dbContext.LocationFoods.Add(new LocationFoods()
+                {
+                    Item = dbContext.Items.First(x => x.Upc == "200BBQ"),
+                    ExpiryDate = now + TimeSpan.FromDays(180),
+                    Quantity = 220,
+                    Location = location,
+                });
+
+                _ = dbContext.SaveChanges();
+            }
         }
 
         public void PopulateLocations()
@@ -52,7 +113,6 @@ namespace PantryWPF.Main
 
         public void PopulateEquipment()
         {
-
             using (var dbContext = new DataBase())
             {
                 _ = dbContext.Database.ExecuteSqlRaw("DELETE FROM Equipments;");
@@ -68,7 +128,6 @@ namespace PantryWPF.Main
 
         public void PopulateRecipes()
         {
-
             using (var dbContext = new DataBase())
             {
                 _ = dbContext.Database.ExecuteSqlRaw("DELETE FROM Recipes;");
@@ -129,7 +188,6 @@ namespace PantryWPF.Main
                 });
                 _ = dbContext.SaveChanges();
             }
-
         }
 
         public void PopulateFoods()
