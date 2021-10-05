@@ -1,5 +1,4 @@
 ﻿using System.Collections.ObjectModel;
-using System.ComponentModel;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
 using Pantry.Core.Models;
@@ -13,7 +12,7 @@ namespace PantryWPF.Inventory
         private Location _selectedLocation;
         public ObservableCollection<LocationFoods> LocationFoodsCollection { get; set; }
         public ObservableCollection<Location> Locations { get; set; }
-        private DataBase _db;
+        private readonly DataBase _db;
 
         public Location SelectedLocation
         {
