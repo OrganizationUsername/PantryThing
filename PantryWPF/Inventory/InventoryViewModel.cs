@@ -7,20 +7,23 @@ using PantryWPF.Main;
 
 namespace PantryWPF.Inventory
 {
-    public class InventoryViewModel : VmBase
+    public sealed class InventoryViewModel : VmBase
     {
         public ObservableCollection<LocationFoods> LocationFoodsCollection { get; set; }
+        //public ObservableCollection<LocationFoodViewModel> LocationFoodsCollection { get; set; }
 
         public InventoryViewModel()
         {
-            LocationFoodsCollection = new();
             var db = new DataBase();
 
             var locationFoods = db.LocationFoods.Include(x => x.Item).ToList();
-            foreach (var x in locationFoods)
-            {
-                LocationFoodsCollection.Add(x);
-            }
+            LocationFoodsCollection = new(locationFoods);
+
+            //foreach (var x in locationFoods)
+            //{
+            //    LocationFoodsCollection.Add(x);
+            //    //LocationFoodsCollection.Add(new LocationFoodViewModel() { LocationFoods = x });
+            //}
             OnPropertyChanged(nameof(LocationFoodsCollection));
         }
 

@@ -7,12 +7,15 @@
              xmlns:models="clr-namespace:Pantry.Core.Models;assembly=Pantry.Core"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
-    <UserControl.DataContext >
+    <UserControl.DataContext>
         <local:InventoryViewModel/>
     </UserControl.DataContext>
     <UserControl.Resources>
         <DataTemplate DataType="{x:Type models:LocationFoods}">
-            <local:LocationFoodView/>
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Text="{Binding Item.Upc}"/>
+                <TextBlock Text="{Binding Quantity}"/>
+            </StackPanel>
         </DataTemplate>
     </UserControl.Resources>
     <ListView ItemsSource="{Binding LocationFoodsCollection}"/>
