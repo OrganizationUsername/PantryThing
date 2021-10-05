@@ -58,42 +58,50 @@ namespace PantryWPF.Main
         {
             using (var dbContext = new DataBase())
             {
-                _ = dbContext.Database.ExecuteSqlRaw("DELETE FROM LocationFoodsCollection;");
+                _ = dbContext.Database.ExecuteSqlRaw("DELETE FROM LocationFoods;");
 
-                var location = dbContext.Locations.First(x => x.LocationName == "Default");
+                var defaultLocation = dbContext.Locations.First(x => x.LocationName == "Default");
                 var now = DateTime.Now;
 
-                dbContext.LocationFoods.Add(new LocationFoods()
+                _ = dbContext.LocationFoods.Add(new LocationFoods()
                 {
                     Item = dbContext.Items.First(x => x.Upc == "1GalMilk"),
                     ExpiryDate = now + TimeSpan.FromDays(14),
                     Quantity = 3900,
-                    Location = location,
+                    Location = defaultLocation,
                 });
 
-                dbContext.LocationFoods.Add(new LocationFoods()
+                _ = dbContext.LocationFoods.Add(new LocationFoods()
                 {
                     Item = dbContext.Items.First(x => x.Upc == "1GalMilk"),
                     OpenDate = now + TimeSpan.FromDays(-7),
                     ExpiryDate = now + TimeSpan.FromDays(1),
                     Quantity = 3900,
-                    Location = location,
+                    Location = defaultLocation,
                 });
 
-                dbContext.LocationFoods.Add(new LocationFoods()
+                _ = dbContext.LocationFoods.Add(new LocationFoods()
                 {
                     Item = dbContext.Items.First(x => x.Upc == "100Chicken"),
                     ExpiryDate = now + TimeSpan.FromDays(180),
                     Quantity = 4540 / 2.0,
-                    Location = location,
+                    Location = defaultLocation,
                 });
 
-                dbContext.LocationFoods.Add(new LocationFoods()
+                _ = dbContext.LocationFoods.Add(new LocationFoods()
+                {
+                    Item = dbContext.Items.First(x => x.Upc == "100Chicken"),
+                    ExpiryDate = now + TimeSpan.FromDays(180),
+                    Quantity = 4540,
+                    Location = dbContext.Locations.First(x => x.LocationName == "Deep Freezer"),
+                });
+
+                _ = dbContext.LocationFoods.Add(new LocationFoods()
                 {
                     Item = dbContext.Items.First(x => x.Upc == "200BBQ"),
                     ExpiryDate = now + TimeSpan.FromDays(180),
                     Quantity = 220,
-                    Location = location,
+                    Location = defaultLocation,
                 });
 
                 _ = dbContext.SaveChanges();
@@ -106,8 +114,11 @@ namespace PantryWPF.Main
             {
                 _ = dbContext.Database.ExecuteSqlRaw("DELETE FROM Locations;");
                 _ = dbContext.Database.ExecuteSqlRaw("UPDATE `sqlite_sequence` SET `seq` = 0 WHERE `name` = 'Locations';");
-                dbContext.Locations.Add(new() { LocationName = "Default" });
-                dbContext.SaveChanges();
+                _ = dbContext.Locations.Add(new() { LocationName = "Default" });
+                _ = dbContext.Locations.Add(new() { LocationName = "Fridge" });
+                _ = dbContext.Locations.Add(new() { LocationName = "Freezer" });
+                _ = dbContext.Locations.Add(new() { LocationName = "Deep Freezer" });
+                _ = dbContext.SaveChanges();
             }
         }
 

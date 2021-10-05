@@ -14,9 +14,20 @@
         <DataTemplate DataType="{x:Type models:LocationFoods}">
             <StackPanel Orientation="Horizontal">
                 <TextBlock Text="{Binding Item.Upc}"/>
+                <TextBlock Text=": "/>
                 <TextBlock Text="{Binding Quantity}"/>
+                <ProgressBar Value="3" Maximum="100" Width="100" Foreground="Red"/>
             </StackPanel>
         </DataTemplate>
     </UserControl.Resources>
-    <ListView ItemsSource="{Binding LocationFoodsCollection}"/>
+    <DockPanel LastChildFill="False">
+        <DockPanel DockPanel.Dock="Left">
+            <ComboBox ItemsSource="{Binding Locations}" 
+                      DisplayMemberPath="LocationName" DockPanel.Dock="Top"
+                      SelectedItem="{Binding SelectedLocation}"/>
+            <ListView ItemsSource="{Binding LocationFoodsCollection}"/>
+        </DockPanel>
+
+    </DockPanel>
+
 </UserControl>

@@ -13,7 +13,7 @@
             <TextBlock Text="{Binding Description}"/>
         </DataTemplate>
         <DataTemplate DataType="{x:Type recipes:RecipeDetailViewModel}">
-            <recipes:RecipeDetailView />
+            <recipes:RecipeDetailView/>
         </DataTemplate>
         <DataTemplate DataType="{x:Type food:FoodListView}">
             <food:FoodListView/>
