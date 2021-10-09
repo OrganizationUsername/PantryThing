@@ -25,7 +25,16 @@
             <ComboBox ItemsSource="{Binding Locations}" 
                       DisplayMemberPath="LocationName" DockPanel.Dock="Top"
                       SelectedItem="{Binding SelectedLocation}"/>
-            <ListView ItemsSource="{Binding LocationFoodsCollection}"/>
+            <ListView ItemsSource="{Binding LocationFoodsCollection}" SelectedItem="{Binding SelectedLocationFood}"/>
         </DockPanel>
+        <StackPanel>
+            <TextBlock Text="{Binding SelectedLocationFood.Item.Upc}"/>
+            <TextBlock Text="{Binding SelectedLocationFood.Item.Food.FoodName}"/>
+            <ComboBox ItemsSource="{Binding Locations}" 
+                      DisplayMemberPath="LocationName" DockPanel.Dock="Top" 
+                      SelectedItem="{Binding SelectedLocationFood.Location}"/>
+            <TextBox Text="{Binding SelectedLocationFood.Quantity}"/>
+            <Button Content="Save Changes" Command="{Binding SaveChangesDelegateCommand}"/>
+        </StackPanel>
     </DockPanel>
 </UserControl>
