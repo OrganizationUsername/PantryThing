@@ -67,12 +67,12 @@ namespace PantryWPF.Food
 
         public void KeepOnlyUniqueFoodNames()
         {
-            var Names = new List<string>();
+            var names = new List<string>();
             foreach (var x in _dataBase.Foods)
             {
-                if (!Names.Contains(x.FoodName) && !string.IsNullOrWhiteSpace(x.FoodName))
+                if (!names.Contains(x.FoodName) && !string.IsNullOrWhiteSpace(x.FoodName))
                 {
-                    Names.Add(x.FoodName);
+                    names.Add(x.FoodName);
                 }
                 else
                 {

@@ -26,10 +26,10 @@ namespace PantryWPF.Main
             container.RegisterType<DataBase, DataBase>();
 
             MainView = new RecipesListViewModel();
-            RecipeNavigationCommand = new NavigationCommand(this, new RecipesListViewModel());
-            InventoryNavigationCommand = new NavigationCommand(this, new InventoryViewModel());
-            FoodNavigationCommand = new NavigationCommand(this, new FoodListViewModel());
-            SeedDatabaseCommand = new DelegateCommand(SeedDatabase);
+            RecipeNavigationCommand = new(this, new RecipesListViewModel());
+            InventoryNavigationCommand = new(this, new InventoryViewModel());
+            FoodNavigationCommand = new(this, new FoodListViewModel());
+            SeedDatabaseCommand = new(SeedDatabase);
         }
 
         public void SeedDatabase()
@@ -47,11 +47,11 @@ namespace PantryWPF.Main
             using (var dbContext = new DataBase())
             {
                 _ = dbContext.Database.ExecuteSqlRaw("DELETE FROM Items;");
-                dbContext.Items.Add(new Item() { Food = dbContext.Foods.First(x => x.FoodName == "Frozen Chicken"), Weight = 4540, Upc = "100Chicken" });
-                dbContext.Items.Add(new Item() { Food = dbContext.Foods.First(x => x.FoodName == "BBQ Sauce"), Weight = 454, Upc = "200BBQ" });
-                dbContext.Items.Add(new Item() { Food = dbContext.Foods.First(x => x.FoodName == "Milk"), Weight = 3900, Upc = "1GalMilk" });
-                dbContext.Items.Add(new Item() { Food = dbContext.Foods.First(x => x.FoodName == "Sliced Bread"), Weight = 454, Upc = "LotsOfBread" });
-                dbContext.Items.Add(new Item() { Food = dbContext.Foods.First(x => x.FoodName == "Bread"), Weight = 1000, Upc = "Artisan Bread" });
+                _ = dbContext.Items.Add(new() { Food = dbContext.Foods.First(x => x.FoodName == "Frozen Chicken"), Weight = 4540, Upc = "100Chicken" });
+                _ = dbContext.Items.Add(new() { Food = dbContext.Foods.First(x => x.FoodName == "BBQ Sauce"), Weight = 454, Upc = "200BBQ" });
+                _ = dbContext.Items.Add(new() { Food = dbContext.Foods.First(x => x.FoodName == "Milk"), Weight = 3900, Upc = "1GalMilk" });
+                _ = dbContext.Items.Add(new() { Food = dbContext.Foods.First(x => x.FoodName == "Sliced Bread"), Weight = 454, Upc = "LotsOfBread" });
+                _ = dbContext.Items.Add(new() { Food = dbContext.Foods.First(x => x.FoodName == "Bread"), Weight = 1000, Upc = "Artisan Bread" });
 
                 _ = dbContext.SaveChanges();
 
@@ -67,7 +67,7 @@ namespace PantryWPF.Main
                 var defaultLocation = dbContext.Locations.First(x => x.LocationName == "Default");
                 var now = DateTime.Now;
 
-                _ = dbContext.LocationFoods.Add(new LocationFoods()
+                _ = dbContext.LocationFoods.Add(new()
                 {
                     Item = dbContext.Items.First(x => x.Upc == "1GalMilk"),
                     ExpiryDate = now + TimeSpan.FromDays(14),
@@ -75,7 +75,7 @@ namespace PantryWPF.Main
                     Location = defaultLocation,
                 });
 
-                _ = dbContext.LocationFoods.Add(new LocationFoods()
+                _ = dbContext.LocationFoods.Add(new()
                 {
                     Item = dbContext.Items.First(x => x.Upc == "Artisan Bread"),
                     ExpiryDate = now + TimeSpan.FromDays(14),
@@ -83,7 +83,7 @@ namespace PantryWPF.Main
                     Location = defaultLocation,
                 });
 
-                _ = dbContext.LocationFoods.Add(new LocationFoods()
+                _ = dbContext.LocationFoods.Add(new()
                 {
                     Item = dbContext.Items.First(x => x.Upc == "LotsOfBread"),
                     OpenDate = now + TimeSpan.FromDays(-7),
@@ -92,7 +92,7 @@ namespace PantryWPF.Main
                     Location = defaultLocation,
                 });
 
-                _ = dbContext.LocationFoods.Add(new LocationFoods()
+                _ = dbContext.LocationFoods.Add(new()
                 {
                     Item = dbContext.Items.First(x => x.Upc == "1GalMilk"),
                     OpenDate = now + TimeSpan.FromDays(-7),
@@ -101,7 +101,7 @@ namespace PantryWPF.Main
                     Location = defaultLocation,
                 });
 
-                _ = dbContext.LocationFoods.Add(new LocationFoods()
+                _ = dbContext.LocationFoods.Add(new()
                 {
                     Item = dbContext.Items.First(x => x.Upc == "100Chicken"),
                     ExpiryDate = now + TimeSpan.FromDays(180),
@@ -109,7 +109,7 @@ namespace PantryWPF.Main
                     Location = defaultLocation,
                 });
 
-                _ = dbContext.LocationFoods.Add(new LocationFoods()
+                _ = dbContext.LocationFoods.Add(new()
                 {
                     Item = dbContext.Items.First(x => x.Upc == "100Chicken"),
                     ExpiryDate = now + TimeSpan.FromDays(180),
@@ -117,7 +117,7 @@ namespace PantryWPF.Main
                     Location = dbContext.Locations.First(x => x.LocationName == "Deep Freezer"),
                 });
 
-                _ = dbContext.LocationFoods.Add(new LocationFoods()
+                _ = dbContext.LocationFoods.Add(new()
                 {
                     Item = dbContext.Items.First(x => x.Upc == "200BBQ"),
                     ExpiryDate = now + TimeSpan.FromDays(180),
@@ -153,7 +153,7 @@ namespace PantryWPF.Main
                 _ = dbContext.Equipments.Add(new() { EquipmentName = "Bread Machine", Location = dbContext.Locations.First(x => x.LocationName == "Default") });
                 _ = dbContext.Equipments.Add(new() { EquipmentName = "Human", Location = dbContext.Locations.First(x => x.LocationName == "Default") });
                 _ = dbContext.Equipments.Add(new() { EquipmentName = "Fridge", Location = dbContext.Locations.First(x => x.LocationName == "Default") });
-                _ = dbContext.Equipments.Add(new Equipment() { EquipmentName = "Sous Vide", Location = dbContext.Locations.First(x => x.LocationName == "Default") });
+                _ = dbContext.Equipments.Add(new() { EquipmentName = "Sous Vide", Location = dbContext.Locations.First(x => x.LocationName == "Default") });
                 _ = dbContext.SaveChanges();
             }
         }
@@ -168,20 +168,20 @@ namespace PantryWPF.Main
                 _ = dbContext.Database.ExecuteSqlRaw("UPDATE `sqlite_sequence` SET `seq` = 0 WHERE `name` = 'RecipeSteps';");
 
                 {
-                    var recipe = dbContext.Recipes.Add(new Recipe()
+                    var recipe = dbContext.Recipes.Add(new()
                     {
                         Description = "Cooked Chicken",
-                        RecipeFoods = new List<RecipeFood>()
+                        RecipeFoods = new()
                         {
                             new() { Amount = 120, Food = dbContext.Foods.First(x => x.FoodName == "Raw Chicken") },
                             new() { Amount = 1, Food = dbContext.Foods.First(x => x.FoodName == "BBQ Sauce") },
                             new() { Amount = -120, Food = dbContext.Foods.First(x => x.FoodName == "Cooked Chicken") },
                         },
-                        RecipeSteps = new List<RecipeStep>() { }
+                        RecipeSteps = new()
                     });
                     _ = dbContext.SaveChanges();
 
-                    recipe.Entity.RecipeSteps.Add(new RecipeStep()
+                    recipe.Entity.RecipeSteps.Add(new()
                     {
                         RecipeId = recipe.Entity.RecipeId,
                         Instruction = "Put chicken in Sous Vide.",
@@ -203,7 +203,7 @@ namespace PantryWPF.Main
                     });
 
                     _ = dbContext.SaveChanges();
-                    recipe.Entity.RecipeSteps.Add(new RecipeStep()
+                    recipe.Entity.RecipeSteps.Add(new()
                     {
                         RecipeId = recipe.Entity.RecipeId,
                         Instruction = "Let it cook.",
@@ -220,7 +220,7 @@ namespace PantryWPF.Main
                     });
 
                     _ = dbContext.SaveChanges();
-                    recipe.Entity.RecipeSteps.Add(new RecipeStep()
+                    recipe.Entity.RecipeSteps.Add(new()
                     {
                         RecipeId = recipe.Entity.RecipeId,
                         Instruction = "Take chicken out.",
@@ -243,19 +243,19 @@ namespace PantryWPF.Main
                 }
 
                 {
-                    var recipe = dbContext.Recipes.Add(new Recipe()
+                    var recipe = dbContext.Recipes.Add(new()
                     {
                         Description = "Raw Chicken",
-                        RecipeFoods = new List<RecipeFood>()
+                        RecipeFoods = new()
                         {
                             new() { Amount = 120, Food = dbContext.Foods.First(x => x.FoodName == "Frozen Chicken") },
                             new() { Amount = -120, Food = dbContext.Foods.First(x => x.FoodName == "Raw Chicken") },
                         },
-                        RecipeSteps = new List<RecipeStep>()
+                        RecipeSteps = new()
                     });
                     _ = dbContext.SaveChanges();
 
-                    recipe.Entity.RecipeSteps.Add(new RecipeStep()
+                    recipe.Entity.RecipeSteps.Add(new()
                     {
                         RecipeId = recipe.Entity.RecipeId,
                         Instruction = "Put chicken in Fridge.",
@@ -277,7 +277,7 @@ namespace PantryWPF.Main
                     });
 
                     _ = dbContext.SaveChanges();
-                    recipe.Entity.RecipeSteps.Add(new RecipeStep()
+                    recipe.Entity.RecipeSteps.Add(new()
                     {
                         RecipeId = recipe.Entity.RecipeId,
                         Instruction = "Let it defrost.",
@@ -295,19 +295,19 @@ namespace PantryWPF.Main
                 }
 
                 {
-                    var recipe = dbContext.Recipes.Add(new Recipe()
+                    var recipe = dbContext.Recipes.Add(new()
                     {
                         Description = "Sliced Bread",
-                        RecipeFoods = new List<RecipeFood>()
+                        RecipeFoods = new()
                         {
                             new() { Amount = 454, Food = dbContext.Foods.First(x => x.FoodName == "Bread") },
                             new() { Amount = -454, Food = dbContext.Foods.First(x => x.FoodName == "Sliced Bread") },
                         },
-                        RecipeSteps = new List<RecipeStep>()
+                        RecipeSteps = new()
                     });
                     _ = dbContext.SaveChanges();
 
-                    recipe.Entity.RecipeSteps.Add(new RecipeStep()
+                    recipe.Entity.RecipeSteps.Add(new()
                     {
                         RecipeId = recipe.Entity.RecipeId,
                         Instruction = "Cut Bread.",
@@ -334,17 +334,17 @@ namespace PantryWPF.Main
             {
                 _ = dbContext.Database.ExecuteSqlRaw("DELETE FROM Foods;");
                 _ = dbContext.Database.ExecuteSqlRaw("UPDATE `sqlite_sequence` SET `seq` = 0 WHERE `name` = 'Foods';");
-                _ = dbContext.Foods.Add(new Pantry.Core.Models.Food() { FoodName = "Frozen Chicken" });
-                _ = dbContext.Foods.Add(new Pantry.Core.Models.Food() { FoodName = "Raw Chicken", });
-                _ = dbContext.Foods.Add(new Pantry.Core.Models.Food() { FoodName = "BBQ Sauce" });
-                _ = dbContext.Foods.Add(new Pantry.Core.Models.Food() { FoodName = "Cooked Chicken" });
-                _ = dbContext.Foods.Add(new Pantry.Core.Models.Food() { FoodName = "Sliced Chicken" });
-                _ = dbContext.Foods.Add(new Pantry.Core.Models.Food() { FoodName = "Flour" });
-                _ = dbContext.Foods.Add(new Pantry.Core.Models.Food() { FoodName = "Eggs" });
-                _ = dbContext.Foods.Add(new Pantry.Core.Models.Food() { FoodName = "Milk" });
-                _ = dbContext.Foods.Add(new Pantry.Core.Models.Food() { FoodName = "Bread" });
-                _ = dbContext.Foods.Add(new Pantry.Core.Models.Food() { FoodName = "Sliced Bread" });
-                _ = dbContext.Foods.Add(new Pantry.Core.Models.Food() { FoodName = "Chicken Sandwich" });
+                _ = dbContext.Foods.Add(new() { FoodName = "Frozen Chicken" });
+                _ = dbContext.Foods.Add(new() { FoodName = "Raw Chicken", });
+                _ = dbContext.Foods.Add(new() { FoodName = "BBQ Sauce" });
+                _ = dbContext.Foods.Add(new() { FoodName = "Cooked Chicken" });
+                _ = dbContext.Foods.Add(new() { FoodName = "Sliced Chicken" });
+                _ = dbContext.Foods.Add(new() { FoodName = "Flour" });
+                _ = dbContext.Foods.Add(new() { FoodName = "Eggs" });
+                _ = dbContext.Foods.Add(new() { FoodName = "Milk" });
+                _ = dbContext.Foods.Add(new() { FoodName = "Bread" });
+                _ = dbContext.Foods.Add(new() { FoodName = "Sliced Bread" });
+                _ = dbContext.Foods.Add(new() { FoodName = "Chicken Sandwich" });
                 _ = dbContext.SaveChanges();
             }
         }
