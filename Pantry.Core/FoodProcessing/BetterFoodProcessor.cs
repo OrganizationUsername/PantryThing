@@ -19,7 +19,7 @@ namespace Pantry.Core.FoodProcessing
                 var onlyPantryUsed = true;
                 while (foodInstance.Amount > 0)
                 {
-                    var target = clonedFoodInventory.FirstOrDefault(x => x.Food.FoodId == foodInstance.Food.FoodId && x.Amount > 0);
+                    var target = clonedFoodInventory.OrderBy(x => x.Amount).FirstOrDefault(x => x.Food.FoodId == foodInstance.Food.FoodId && x.Amount > 0);
                     if (target is not null)
                     {
                         var diminishAmount = Math.Min(foodInstance.Amount, target.Amount);
@@ -27,7 +27,7 @@ namespace Pantry.Core.FoodProcessing
                         target.Amount -= diminishAmount;
                         if (onlyPantryUsed)
                         {
-                            totalInput.Add(new RecipeFood() { Amount = diminishAmount, Food = foodInstance.Food });
+                            totalInput.Add(new() { Amount = diminishAmount, Food = foodInstance.Food });
                         }
                         else
                         {
@@ -41,7 +41,7 @@ namespace Pantry.Core.FoodProcessing
 
                     if (newRecipe is null)
                     {
-                        return new CookPlan() { CanMake = false };
+                        return new() { CanMake = false };
                     }
 
                     var result = this.GetCookPlan(CloneFoodInstances(clonedFoodInventory), newRecipe, recipes);
@@ -54,13 +54,13 @@ namespace Pantry.Core.FoodProcessing
                     }
                     else
                     {
-                        return new CookPlan() { CanMake = false };
+                        return new() { CanMake = false };
                     }
                 }
             }
             totalOutput.AddRange(recipe.RecipeFoods.Where(x => x.Amount < 0).Select(x => new RecipeFood() { Amount = -x.Amount, Food = x.Food }));
 
-            return new CookPlan()
+            return new()
             {
                 CanMake = true,
                 TotalOutput = totalOutput,
@@ -80,7 +80,7 @@ namespace Pantry.Core.FoodProcessing
             for (var index = 0; index < recipe.RecipeFoods.Count; index++)
             {
                 var fi = recipe.RecipeFoods[index];
-                clones[index] = (new RecipeFood()
+                clones[index] = (new()
                 {
                     Food = fi.Food,
                     Amount = fi.Amount
@@ -95,9 +95,9 @@ namespace Pantry.Core.FoodProcessing
             for (var index = 0; index < foodInstances.Count; index++)
             {
                 var fi = foodInstances[index];
-                clones[index] = (new RecipeFood()
+                clones[index] = (new()
                 {
-                    Food = new Food() { FoodName = fi.Food.FoodName, FoodId = fi.Food.FoodId },
+                    Food = new() { FoodName = fi.Food.FoodName, FoodId = fi.Food.FoodId },
                     Amount = fi.Amount
                 });
             }

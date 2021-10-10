@@ -34,17 +34,18 @@ namespace PantryWPF.Recipes
         private readonly DataBase _dataBase;
         public ObservableCollection<RecipeStep> RecipeStepsList { get; set; } = new();
         public ObservableCollection<RecipeFood> RecipeFoodsList { get; set; } = new();
+        public string ItemsUsed { get; set; } = "";
         public bool CanCook { get; set; }
 
         public RecipeDetailViewModel(Recipe selectedRecipe)
         {
-            SaveStepCommand = new DelegateCommand(SaveNewStep);
-            SaveFoodCommand = new DelegateCommand(SaveNewFood);
-            DeleteStepCommand = new DelegateCommand(DeleteSelectedStep);
-            DeleteFoodCommand = new DelegateCommand(DeleteSelectedFood);
-            DeleteThisRecipeCommand = new DelegateCommand(DeleteThisRecipe);
+            SaveStepCommand = new(SaveNewStep);
+            SaveFoodCommand = new(SaveNewFood);
+            DeleteStepCommand = new(DeleteSelectedStep);
+            DeleteFoodCommand = new(DeleteSelectedFood);
+            DeleteThisRecipeCommand = new(DeleteThisRecipe);
 
-            _dataBase = new DataBase();
+            _dataBase = new();
             _selectedRecipe = _dataBase.Recipes.FirstOrDefault(x => x.RecipeId == selectedRecipe.RecipeId);
             Foods = _dataBase.Foods.ToList();
             LoadRecipeDetailData();
@@ -66,7 +67,41 @@ namespace PantryWPF.Recipes
             Trace.WriteLine("Current inventory:");
             Trace.WriteLine(string.Join(Environment.NewLine, collection.Select(x => $"{x.Food.FoodName}: {x.Amount}")));
             var canCook = foodProcessor.GetCookPlan(collection, _selectedRecipe, _dataBase.Recipes.ToList());
+
+            if (canCook.CanMake)
+            {
+                Trace.WriteLine("-----");
+                Trace.WriteLine(string.Join(Environment.NewLine, canCook.TotalInput.Select(x => $"{x.Food.FoodName}, {x.Amount}")));
+                ItemsUsed = string.Join(Environment.NewLine, GetRelevantInventoryItemsObjects(canCook.TotalInput).Select(x => $"{x.Item.Food.FoodName}- {x.LocationFoodsId}: {x.Quantity}"));
+                OnPropertyChanged(nameof(ItemsUsed));
+            }
             return canCook.CanMake;
+        }
+
+        private List<LocationFoods> GetRelevantInventoryItemsObjects(IList<RecipeFood> recipeFoods)
+        {
+            List<LocationFoods> outputFoods = new();
+            var locationFoods = _dataBase.LocationFoods
+                .AsNoTracking()
+                .Include(x => x.Item).ThenInclude(x => x.Food)
+                .Where(x => x.Exists && x.Quantity > 0)
+                .OrderBy(x => x.Quantity).ToList();
+            foreach (var x in recipeFoods)
+            {
+                var totalAmount = x.Amount;
+                while (totalAmount > 0)
+                {
+                    var locationFood = locationFoods.FirstOrDefault(y => y.Quantity > 0 && y.Item.FoodId == x.Food.FoodId);
+                    if (locationFood is null) { throw new("Thought we could make it, but we cannot."); }
+                    
+                    var amountToRemove = Math.Min(totalAmount, locationFood.Quantity);
+                    locationFood.Quantity -= amountToRemove;
+                    totalAmount -= amountToRemove;
+                    
+                    outputFoods.Add(new() { Item = locationFood.Item, Quantity = amountToRemove, LocationFoodsId = locationFood.LocationFoodsId });
+                }
+            }
+            return outputFoods;
         }
 
         private void LoadRecipeDetailData()
@@ -131,7 +166,7 @@ namespace PantryWPF.Recipes
 
             if (_dataBase.RecipeFoods is null)
             {
-                RecipeFoodsList = new ObservableCollection<RecipeFood>();
+                RecipeFoodsList = new();
                 return;
             }
             var newList = _dataBase.RecipeFoods.Where(x => x.RecipeId == _selectedRecipe.RecipeId).ToList();
@@ -150,7 +185,7 @@ namespace PantryWPF.Recipes
             if (_selectedRecipe is null && (!_dataBase.RecipeSteps.Any() ||
                                         !_dataBase.RecipeSteps.Any(x => x.RecipeId == _selectedRecipe.RecipeId)))
             {
-                newList = new List<RecipeStep>();
+                newList = new();
             }
             else
             {
@@ -180,7 +215,7 @@ namespace PantryWPF.Recipes
 
             if (!goodNumber || string.IsNullOrWhiteSpace(NewDescription)) { return; }
 
-            _dataBase.RecipeSteps.Add(new RecipeStep() { Instruction = NewDescription, RecipeId = _selectedRecipe.RecipeId, TimeCost = tempDuration });
+            _dataBase.RecipeSteps.Add(new() { Instruction = NewDescription, RecipeId = _selectedRecipe.RecipeId, TimeCost = tempDuration });
             _dataBase.SaveChanges();
             NewDescription = "";
             NewDuration = "";
@@ -193,7 +228,7 @@ namespace PantryWPF.Recipes
         [NotifyPropertyChangedInvocator]
         protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+            PropertyChanged?.Invoke(this, new(propertyName));
         }
     }
 }

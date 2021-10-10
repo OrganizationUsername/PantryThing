@@ -73,6 +73,7 @@ namespace PantryWPF.Main
                     ExpiryDate = now + TimeSpan.FromDays(14),
                     Quantity = 3900,
                     Location = defaultLocation,
+                    Exists = true
                 });
 
                 _ = dbContext.LocationFoods.Add(new()
@@ -81,6 +82,7 @@ namespace PantryWPF.Main
                     ExpiryDate = now + TimeSpan.FromDays(14),
                     Quantity = 1000,
                     Location = defaultLocation,
+                    Exists = true
                 });
 
                 _ = dbContext.LocationFoods.Add(new()
@@ -90,6 +92,7 @@ namespace PantryWPF.Main
                     ExpiryDate = now + TimeSpan.FromDays(1),
                     Quantity = 454,
                     Location = defaultLocation,
+                    Exists = true
                 });
 
                 _ = dbContext.LocationFoods.Add(new()
@@ -99,22 +102,25 @@ namespace PantryWPF.Main
                     ExpiryDate = now + TimeSpan.FromDays(1),
                     Quantity = 3900,
                     Location = defaultLocation,
+                    Exists = true
                 });
 
                 _ = dbContext.LocationFoods.Add(new()
                 {
                     Item = dbContext.Items.First(x => x.Upc == "100Chicken"),
                     ExpiryDate = now + TimeSpan.FromDays(180),
-                    Quantity = 4540 / 2.0,
+                    Quantity = 75,
                     Location = defaultLocation,
+                    Exists = true
                 });
 
                 _ = dbContext.LocationFoods.Add(new()
                 {
                     Item = dbContext.Items.First(x => x.Upc == "100Chicken"),
                     ExpiryDate = now + TimeSpan.FromDays(180),
-                    Quantity = 4540,
+                    Quantity = 66,
                     Location = dbContext.Locations.First(x => x.LocationName == "Deep Freezer"),
+                    Exists = true
                 });
 
                 _ = dbContext.LocationFoods.Add(new()
@@ -123,6 +129,7 @@ namespace PantryWPF.Main
                     ExpiryDate = now + TimeSpan.FromDays(180),
                     Quantity = 220,
                     Location = defaultLocation,
+                    Exists = true
                 });
 
                 _ = dbContext.SaveChanges();
@@ -167,6 +174,7 @@ namespace PantryWPF.Main
                 _ = dbContext.Database.ExecuteSqlRaw("UPDATE `sqlite_sequence` SET `seq` = 0 WHERE `name` = 'Recipes';");
                 _ = dbContext.Database.ExecuteSqlRaw("UPDATE `sqlite_sequence` SET `seq` = 0 WHERE `name` = 'RecipeSteps';");
 
+                /* Cooked Chicken */
                 {
                     var recipe = dbContext.Recipes.Add(new()
                     {
@@ -242,6 +250,7 @@ namespace PantryWPF.Main
                     });
                 }
 
+                /* Raw Chicken */
                 {
                     var recipe = dbContext.Recipes.Add(new()
                     {
@@ -294,6 +303,7 @@ namespace PantryWPF.Main
                     });
                 }
 
+                /* Sliced Bread */
                 {
                     var recipe = dbContext.Recipes.Add(new()
                     {

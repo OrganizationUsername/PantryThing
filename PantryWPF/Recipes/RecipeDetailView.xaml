@@ -84,6 +84,8 @@
         <StackPanel>
             <TextBlock Text="Can Cook?"/>
             <TextBlock Text="{Binding CanCook}"/>
+            <Button Content="Cook it!" IsEnabled="{Binding CanCook}"/>
+            <TextBlock Text="{Binding ItemsUsed}"/>
         </StackPanel>
     </StackPanel>
 </UserControl>
