@@ -59,8 +59,8 @@ namespace Pantry.Core.Test.ScheduleTests
                             Instruction = "Put chicken in Sous Vide.", TimeCost = 1,
                             RecipeStepEquipment = new List<RecipeStepEquipment>()
                             {
-                                new RecipeStepEquipment(){Equipment =_sousVide, RecipeStepId=0 },
-                                new RecipeStepEquipment(){Equipment = _humanMachine, RecipeStepId=0},
+                                new(){Equipment =_sousVide, RecipeStepId=0 },
+                                new(){Equipment = _humanMachine, RecipeStepId=0},
                             }
                         },
                         new()
@@ -69,7 +69,7 @@ namespace Pantry.Core.Test.ScheduleTests
                             Instruction = "Let it cook.", TimeCost = 120,
                             RecipeStepEquipment = new List<RecipeStepEquipment>()
                             {
-                                new RecipeStepEquipment(){Equipment =_sousVide, RecipeStepId=1 },
+                                new(){Equipment =_sousVide, RecipeStepId=1 },
                             }
                         },
                         new()
@@ -78,8 +78,8 @@ namespace Pantry.Core.Test.ScheduleTests
                             Instruction = "Take chicken out.", TimeCost = 1,
                             RecipeStepEquipment = new List<RecipeStepEquipment>()
                             {
-                                new RecipeStepEquipment(){Equipment =_sousVide, RecipeStepId=2 },
-                                new RecipeStepEquipment(){Equipment = _humanMachine, RecipeStepId=2},
+                                new(){Equipment =_sousVide, RecipeStepId=2 },
+                                new(){Equipment = _humanMachine, RecipeStepId=2},
                             }
                         },
                     }
@@ -101,8 +101,8 @@ namespace Pantry.Core.Test.ScheduleTests
                             Instruction = "Put chicken in fridge.", TimeCost = 1,
                             RecipeStepEquipment = new List<RecipeStepEquipment>()
                             {
-                                new RecipeStepEquipment(){Equipment =_fridge, RecipeStepId=3 },
-                                new RecipeStepEquipment(){Equipment = _humanMachine, RecipeStepId=3},
+                                new(){Equipment =_fridge, RecipeStepId=3 },
+                                new(){Equipment = _humanMachine, RecipeStepId=3},
                             }
                         },
                         new()
@@ -111,7 +111,7 @@ namespace Pantry.Core.Test.ScheduleTests
                             Instruction = "Let it defrost.", TimeCost = 1440,
                             RecipeStepEquipment = new List<RecipeStepEquipment>()
                             {
-                                new RecipeStepEquipment(){Equipment =_fridge, RecipeStepId=4 },
+                                new(){Equipment =_fridge, RecipeStepId=4 },
                             }
                         }
                     }
@@ -133,7 +133,7 @@ namespace Pantry.Core.Test.ScheduleTests
                             Instruction = "Cut chicken with a knife.", TimeCost = 3,
                             RecipeStepEquipment = new List<RecipeStepEquipment>()
                             {
-                                new RecipeStepEquipment(){Equipment = _humanMachine, RecipeStepId=5},
+                                new(){Equipment = _humanMachine, RecipeStepId=5},
                             }
                         },
                     }
@@ -155,7 +155,7 @@ namespace Pantry.Core.Test.ScheduleTests
                             Instruction = "Cut Bread", TimeCost = 2,
                             RecipeStepEquipment = new List<RecipeStepEquipment>()
                             {
-                                new RecipeStepEquipment(){Equipment = _humanMachine, RecipeStepId=6},
+                                new(){Equipment = _humanMachine, RecipeStepId=6},
                             }
                         },
                     }
@@ -178,7 +178,7 @@ namespace Pantry.Core.Test.ScheduleTests
                             Instruction = "Assemble Sandwich", TimeCost = 1,
                             RecipeStepEquipment = new List<RecipeStepEquipment>()
                             {
-                                new RecipeStepEquipment(){Equipment = _humanMachine, RecipeStepId=7},
+                                new(){Equipment = _humanMachine, RecipeStepId=7},
                             }
                         },
                     }
@@ -202,8 +202,8 @@ namespace Pantry.Core.Test.ScheduleTests
                             Instruction = "Insert into Bread Machine.", TimeCost = 1,
                             RecipeStepEquipment = new List<RecipeStepEquipment>()
                             {
-                                new RecipeStepEquipment(){Equipment =_breadMachine, RecipeStepId=8 },
-                                new RecipeStepEquipment(){Equipment = _humanMachine, RecipeStepId=8},
+                                new(){Equipment =_breadMachine, RecipeStepId=8 },
+                                new(){Equipment = _humanMachine, RecipeStepId=8},
                             }
                         },
                         new()
@@ -212,7 +212,7 @@ namespace Pantry.Core.Test.ScheduleTests
                             Instruction = "Bread Machine cooks.", TimeCost = 180,
                             RecipeStepEquipment = new List<RecipeStepEquipment>()
                             {
-                                new RecipeStepEquipment(){Equipment =_breadMachine, RecipeStepId=9 },
+                                new(){Equipment =_breadMachine, RecipeStepId=9 },
                             }
                         },
                         new()
@@ -221,8 +221,8 @@ namespace Pantry.Core.Test.ScheduleTests
                             Instruction = "Extract bread from bread machine.", TimeCost = 1,
                             RecipeStepEquipment = new List<RecipeStepEquipment>()
                             {
-                                new RecipeStepEquipment(){Equipment =_breadMachine, RecipeStepId=10 },
-                                new RecipeStepEquipment(){Equipment = _humanMachine, RecipeStepId=10},
+                                new(){Equipment =_breadMachine, RecipeStepId=10 },
+                                new(){Equipment = _humanMachine, RecipeStepId=10},
                             }
                         },
                     }

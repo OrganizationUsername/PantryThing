@@ -50,6 +50,7 @@ namespace PantryWPF.Main
                 dbContext.Items.Add(new Item() { Food = dbContext.Foods.First(x => x.FoodName == "Frozen Chicken"), Weight = 4540, Upc = "100Chicken" });
                 dbContext.Items.Add(new Item() { Food = dbContext.Foods.First(x => x.FoodName == "BBQ Sauce"), Weight = 454, Upc = "200BBQ" });
                 dbContext.Items.Add(new Item() { Food = dbContext.Foods.First(x => x.FoodName == "Milk"), Weight = 3900, Upc = "1GalMilk" });
+                dbContext.Items.Add(new Item() { Food = dbContext.Foods.First(x => x.FoodName == "Sliced Bread"), Weight = 454, Upc = "LotsOfBread" });
                 _ = dbContext.SaveChanges();
             }
         }
@@ -68,6 +69,15 @@ namespace PantryWPF.Main
                     Item = dbContext.Items.First(x => x.Upc == "1GalMilk"),
                     ExpiryDate = now + TimeSpan.FromDays(14),
                     Quantity = 3900,
+                    Location = defaultLocation,
+                });
+
+                _ = dbContext.LocationFoods.Add(new LocationFoods()
+                {
+                    Item = dbContext.Items.First(x => x.Upc == "LotsOfBread"),
+                    OpenDate = now + TimeSpan.FromDays(-7),
+                    ExpiryDate = now + TimeSpan.FromDays(1),
+                    Quantity = 454,
                     Location = defaultLocation,
                 });
 
@@ -146,57 +156,163 @@ namespace PantryWPF.Main
                 _ = dbContext.Database.ExecuteSqlRaw("UPDATE `sqlite_sequence` SET `seq` = 0 WHERE `name` = 'Recipes';");
                 _ = dbContext.Database.ExecuteSqlRaw("UPDATE `sqlite_sequence` SET `seq` = 0 WHERE `name` = 'RecipeSteps';");
 
-
-                var recipe = dbContext.Recipes.Add(new Recipe()
                 {
-                    Description = "Cooked Chicken",
-                    RecipeFoods = new List<RecipeFood>()
+                    var recipe = dbContext.Recipes.Add(new Recipe()
                     {
-                        new() { Amount = 120, Food = dbContext.Foods.First(x=>x.FoodName=="Frozen Chicken") },
-                        new() { Amount = 1,  Food = dbContext.Foods.First(x=>x.FoodName=="BBQ Sauce") },
-                        new() { Amount = -120,  Food = dbContext.Foods.First(x=>x.FoodName=="Cooked Chicken") },
-                    },
-                    RecipeSteps = new List<RecipeStep>()
-                });
-                _ = dbContext.SaveChanges();
+                        Description = "Cooked Chicken",
+                        RecipeFoods = new List<RecipeFood>()
+                        {
+                            new() { Amount = 120, Food = dbContext.Foods.First(x => x.FoodName == "Frozen Chicken") },
+                            new() { Amount = 1, Food = dbContext.Foods.First(x => x.FoodName == "BBQ Sauce") },
+                            new() { Amount = -120, Food = dbContext.Foods.First(x => x.FoodName == "Cooked Chicken") },
+                        },
+                        RecipeSteps = new List<RecipeStep>() { }
+                    });
+                    _ = dbContext.SaveChanges();
 
-                recipe.Entity.RecipeSteps.Add(new RecipeStep()
-                {
-                    RecipeId = recipe.Entity.RecipeId,
-                    Instruction = "Put chicken in Sous Vide.",
-                    Order = 1,
-                    TimeCost = 1,
-                    RecipeStepEquipment = new List<RecipeStepEquipment>()
+                    recipe.Entity.RecipeSteps.Add(new RecipeStep()
                     {
-                        new (){Equipment =dbContext.Equipments.First(x => x.EquipmentName == "Sous Vide"), RecipeStepId  = 2},
-                        new (){Equipment =dbContext.Equipments.First(x => x.EquipmentName == "Human"), RecipeStepId  = 2},
-                    },
-                });
+                        RecipeId = recipe.Entity.RecipeId,
+                        Instruction = "Put chicken in Sous Vide.",
+                        Order = 1,
+                        TimeCost = 1,
+                        RecipeStepEquipment = new List<RecipeStepEquipment>()
+                        {
+                            new()
+                            {
+                                Equipment = dbContext.Equipments.First(x => x.EquipmentName == "Sous Vide"),
+                                RecipeStepId = 2
+                            },
+                            new()
+                            {
+                                Equipment = dbContext.Equipments.First(x => x.EquipmentName == "Human"),
+                                RecipeStepId = 2
+                            },
+                        },
+                    });
 
-                _ = dbContext.SaveChanges();
-                recipe.Entity.RecipeSteps.Add(new RecipeStep()
-                {
-                    RecipeId = recipe.Entity.RecipeId,
-                    Instruction = "Let it cook.",
-                    TimeCost = 120,
-                    RecipeStepEquipment = new List<RecipeStepEquipment>()
+                    _ = dbContext.SaveChanges();
+                    recipe.Entity.RecipeSteps.Add(new RecipeStep()
                     {
-                        new (){Equipment =dbContext.Equipments.First(x => x.EquipmentName == "Sous Vide"), RecipeStepId  = 2},
-                    }
-                });
+                        RecipeId = recipe.Entity.RecipeId,
+                        Instruction = "Let it cook.",
+                        Order = 2,
+                        TimeCost = 120,
+                        RecipeStepEquipment = new List<RecipeStepEquipment>()
+                        {
+                            new()
+                            {
+                                Equipment = dbContext.Equipments.First(x => x.EquipmentName == "Sous Vide"),
+                                RecipeStepId = 2
+                            },
+                        }
+                    });
 
-                _ = dbContext.SaveChanges();
-                recipe.Entity.RecipeSteps.Add(new RecipeStep()
-                {
-                    RecipeId = recipe.Entity.RecipeId,
-                    Instruction = "Take chicken out.",
-                    TimeCost = 1,
-                    RecipeStepEquipment = new List<RecipeStepEquipment>()
+                    _ = dbContext.SaveChanges();
+                    recipe.Entity.RecipeSteps.Add(new RecipeStep()
                     {
-                        new (){Equipment =dbContext.Equipments.First(x => x.EquipmentName == "Sous Vide"), RecipeStepId  = 2},
-                        new (){Equipment =dbContext.Equipments.First(x => x.EquipmentName == "Human"), RecipeStepId  = 2},
-                    }
-                });
+                        RecipeId = recipe.Entity.RecipeId,
+                        Instruction = "Take chicken out.",
+                        Order = 3,
+                        TimeCost = 1,
+                        RecipeStepEquipment = new List<RecipeStepEquipment>()
+                        {
+                            new()
+                            {
+                                Equipment = dbContext.Equipments.First(x => x.EquipmentName == "Sous Vide"),
+                                RecipeStepId = 2
+                            },
+                            new()
+                            {
+                                Equipment = dbContext.Equipments.First(x => x.EquipmentName == "Human"),
+                                RecipeStepId = 2
+                            },
+                        }
+                    });
+                }
+
+                {
+                    var recipe = dbContext.Recipes.Add(new Recipe()
+                    {
+                        Description = "Raw Chicken",
+                        RecipeFoods = new List<RecipeFood>()
+                        {
+                            new() { Amount = 120, Food = dbContext.Foods.First(x => x.FoodName == "Frozen Chicken") },
+                            new() { Amount = -120, Food = dbContext.Foods.First(x => x.FoodName == "Raw Chicken") },
+                        },
+                        RecipeSteps = new List<RecipeStep>()
+                    });
+                    _ = dbContext.SaveChanges();
+
+                    recipe.Entity.RecipeSteps.Add(new RecipeStep()
+                    {
+                        RecipeId = recipe.Entity.RecipeId,
+                        Instruction = "Put chicken in Fridge.",
+                        Order = 1,
+                        TimeCost = 1,
+                        RecipeStepEquipment = new List<RecipeStepEquipment>()
+                        {
+                            new()
+                            {
+                                Equipment = dbContext.Equipments.First(x => x.EquipmentName == "Fridge"),
+                                RecipeStepId = 2
+                            },
+                            new()
+                            {
+                                Equipment = dbContext.Equipments.First(x => x.EquipmentName == "Human"),
+                                RecipeStepId = 2
+                            },
+                        },
+                    });
+
+                    _ = dbContext.SaveChanges();
+                    recipe.Entity.RecipeSteps.Add(new RecipeStep()
+                    {
+                        RecipeId = recipe.Entity.RecipeId,
+                        Instruction = "Let it defrost.",
+                        Order = 2,
+                        TimeCost = 120,
+                        RecipeStepEquipment = new List<RecipeStepEquipment>()
+                        {
+                            new()
+                            {
+                                Equipment = dbContext.Equipments.First(x => x.EquipmentName == "Fridge"),
+                                RecipeStepId = 2
+                            },
+                        }
+                    });
+                }
+
+                {
+                    var recipe = dbContext.Recipes.Add(new Recipe()
+                    {
+                        Description = "Sliced Bread",
+                        RecipeFoods = new List<RecipeFood>()
+                        {
+                            new() { Amount = 454, Food = dbContext.Foods.First(x => x.FoodName == "Bread") },
+                            new() { Amount = -454, Food = dbContext.Foods.First(x => x.FoodName == "Sliced Bread") },
+                        },
+                        RecipeSteps = new List<RecipeStep>()
+                    });
+                    _ = dbContext.SaveChanges();
+
+                    recipe.Entity.RecipeSteps.Add(new RecipeStep()
+                    {
+                        RecipeId = recipe.Entity.RecipeId,
+                        Instruction = "Cut Bread.",
+                        Order = 1,
+                        TimeCost = 3,
+                        RecipeStepEquipment = new List<RecipeStepEquipment>()
+                        {
+                            new()
+                            {
+                                Equipment = dbContext.Equipments.First(x => x.EquipmentName == "Human"),
+                                RecipeStepId = 1
+                            },
+                        },
+                    });
+                }
+
                 _ = dbContext.SaveChanges();
             }
         }

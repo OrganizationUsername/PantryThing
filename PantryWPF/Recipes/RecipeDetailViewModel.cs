@@ -5,6 +5,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using Microsoft.EntityFrameworkCore;
+using Pantry.Core.FoodProcessing;
 using Pantry.Core.Models;
 using Pantry.Data;
 using PantryWPF.Annotations;
@@ -32,6 +33,8 @@ namespace PantryWPF.Recipes
         private readonly DataBase _dataBase;
         public ObservableCollection<RecipeStep> RecipeStepsList { get; set; } = new ObservableCollection<RecipeStep>();
         public ObservableCollection<RecipeFood> RecipeFoodsList { get; set; } = new ObservableCollection<RecipeFood>();
+        public bool CanCook { get; set; }
+
         public RecipeDetailViewModel(Recipe selectedRecipe)
         {
             SaveStepCommand = new DelegateCommand(SaveNewStep);
@@ -44,6 +47,30 @@ namespace PantryWPF.Recipes
             _selectedRecipe = _dataBase.Recipes.FirstOrDefault(x => x.RecipeId == selectedRecipe.RecipeId);
             Foods = _dataBase.Foods.ToList();
             LoadRecipeDetailData();
+            CanCook = CalculateCanCook();
+        }
+
+        public bool CalculateCanCook()
+        {
+            BetterFoodProcessor foodProcessor = new();
+
+            var asdf = _dataBase.RecipeFoods.Include(x => x.Food).ToList();
+
+            var collection = _dataBase.LocationFoods
+                .Include(x => x.Item)
+                .ThenInclude(x => x.Food)
+                .ToList()
+                .Select(x => new RecipeFood() { Amount = x.Quantity, Food = x.Item.Food }).ToList();
+
+            CookPlan canCook = foodProcessor.GetCookPlan(collection, _selectedRecipe, _dataBase.Recipes.ToList());
+            //CookPlan canCook = foodProcessor.GetCookPlan(_dataBase.RecipeFoods.Include(x => x.Food).ToList(), _selectedRecipe, _dataBase.Recipes.ToList());
+            return canCook.CanMake;
+        }
+
+        private void LoadRecipeDetailData()
+        {
+            LoadSteps();
+            LoadFoodInstances();
         }
 
         private void DeleteThisRecipe()
@@ -95,12 +122,6 @@ namespace PantryWPF.Recipes
                 OnPropertyChanged(nameof(NewFoodAmount));
                 LoadRecipeDetailData();
             }
-        }
-
-        private void LoadRecipeDetailData()
-        {
-            LoadSteps();
-            LoadFoodInstances();
         }
 
         private void LoadFoodInstances()

@@ -1,4 +1,5 @@
-﻿using System.Collections.ObjectModel;
+﻿using System;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows;
 using Microsoft.EntityFrameworkCore;
@@ -13,9 +14,12 @@ namespace PantryWPF.Inventory
         private Location _selectedLocation;
         public ObservableCollection<LocationFoods> LocationFoodsCollection { get; set; }
         public ObservableCollection<Location> Locations { get; set; }
+        public ObservableCollection<Item> Items { get; set; }
+        public Item SelectedItem { get; set; }
         private readonly DataBase _db;
         private LocationFoods _selectedLocationFood;
         public DelegateCommand SaveChangesDelegateCommand { get; set; }
+        public DelegateCommand AddLocationFoodDelegateCommand { get; set; }
 
         public LocationFoods SelectedLocationFood
         {
@@ -73,6 +77,7 @@ namespace PantryWPF.Inventory
         public InventoryViewModel()
         {
             SaveChangesDelegateCommand = new DelegateCommand(SaveChanges);
+            AddLocationFoodDelegateCommand = new DelegateCommand(AddNewLocationFood);
             _db = new DataBase();
             LoadData();
             OnPropertyChanged(nameof(LocationFoodsCollection));
@@ -82,7 +87,26 @@ namespace PantryWPF.Inventory
         {
             LocationFoodsCollection = new(_db.LocationFoods.Include(x => x.Item).ToList());
             Locations = new ObservableCollection<Location>(_db.Locations.ToList());
-            SelectedLocation = LocationFoodsCollection.First().Location;
+            SelectedLocation = LocationFoodsCollection.FirstOrDefault()?.Location;
+            Items = new ObservableCollection<Item>(_db.Items.ToList());
+        }
+
+        public void AddNewLocationFood()
+        {
+            if (SelectedItem is null || SelectedLocation is null) { return; }
+            RejectChanges();
+            _db.LocationFoods.Add(new LocationFoods()
+            {
+                PurchaseDate = DateTime.Now,
+                Item = SelectedItem,
+                Exists = true,
+                Location = SelectedLocation,
+                ExpiryDate = DateTime.MinValue,
+                OpenDate = DateTime.MinValue,
+                Quantity = _db.Items.Single(x => x.FoodId == SelectedItem.FoodId).Weight
+            });
+            _db.SaveChanges();
+            ReLoadData();
         }
 
         public void ReLoadData()
@@ -92,9 +116,7 @@ namespace PantryWPF.Inventory
             {
                 LocationFoodsCollection.Add(x);
             }
-
             SelectedLocationFood = null;
-
             OnPropertyChanged(nameof(Locations));
             OnPropertyChanged(nameof(LocationFoodsCollection));
         }

@@ -38,7 +38,9 @@
                             <StackPanel Orientation="Horizontal">
                                 <TextBlock Text="{Binding Instruction}"/>
                                 <TextBox Text="{Binding TimeCost}"/>
-                                --><!--<ListBox ItemsSource="{Binding Equipments}"/>--><!--
+                                -->
+                    <!--<ListBox ItemsSource="{Binding Equipments}"/>-->
+                    <!--
                             </StackPanel>
                         </DataTemplate>
                     </ListView.ItemTemplate>-->
@@ -79,5 +81,9 @@
                 <Button Content="Add new step" Command="{Binding SaveStepCommand}"/>
             </StackPanel>
         </GroupBox>
+        <StackPanel>
+            <TextBlock Text="Can Cook?"/>
+            <TextBlock Text="{Binding CanCook}"/>
+        </StackPanel>
     </StackPanel>
 </UserControl>
