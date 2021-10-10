@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Diagnostics;
@@ -31,8 +32,8 @@ namespace PantryWPF.Recipes
         public RecipeStep SelectedRecipeStep { get; set; }
         public RecipeFood SelectedRecipeFood { get; set; }
         private readonly DataBase _dataBase;
-        public ObservableCollection<RecipeStep> RecipeStepsList { get; set; } = new ObservableCollection<RecipeStep>();
-        public ObservableCollection<RecipeFood> RecipeFoodsList { get; set; } = new ObservableCollection<RecipeFood>();
+        public ObservableCollection<RecipeStep> RecipeStepsList { get; set; } = new();
+        public ObservableCollection<RecipeFood> RecipeFoodsList { get; set; } = new();
         public bool CanCook { get; set; }
 
         public RecipeDetailViewModel(Recipe selectedRecipe)
@@ -53,17 +54,18 @@ namespace PantryWPF.Recipes
         public bool CalculateCanCook()
         {
             BetterFoodProcessor foodProcessor = new();
-
-            var asdf = _dataBase.RecipeFoods.Include(x => x.Food).ToList();
-
             var collection = _dataBase.LocationFoods
                 .Include(x => x.Item)
                 .ThenInclude(x => x.Food)
                 .ToList()
                 .Select(x => new RecipeFood() { Amount = x.Quantity, Food = x.Item.Food }).ToList();
-
-            CookPlan canCook = foodProcessor.GetCookPlan(collection, _selectedRecipe, _dataBase.Recipes.ToList());
-            //CookPlan canCook = foodProcessor.GetCookPlan(_dataBase.RecipeFoods.Include(x => x.Food).ToList(), _selectedRecipe, _dataBase.Recipes.ToList());
+            Trace.WriteLine("-----");
+            Trace.WriteLine($"Trying to cook: {string.Join(Environment.NewLine, _selectedRecipe.RecipeFoods.Where(x => x.Amount < 0).Select(x => $"{x.Food.FoodName}: {x.Amount}"))}");
+            Trace.WriteLine($"Recipe Requirements: {string.Join(Environment.NewLine, _selectedRecipe.RecipeFoods.Where(x => x.Amount > 0).Select(x => $"{x.Food.FoodName}: {x.Amount}"))}");
+            Trace.WriteLine($"Ingredients:{string.Join(Environment.NewLine, _selectedRecipe.RecipeFoods.Select(x => $"{x.Food.FoodName}: {x.Amount}"))}");
+            Trace.WriteLine("Current inventory:");
+            Trace.WriteLine(string.Join(Environment.NewLine, collection.Select(x => $"{x.Food.FoodName}: {x.Amount}")));
+            var canCook = foodProcessor.GetCookPlan(collection, _selectedRecipe, _dataBase.Recipes.ToList());
             return canCook.CanMake;
         }
 
@@ -75,7 +77,7 @@ namespace PantryWPF.Recipes
 
         private void DeleteThisRecipe()
         {
-            Recipe thisRecipe = _dataBase.Recipes.FirstOrDefault(x => x.RecipeId == _selectedRecipe.RecipeId);
+            var thisRecipe = _dataBase.Recipes.FirstOrDefault(x => x.RecipeId == _selectedRecipe.RecipeId);
             if (thisRecipe is null || _selectedRecipe is null)
             {
                 return;
@@ -104,14 +106,13 @@ namespace PantryWPF.Recipes
         private void SaveNewFood()
         {
             if (_selectedRecipe is null) { return; }
-            if (NewFood is not null && double.TryParse(NewFoodAmount, out double FoodAmount) && FoodAmount != 0)
+            if (NewFood is not null && double.TryParse(NewFoodAmount, out var foodAmount) && foodAmount != 0)
             {
                 var recipe = _dataBase.Recipes.Include(x => x.RecipeFoods).First(x => x.RecipeId == _selectedRecipe.RecipeId);
-                var x = new RecipeFood() { Amount = FoodAmount, FoodId = NewFood.FoodId, RecipeId = _selectedRecipe.RecipeId };
+                var x = new RecipeFood() { Amount = foodAmount, FoodId = NewFood.FoodId, RecipeId = _selectedRecipe.RecipeId };
                 if (recipe.RecipeFoods is null)
                 {
                     _dataBase.RecipeFoods.Add(x);
-                    //recipe.RecipeFoods = new List<RecipeFood>() { x };
                 }
                 else
                 {
@@ -145,7 +146,7 @@ namespace PantryWPF.Recipes
 
         private void LoadSteps()
         {
-            List<RecipeStep> newList = default;
+            List<RecipeStep> newList;
             if (_selectedRecipe is null && (!_dataBase.RecipeSteps.Any() ||
                                         !_dataBase.RecipeSteps.Any(x => x.RecipeId == _selectedRecipe.RecipeId)))
             {
@@ -175,7 +176,7 @@ namespace PantryWPF.Recipes
         {
             if (_selectedRecipe is null) { return; }
 
-            bool goodNumber = int.TryParse(NewDuration, out int tempDuration);
+            var goodNumber = int.TryParse(NewDuration, out var tempDuration);
 
             if (!goodNumber || string.IsNullOrWhiteSpace(NewDescription)) { return; }
 

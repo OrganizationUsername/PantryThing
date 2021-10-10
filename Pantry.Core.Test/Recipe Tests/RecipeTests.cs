@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using NUnit.Framework;
@@ -141,8 +140,8 @@ namespace Pantry.Core.Test.Recipe_Tests
                 new RecipeFood() { Food = _slicedBread, Amount = 10 },
                 new RecipeFood() { Food = _slicedChicken, Amount = 120 },
             };
-            Recipe recipe = _recipes.First(x => x.RecipeFoods.Any(y => y.Food == _chickenSandwich));
-            CookPlan canCook = _foodProcessor.GetCookPlan(pantry, recipe, _recipes);
+            var recipe = _recipes.First(x => x.RecipeFoods.Any(y => y.Food == _chickenSandwich));
+            var canCook = _foodProcessor.GetCookPlan(pantry, recipe, _recipes);
             canCook.ConsoleResult();
             Assert.IsTrue(canCook.CanMake);
         }
@@ -155,8 +154,8 @@ namespace Pantry.Core.Test.Recipe_Tests
                 new RecipeFood() { Food = _slicedBread, Amount = 10 },
                 new RecipeFood() { Food = _slicedChicken, Amount = 119 },
             };
-            Recipe recipe = _recipes.First(x => x.RecipeFoods.Any(y => y.Food == _chickenSandwich));
-            CookPlan canCook = _foodProcessor.GetCookPlan(pantry, recipe, _recipes);
+            var recipe = _recipes.First(x => x.RecipeFoods.Any(y => y.Food == _chickenSandwich));
+            var canCook = _foodProcessor.GetCookPlan(pantry, recipe, _recipes);
             canCook.ConsoleResult();
             Assert.IsFalse(canCook.CanMake);
         }
@@ -169,8 +168,8 @@ namespace Pantry.Core.Test.Recipe_Tests
                 new RecipeFood() { Food = _slicedBread, Amount = 1 },
                 new RecipeFood() { Food = _slicedChicken, Amount = 120 },
             };
-            Recipe recipe = _recipes.First(x => x.RecipeFoods.Any(y => y.Food == _chickenSandwich));
-            CookPlan canCook = _foodProcessor.GetCookPlan(pantry, recipe, _recipes);
+            var recipe = _recipes.First(x => x.RecipeFoods.Any(y => y.Food == _chickenSandwich));
+            var canCook = _foodProcessor.GetCookPlan(pantry, recipe, _recipes);
             canCook.ConsoleResult();
             Assert.IsFalse(canCook.CanMake);
         }
@@ -183,8 +182,8 @@ namespace Pantry.Core.Test.Recipe_Tests
                 new RecipeFood() { Food = _slicedBread, Amount = 10 },
                 new RecipeFood() { Food = _cookedChicken, Amount = 120 },
             };
-            Recipe recipe = _recipes.First(x => x.RecipeFoods.Any(y => y.Food == _chickenSandwich));
-            CookPlan canCook = _foodProcessor.GetCookPlan(pantry, recipe, _recipes);
+            var recipe = _recipes.First(x => x.RecipeFoods.Any(y => y.Food == _chickenSandwich));
+            var canCook = _foodProcessor.GetCookPlan(pantry, recipe, _recipes);
             canCook.ConsoleResult();
             Assert.IsTrue(canCook.CanMake);
         }
@@ -197,9 +196,9 @@ namespace Pantry.Core.Test.Recipe_Tests
                 new RecipeFood() { Food = _bread, Amount = 10 },
                 new RecipeFood() { Food = _cookedChicken, Amount = 120 },
             };
-            Recipe recipe = _recipes.First(x => x.RecipeFoods.Any(y => y.Food == _chickenSandwich && y.Amount < 0)); ;
+            var recipe = _recipes.First(x => x.RecipeFoods.Any(y => y.Food == _chickenSandwich && y.Amount < 0)); ;
             //recipe = _recipes.First(x => x.MainOutput == _chickenSandwich);
-            CookPlan canCook = _foodProcessor.GetCookPlan(pantry, recipe, _recipes);
+            var canCook = _foodProcessor.GetCookPlan(pantry, recipe, _recipes);
             canCook.ConsoleResult();
             Assert.IsTrue(canCook.CanMake);
         }
@@ -214,8 +213,8 @@ namespace Pantry.Core.Test.Recipe_Tests
                 new RecipeFood() { Food = _milk, Amount = 210 },
                 new RecipeFood() { Food = _cookedChicken, Amount = 120 },
             };
-            Recipe recipe = _recipes.First(x => x.RecipeFoods.Any(y => y.Food == _chickenSandwich));
-            CookPlan canCook = _foodProcessor.GetCookPlan(pantry, recipe, _recipes);
+            var recipe = _recipes.First(x => x.RecipeFoods.Any(y => y.Food == _chickenSandwich));
+            var canCook = _foodProcessor.GetCookPlan(pantry, recipe, _recipes);
             canCook.ConsoleResult();
             Assert.IsTrue(canCook.CanMake);
         }
@@ -231,8 +230,8 @@ namespace Pantry.Core.Test.Recipe_Tests
                 new RecipeFood() { Food = _frozenChicken, Amount = 120 },
                 new RecipeFood() { Food = _bbqSauce, Amount = 10 },
             };
-            Recipe recipe = _recipes.First(x => x.RecipeFoods.Any(y => y.Food == _chickenSandwich));
-            CookPlan canCook = _foodProcessor.GetCookPlan(pantry, recipe, _recipes);
+            var recipe = _recipes.First(x => x.RecipeFoods.Any(y => y.Food == _chickenSandwich));
+            var canCook = _foodProcessor.GetCookPlan(pantry, recipe, _recipes);
             canCook.ConsoleResult();
             Assert.IsTrue(canCook.CanMake);
         }
@@ -248,8 +247,8 @@ namespace Pantry.Core.Test.Recipe_Tests
                 new RecipeFood() { Food = _frozenChicken, Amount = 120 },
                 new RecipeFood() { Food = _bbqSauce, Amount = 10 },
             };
-            Recipe recipe = _recipes.First(x => x.RecipeFoods.Any(y => y.Food == _chickenSandwich));
-            CookPlan canCook = _foodProcessor.GetCookPlan(pantry, recipe, _recipes);
+            var recipe = _recipes.First(x => x.RecipeFoods.Any(y => y.Food == _chickenSandwich));
+            var canCook = _foodProcessor.GetCookPlan(pantry, recipe, _recipes);
             canCook.ConsoleResult();
             Assert.IsFalse(canCook.CanMake);
         }
@@ -263,7 +262,7 @@ namespace Pantry.Core.Test.Recipe_Tests
                 new RecipeFood() { Food = _cookedChicken, Amount = 500 },
             };
             PantryProvider pp = new(pantry);
-            Recipe recipe = _recipes.First(x => x.RecipeFoods.Any(y => y.Food == _chickenSandwich));
+            var recipe = _recipes.First(x => x.RecipeFoods.Any(y => y.Food == _chickenSandwich));
             CookPlan canCook = null;
             for (var i = 0; i < 4; i++)
             {
@@ -285,7 +284,7 @@ namespace Pantry.Core.Test.Recipe_Tests
                 new RecipeFood() { Food = _cookedChicken, Amount = 500 },
             };
             PantryProvider pp = new(pantry);
-            Recipe recipe = _recipes.First(x => x.RecipeFoods.Any(y => y.Food == _chickenSandwich));
+            var recipe = _recipes.First(x => x.RecipeFoods.Any(y => y.Food == _chickenSandwich));
             CookPlan canCook = null;
             for (var i = 0; i < 5; i++)
             {
@@ -309,7 +308,7 @@ namespace Pantry.Core.Test.Recipe_Tests
                 new RecipeFood() { Food = _cookedChicken, Amount = 500 },
             };
             PantryProvider pp = new(pantry);
-            Recipe recipe = _recipes.First(x => x.RecipeFoods.Any(y => y.Food == _chickenSandwich));
+            var recipe = _recipes.First(x => x.RecipeFoods.Any(y => y.Food == _chickenSandwich));
             CookPlan canCook = null;
             for (var i = 0; i < 4; i++)
             {
@@ -333,7 +332,7 @@ namespace Pantry.Core.Test.Recipe_Tests
                 new RecipeFood() { Food = _cookedChicken, Amount = 500 },
             };
             PantryProvider pp = new(pantry);
-            Recipe recipe = _recipes.First(x => x.RecipeFoods.Any(y => y.Food == _chickenSandwich));
+            var recipe = _recipes.First(x => x.RecipeFoods.Any(y => y.Food == _chickenSandwich));
             CookPlan canCook = null;
             for (var i = 0; i < 5; i++)
             {

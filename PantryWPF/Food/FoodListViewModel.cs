@@ -56,7 +56,7 @@ namespace PantryWPF.Food
                 Recipes = new();
                 return;
             }
-            var tempList = _selectedFood.RecipeFoods.Select(x => x.Recipe).Distinct().ToList();
+            var tempList = _selectedFood.RecipeFoods.Where(x => x.Amount > 0).Select(x => x.Recipe).Distinct().ToList();
             Recipes.Clear();
             foreach (var x in tempList)
             {

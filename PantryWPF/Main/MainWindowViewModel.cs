@@ -51,7 +51,10 @@ namespace PantryWPF.Main
                 dbContext.Items.Add(new Item() { Food = dbContext.Foods.First(x => x.FoodName == "BBQ Sauce"), Weight = 454, Upc = "200BBQ" });
                 dbContext.Items.Add(new Item() { Food = dbContext.Foods.First(x => x.FoodName == "Milk"), Weight = 3900, Upc = "1GalMilk" });
                 dbContext.Items.Add(new Item() { Food = dbContext.Foods.First(x => x.FoodName == "Sliced Bread"), Weight = 454, Upc = "LotsOfBread" });
+                dbContext.Items.Add(new Item() { Food = dbContext.Foods.First(x => x.FoodName == "Bread"), Weight = 1000, Upc = "Artisan Bread" });
+
                 _ = dbContext.SaveChanges();
+
             }
         }
 
@@ -69,6 +72,14 @@ namespace PantryWPF.Main
                     Item = dbContext.Items.First(x => x.Upc == "1GalMilk"),
                     ExpiryDate = now + TimeSpan.FromDays(14),
                     Quantity = 3900,
+                    Location = defaultLocation,
+                });
+
+                _ = dbContext.LocationFoods.Add(new LocationFoods()
+                {
+                    Item = dbContext.Items.First(x => x.Upc == "Artisan Bread"),
+                    ExpiryDate = now + TimeSpan.FromDays(14),
+                    Quantity = 1000,
                     Location = defaultLocation,
                 });
 
@@ -162,7 +173,7 @@ namespace PantryWPF.Main
                         Description = "Cooked Chicken",
                         RecipeFoods = new List<RecipeFood>()
                         {
-                            new() { Amount = 120, Food = dbContext.Foods.First(x => x.FoodName == "Frozen Chicken") },
+                            new() { Amount = 120, Food = dbContext.Foods.First(x => x.FoodName == "Raw Chicken") },
                             new() { Amount = 1, Food = dbContext.Foods.First(x => x.FoodName == "BBQ Sauce") },
                             new() { Amount = -120, Food = dbContext.Foods.First(x => x.FoodName == "Cooked Chicken") },
                         },

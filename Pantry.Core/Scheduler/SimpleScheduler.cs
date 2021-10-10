@@ -20,13 +20,13 @@ namespace Pantry.Core.Scheduler
 
         public void TrySchedule(DateTime goal)
         {
-            int offset = 0;
+            var offset = 0;
             foreach (var scheduledTask in ScheduledTasks)
             {
                 var recipeSteps = scheduledTask.RecipesTouched.SelectMany(b => b.RecipeSteps).Reverse();
                 foreach (var recipeStep in recipeSteps)
                 {
-                    bool satisfied = false;
+                    var satisfied = false;
                     for (; !satisfied; offset++)
                     {
                         if (recipeStep.RecipeStepEquipment.Select(x => x.Equipment).All(y =>
@@ -84,17 +84,17 @@ namespace Pantry.Core.Scheduler
             this.Equipments = equipments;
         }
 
-        public List<CookPlan> ScheduledTasks { get; set; } = new();
-        public List<Equipment> Equipments { get; set; } = new();
+        public List<CookPlan> ScheduledTasks { get; set; }
+        public List<Equipment> Equipments { get; set; }
         public void TrySchedule(DateTime goal)
         {
             foreach (var scheduledTask in ScheduledTasks)
             {
                 var recipeSteps = scheduledTask.RecipesTouched.SelectMany(b => b.RecipeSteps).Reverse();
-                int offset = 0;
+                var offset = 0;
                 foreach (var recipeStep in recipeSteps)
                 {
-                    bool satisfied = false;
+                    var satisfied = false;
                     for (; !satisfied; offset++)
                     {
                         if (recipeStep.RecipeStepEquipment.Select(x => x.Equipment).All(y =>

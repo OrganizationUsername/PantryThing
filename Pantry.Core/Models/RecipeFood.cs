@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace Pantry.Core.Models
+﻿namespace Pantry.Core.Models
 {
     public class RecipeFood
     {

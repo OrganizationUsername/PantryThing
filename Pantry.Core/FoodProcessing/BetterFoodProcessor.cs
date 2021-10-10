@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using Pantry.Core.Models;
 
@@ -59,7 +58,7 @@ namespace Pantry.Core.FoodProcessing
                     }
                 }
             }
-            totalOutput.AddRange(recipe.RecipeFoods.Where(x => x.Amount < 0).Select(x=>new RecipeFood(){Amount = -x.Amount,Food = x.Food}));
+            totalOutput.AddRange(recipe.RecipeFoods.Where(x => x.Amount < 0).Select(x => new RecipeFood() { Amount = -x.Amount, Food = x.Food }));
 
             return new CookPlan()
             {
@@ -72,15 +71,15 @@ namespace Pantry.Core.FoodProcessing
 
         public static Recipe RecipeFinder(int FoodId, IList<Recipe> recipes)
         {
-            return recipes.FirstOrDefault(r => r.RecipeFoods.Any(fi => fi.Food.FoodId == FoodId && fi.Amount < 0));
+            return recipes.FirstOrDefault(r => r.RecipeFoods is not null && r.RecipeFoods.Any(fi => fi.Food.FoodId == FoodId && fi.Amount < 0));
         }
 
         private static RecipeFood[] GetFoodInstancesFromRecipe(Recipe recipe)
         {
-            RecipeFood[] clones = new RecipeFood[recipe.RecipeFoods.Count];
+            var clones = new RecipeFood[recipe.RecipeFoods.Count];
             for (var index = 0; index < recipe.RecipeFoods.Count; index++)
             {
-                RecipeFood fi = recipe.RecipeFoods[index];
+                var fi = recipe.RecipeFoods[index];
                 clones[index] = (new RecipeFood()
                 {
                     Food = fi.Food,
@@ -95,7 +94,7 @@ namespace Pantry.Core.FoodProcessing
             var clones = new RecipeFood[foodInstances.Count];
             for (var index = 0; index < foodInstances.Count; index++)
             {
-                RecipeFood fi = foodInstances[index];
+                var fi = foodInstances[index];
                 clones[index] = (new RecipeFood()
                 {
                     Food = new Food() { FoodName = fi.Food.FoodName, FoodId = fi.Food.FoodId },
