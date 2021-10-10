@@ -68,7 +68,7 @@ namespace PantryWPF.Inventory
                 }
                 OnPropertyChanged(nameof(SelectedLocation));
                 LocationFoodsCollection = new(_db.LocationFoods
-                    .Where(x => x.Location.LocationName == SelectedLocation.LocationName)
+                    .Where(x => x.Location.LocationName == SelectedLocation.LocationName && x.Quantity > 0)
                     .Include(x => x.Item).ThenInclude(x => x.Food).ToList());
                 OnPropertyChanged(nameof(LocationFoodsCollection));
             }
@@ -76,26 +76,26 @@ namespace PantryWPF.Inventory
 
         public InventoryViewModel()
         {
-            SaveChangesDelegateCommand = new DelegateCommand(SaveChanges);
-            AddLocationFoodDelegateCommand = new DelegateCommand(AddNewLocationFood);
-            _db = new DataBase();
+            SaveChangesDelegateCommand = new(SaveChanges);
+            AddLocationFoodDelegateCommand = new(AddNewLocationFood);
+            _db = new();
             LoadData();
             OnPropertyChanged(nameof(LocationFoodsCollection));
         }
 
         public void LoadData()
         {
-            LocationFoodsCollection = new(_db.LocationFoods.Include(x => x.Item).ToList());
-            Locations = new ObservableCollection<Location>(_db.Locations.ToList());
+            LocationFoodsCollection = new(_db.LocationFoods.Where(x => x.Quantity > 0).Include(x => x.Item).ToList());
+            Locations = new(_db.Locations.ToList());
             SelectedLocation = LocationFoodsCollection.FirstOrDefault()?.Location;
-            Items = new ObservableCollection<Item>(_db.Items.ToList());
+            Items = new(_db.Items.ToList());
         }
 
         public void AddNewLocationFood()
         {
             if (SelectedItem is null || SelectedLocation is null) { return; }
             RejectChanges();
-            _db.LocationFoods.Add(new LocationFoods()
+            _db.LocationFoods.Add(new()
             {
                 PurchaseDate = DateTime.Now,
                 Item = SelectedItem,

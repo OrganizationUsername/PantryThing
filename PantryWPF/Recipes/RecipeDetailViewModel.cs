@@ -70,6 +70,10 @@ namespace PantryWPF.Recipes
             {
                 var y = _dataBase.LocationFoods.First(z => z.Quantity > 0 && z.LocationFoodsId == x.LocationFoodsId);
                 y.Quantity -= x.Quantity;
+                if (y.Quantity == 0)
+                {
+                    y.Exists = false;
+                }
             }
 
             _dataBase.LocationFoods.Add(new()
@@ -82,7 +86,7 @@ namespace PantryWPF.Recipes
                 PurchaseDate = DateTime.MinValue,
                 Item = new()
                 {
-                    Food = canCook.TotalOutput.First().Food,
+                    FoodId = canCook.TotalOutput.First().Food.FoodId,
                     Unit = null,
                     Upc = canCook.TotalOutput.First().Food.FoodName,
                     Weight = canCook.TotalOutput.First().Amount

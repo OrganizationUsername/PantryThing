@@ -31,6 +31,7 @@
                 <Button Content="Add New Item" Command="{Binding AddLocationFoodDelegateCommand}"/>
                 <Label Content=""/>
             </StackPanel>
+
             <ComboBox ItemsSource="{Binding Locations}"
                       DisplayMemberPath="LocationName" DockPanel.Dock="Top"
                       SelectedItem="{Binding SelectedLocation}"/>
@@ -38,12 +39,25 @@
                       SelectedItem="{Binding SelectedLocationFood}"/>
         </DockPanel>
         <StackPanel>
-            <TextBlock Text="{Binding SelectedLocationFood.Item.Upc}"/>
-            <TextBlock Text="{Binding SelectedLocationFood.Item.Food.FoodName}"/>
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Text="LocationFoods ID: "/>
+                <TextBlock Text="{Binding SelectedLocationFood.LocationFoodsId}"/>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Text="UPC: "/>
+                <TextBlock Text="{Binding SelectedLocationFood.Item.Upc}"/>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Text="Food name: "/>
+                <TextBlock Text="{Binding SelectedLocationFood.Item.Food.FoodName}"/>
+            </StackPanel>
             <ComboBox ItemsSource="{Binding Locations}"
                       DisplayMemberPath="LocationName" DockPanel.Dock="Top"
                       SelectedItem="{Binding SelectedLocationFood.Location}"/>
-            <TextBlock Text="{Binding SelectedLocationFood.Quantity}"/>
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Text="Remaining Quantity: "/>
+                <TextBlock Text="{Binding SelectedLocationFood.Quantity}"/>
+            </StackPanel>
             <Button Content="Save Changes" Command="{Binding SaveChangesDelegateCommand}"/>
         </StackPanel>
     </DockPanel>

@@ -46,7 +46,11 @@ namespace PantryWPF.Main
         {
             using (var dbContext = new DataBase())
             {
-                _ = dbContext.Database.ExecuteSqlRaw("DELETE FROM Items;");
+                _ = dbContext.Database.ExecuteSqlRaw(@$"DELETE FROM {dbContext.Items.EntityType.GetTableName()};");
+                if (dbContext.Database.ProviderName == "Microsoft.EntityFrameworkCore.Sqlite")
+                {
+                    _ = dbContext.Database.ExecuteSqlRaw(@$"UPDATE `sqlite_sequence` SET `seq` = 0 WHERE `name` = '{dbContext.Items.EntityType.GetTableName()}';");
+                }
                 _ = dbContext.Items.Add(new() { Food = dbContext.Foods.First(x => x.FoodName == "Frozen Chicken"), Weight = 4540, Upc = "100Chicken" });
                 _ = dbContext.Items.Add(new() { Food = dbContext.Foods.First(x => x.FoodName == "BBQ Sauce"), Weight = 454, Upc = "200BBQ" });
                 _ = dbContext.Items.Add(new() { Food = dbContext.Foods.First(x => x.FoodName == "Milk"), Weight = 3900, Upc = "1GalMilk" });
@@ -62,8 +66,11 @@ namespace PantryWPF.Main
         {
             using (var dbContext = new DataBase())
             {
-                _ = dbContext.Database.ExecuteSqlRaw("DELETE FROM LocationFoods;");
-
+                _ = dbContext.Database.ExecuteSqlRaw(@$"DELETE FROM {dbContext.LocationFoods.EntityType.GetTableName()};");
+                if (dbContext.Database.ProviderName == "Microsoft.EntityFrameworkCore.Sqlite")
+                {
+                    _ = dbContext.Database.ExecuteSqlRaw(@$"UPDATE `sqlite_sequence` SET `seq` = 0 WHERE `name` = '{dbContext.LocationFoods.EntityType.GetTableName()}';");
+                }
                 var defaultLocation = dbContext.Locations.First(x => x.LocationName == "Default");
                 var now = DateTime.Now;
 
@@ -140,8 +147,11 @@ namespace PantryWPF.Main
         {
             using (var dbContext = new DataBase())
             {
-                _ = dbContext.Database.ExecuteSqlRaw("DELETE FROM Locations;");
-                _ = dbContext.Database.ExecuteSqlRaw("UPDATE `sqlite_sequence` SET `seq` = 0 WHERE `name` = 'Locations';");
+                _ = dbContext.Database.ExecuteSqlRaw(@$"DELETE FROM {dbContext.Locations.EntityType.GetTableName()};");
+                if (dbContext.Database.ProviderName == "Microsoft.EntityFrameworkCore.Sqlite")
+                {
+                    _ = dbContext.Database.ExecuteSqlRaw(@$"UPDATE `sqlite_sequence` SET `seq` = 0 WHERE `name` = '{dbContext.Locations.EntityType.GetTableName()}';");
+                }
                 _ = dbContext.Locations.Add(new() { LocationName = "Default" });
                 _ = dbContext.Locations.Add(new() { LocationName = "Fridge" });
                 _ = dbContext.Locations.Add(new() { LocationName = "Freezer" });
@@ -154,9 +164,11 @@ namespace PantryWPF.Main
         {
             using (var dbContext = new DataBase())
             {
-                _ = dbContext.Database.ExecuteSqlRaw("DELETE FROM Equipments;");
-                _ = dbContext.Database.ExecuteSqlRaw("UPDATE `sqlite_sequence` SET `seq` = 0 WHERE `name` = 'Equipments';");
-
+                _ = dbContext.Database.ExecuteSqlRaw(@$"DELETE FROM {dbContext.Equipments.EntityType.GetTableName()};");
+                if (dbContext.Database.ProviderName == "Microsoft.EntityFrameworkCore.Sqlite")
+                {
+                    _ = dbContext.Database.ExecuteSqlRaw(@$"UPDATE `sqlite_sequence` SET `seq` = 0 WHERE `name` = '{dbContext.Equipments.EntityType.GetTableName()}';");
+                }
                 _ = dbContext.Equipments.Add(new() { EquipmentName = "Bread Machine", Location = dbContext.Locations.First(x => x.LocationName == "Default") });
                 _ = dbContext.Equipments.Add(new() { EquipmentName = "Human", Location = dbContext.Locations.First(x => x.LocationName == "Default") });
                 _ = dbContext.Equipments.Add(new() { EquipmentName = "Fridge", Location = dbContext.Locations.First(x => x.LocationName == "Default") });
@@ -169,10 +181,13 @@ namespace PantryWPF.Main
         {
             using (var dbContext = new DataBase())
             {
-                _ = dbContext.Database.ExecuteSqlRaw("DELETE FROM Recipes;");
-                _ = dbContext.Database.ExecuteSqlRaw("DELETE FROM RecipeSteps;");
-                _ = dbContext.Database.ExecuteSqlRaw("UPDATE `sqlite_sequence` SET `seq` = 0 WHERE `name` = 'Recipes';");
-                _ = dbContext.Database.ExecuteSqlRaw("UPDATE `sqlite_sequence` SET `seq` = 0 WHERE `name` = 'RecipeSteps';");
+                _ = dbContext.Database.ExecuteSqlRaw(@$"DELETE FROM {dbContext.Recipes.EntityType.GetTableName()};");
+                _ = dbContext.Database.ExecuteSqlRaw(@$"DELETE FROM {dbContext.RecipeSteps.EntityType.GetTableName()};");
+                if (dbContext.Database.ProviderName == "Microsoft.EntityFrameworkCore.Sqlite")
+                {
+                    _ = dbContext.Database.ExecuteSqlRaw(@$"UPDATE `sqlite_sequence` SET `seq` = 0 WHERE `name` = '{dbContext.Recipes.EntityType.GetTableName()}';");
+                    _ = dbContext.Database.ExecuteSqlRaw(@$"UPDATE `sqlite_sequence` SET `seq` = 0 WHERE `name` = '{dbContext.RecipeSteps.EntityType.GetTableName()}';");
+                }
 
                 /* Cooked Chicken */
                 {
@@ -342,8 +357,11 @@ namespace PantryWPF.Main
         {
             using (var dbContext = new DataBase())
             {
-                _ = dbContext.Database.ExecuteSqlRaw("DELETE FROM Foods;");
-                _ = dbContext.Database.ExecuteSqlRaw("UPDATE `sqlite_sequence` SET `seq` = 0 WHERE `name` = 'Foods';");
+                _ = dbContext.Database.ExecuteSqlRaw(@$"DELETE FROM {dbContext.Foods.EntityType.GetTableName()};");
+                if (dbContext.Database.ProviderName == "Microsoft.EntityFrameworkCore.Sqlite")
+                {
+                    _ = dbContext.Database.ExecuteSqlRaw(@$"UPDATE `sqlite_sequence` SET `seq` = 0 WHERE `name` = '{dbContext.Foods.EntityType.GetTableName()}';");
+                }
                 _ = dbContext.Foods.Add(new() { FoodName = "Frozen Chicken" });
                 _ = dbContext.Foods.Add(new() { FoodName = "Raw Chicken", });
                 _ = dbContext.Foods.Add(new() { FoodName = "BBQ Sauce" });
@@ -356,6 +374,7 @@ namespace PantryWPF.Main
                 _ = dbContext.Foods.Add(new() { FoodName = "Sliced Bread" });
                 _ = dbContext.Foods.Add(new() { FoodName = "Chicken Sandwich" });
                 _ = dbContext.SaveChanges();
+
             }
         }
 
