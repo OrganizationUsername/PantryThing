@@ -84,7 +84,7 @@ namespace PantryWPF.Recipes
                 {
                     Food = canCook.TotalOutput.First().Food,
                     Unit = null,
-                    Upc = canCook.TotalOutput.First().Food.FoodName + "- Cooked",
+                    Upc = canCook.TotalOutput.First().Food.FoodName,
                     Weight = canCook.TotalOutput.First().Amount
                 }
             });
@@ -108,7 +108,7 @@ namespace PantryWPF.Recipes
             Trace.WriteLine($"Ingredients:{string.Join(Environment.NewLine, _selectedRecipe.RecipeFoods.Select(x => $"{x.Food.FoodName}: {x.Amount}"))}");
             Trace.WriteLine("Current inventory:");
             Trace.WriteLine(string.Join(Environment.NewLine, currentFoodInventory.Select(x => $"{x.Food.FoodName}: {x.Amount}")));
-            var canCook = foodProcessor.GetCookPlan(currentFoodInventory, _selectedRecipe, _dataBase.Recipes.ToList());
+            var canCook = foodProcessor.GetCookPlan(currentFoodInventory, _selectedRecipe, _dataBase.Recipes.Include(x => x.RecipeFoods).ToList());
 
             if (canCook.CanMake)
             {
