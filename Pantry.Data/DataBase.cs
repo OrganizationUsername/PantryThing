@@ -79,20 +79,6 @@ namespace Pantry.Data
         {
             //this.Database.EnsureCreated();
         }
-        protected override void OnModelCreating(ModelBuilder modelBuilder)
-        {
-            //modelBuilder.Entity<Recipe>().Ignore(x => x.RecipeSteps);
-            modelBuilder.Entity<RecipeStep>()
-                //.Ignore(x => x.Equipments)
-                .HasIndex(x => x.Order); //pre-optimization
-            //modelBuilder.Entity<Recipe>().HasMany(x => x.RecipeFoods);
-            //modelBuilder.Entity<Recipe>().HasMany(x => x.Outputs);
-            //modelBuilder.Entity<Recipe>().HasKey(x => x.RecipeFoodId);
-            //modelBuilder.Entity<Food>().HasIndex(x => x.FoodName).IsUnique();
-            //modelBuilder.Entity<BetterRecipeInput>().HasKey(x => x.BetterRecipeInputId);
-            base.OnModelCreating(modelBuilder);
-
-        }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {

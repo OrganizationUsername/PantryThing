@@ -16,6 +16,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Pantry.Data\Pantry.Data.csproj" />
+    <ProjectReference Include="..\ServiceGateways\ServiceGateways.csproj" />
   </ItemGroup>
 
 </Project>

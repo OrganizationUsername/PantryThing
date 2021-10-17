@@ -37,8 +37,8 @@
             <StackPanel Orientation="Horizontal">
                 <TextBlock Text="UPC: "/>
                 <TextBlock Text="{Binding SelectedItem.Upc}"/>
-                <Button Content="Add Instance to Inventory" Command="{Binding AddLocationFoodCommand}"/>
             </StackPanel>
+            <Button Content="Add Instance to Inventory" Command="{Binding AddLocationFoodCommand}"/>
         </StackPanel>
     </DockPanel>
 </UserControl>

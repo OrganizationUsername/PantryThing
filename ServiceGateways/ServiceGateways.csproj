@@ -1,0 +1,12 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net5.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Pantry.Core\Pantry.Core.csproj" />
+    <ProjectReference Include="..\Pantry.Data\Pantry.Data.csproj" />
+  </ItemGroup>
+
+</Project>
