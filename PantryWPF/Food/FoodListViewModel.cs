@@ -33,7 +33,7 @@ namespace PantryWPF.Food
         {
             _dataBase = new DataBase();
             KeepOnlyUniqueFoodNames();
-            LoadFoods();
+            LoadData();
             AddRecipeCommand = new DelegateCommand(AddFood);
             DeleteFoodCommand = new DelegateCommand(DeleteSelectedFood);
         }
@@ -45,7 +45,7 @@ namespace PantryWPF.Food
                 var foodToDelete = _dataBase.Foods.First(x => x.FoodId == _selectedFood.FoodId);
                 _dataBase.Foods.Remove(foodToDelete);
                 _dataBase.SaveChanges();
-                LoadFoods();
+                LoadData();
             }
         }
 
@@ -83,7 +83,7 @@ namespace PantryWPF.Food
         }
 
 
-        public void LoadFoods()
+        public void LoadData()
         {
 
             if (_dataBase.Foods is null)
@@ -109,7 +109,7 @@ namespace PantryWPF.Food
             _dataBase.SaveChanges();
             NewFoodName = "";
             OnPropertyChanged(nameof(NewFoodName));
-            LoadFoods();
+            LoadData();
             SelectedFood = Foods.Last();
         }
 

@@ -80,15 +80,16 @@ namespace PantryWPF.Inventory
             AddLocationFoodDelegateCommand = new(AddNewLocationFood);
             _db = new();
             LoadData();
-            OnPropertyChanged(nameof(LocationFoodsCollection));
         }
 
         public void LoadData()
         {
             LocationFoodsCollection = new(_db.LocationFoods.Where(x => x.Quantity > 0).Include(x => x.Item).ToList());
             Locations = new(_db.Locations.ToList());
+            OnPropertyChanged(nameof(Locations));
             SelectedLocation = LocationFoodsCollection.FirstOrDefault()?.Location;
             Items = new(_db.Items.ToList());
+            OnPropertyChanged(nameof(LocationFoodsCollection));
         }
 
         public void AddNewLocationFood()
@@ -117,7 +118,6 @@ namespace PantryWPF.Inventory
                 LocationFoodsCollection.Add(x);
             }
             SelectedLocationFood = null;
-            OnPropertyChanged(nameof(Locations));
             OnPropertyChanged(nameof(LocationFoodsCollection));
         }
 

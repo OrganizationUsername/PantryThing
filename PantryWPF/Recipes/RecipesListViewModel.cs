@@ -33,48 +33,24 @@ namespace PantryWPF.Recipes
             set
             {
                 _selectedRecipe = value;
-                _selectedRecipeDetailViewModel = new RecipeDetailViewModel(_selectedRecipe);
+                _selectedRecipeDetailViewModel = new(_selectedRecipe);
                 OnPropertyChanged(nameof(SelectedRecipeDetailViewModel));
             }
         }
 
-        public RecipesListViewModel()
+        public RecipesListViewModel() //ToDo: Figure out why this isn't called when navigated to.
         {
-            _dataBase = new DataBase();
-            CleanDatabase();
-            LoadRecipes();
-            AddRecipeCommand = new DelegateCommand(AddRecipe);
-        }
-
-        public void CleanDatabase()
-        {
-            List<string> nameList = new();
-            if (_dataBase.Recipes is null)
-            {
-                return;
-            }
-            for (var index = 0; index < _dataBase.Recipes.Count(); index++)
-            {
-                var x = _dataBase.Recipes.ToList()[index];
-                if (nameList.Contains(x.Description) || string.IsNullOrWhiteSpace(x.Description))
-                {
-                    _dataBase.Recipes.Remove(x);
-                }
-                else
-                {
-                    nameList.Add(x.Description);
-                }
-            }
-
-            _dataBase.SaveChanges();
+            _dataBase = new();
+            LoadData();
+            AddRecipeCommand = new(AddRecipe);
         }
 
 
-        public void LoadRecipes()
+        public void LoadData()
         {
             if (ACollection is null)
             {
-                ACollection = new ObservableCollection<Recipe>(_dataBase.Recipes.ToList());
+                ACollection = new(_dataBase.Recipes.ToList());
             }
             else
             {
@@ -90,12 +66,12 @@ namespace PantryWPF.Recipes
 
         public void AddRecipe()
         {
-            if (string.IsNullOrWhiteSpace(NewRecipeName)) { return; }
-            _dataBase.Recipes.Add(new Recipe() { Description = NewRecipeName });
+            if (string.IsNullOrWhiteSpace(NewRecipeName) || _dataBase.Recipes.Any(x => x.Description == NewRecipeName)) { return; }
+            _dataBase.Recipes.Add(new() { Description = NewRecipeName });
             _dataBase.SaveChanges();
-            _dataBase = new DataBase(); //otherwise recipe is always null if it's the first Recipe to be added.
+            _dataBase = new(); //otherwise recipe is always null if it's the first Recipe to be added.
 
-            LoadRecipes();
+            LoadData();
             var newRecipe = ACollection.FirstOrDefault(x => x.Description == NewRecipeName);
 
             if (newRecipe is null)
@@ -103,16 +79,9 @@ namespace PantryWPF.Recipes
                 return;
             }
 
-            //SelectedRecipe = null;
-            //OnPropertyChanged(nameof(SelectedRecipe));
-
-            //SelectedRecipe = new RecipeDetailViewModel(newRecipe);
-
-            LoadRecipes();
+            LoadData();
             SelectedRecipe = this.ACollection.Last();
             OnPropertyChanged(nameof(SelectedRecipe));
-
-
 
             NewRecipeName = "";
             OnPropertyChanged(nameof(NewRecipeName));
