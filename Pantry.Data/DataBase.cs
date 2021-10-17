@@ -97,7 +97,7 @@ namespace Pantry.Data
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             optionsBuilder.EnableSensitiveDataLogging();
-            optionsBuilder.UseSqlite(@"Data Source=C:\Programming\TotallyNewThing\Pantry\testDb.db");
+            optionsBuilder.UseSqlite(@"Data Source=..\..\..\..\testDb.db");
         }
     }
 }
