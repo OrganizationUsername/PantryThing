@@ -1,13 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using Microsoft.EntityFrameworkCore;
-using Pantry.Core.Models;
-using Pantry.Data;
+﻿using Pantry.Data;
 using Pantry.Data.UtilityFunctions;
 using PantryWPF.Food;
 using PantryWPF.Inventory;
-using PantryWPF.Recipes;
+using PantryWPF.Item;
+using PantryWPF.Recipe;
 using Unity;
 
 namespace PantryWPF.Main
@@ -20,6 +16,7 @@ namespace PantryWPF.Main
         public NavigationCommand RecipeNavigationCommand { get; set; }
         public NavigationCommand InventoryNavigationCommand { get; set; }
         public NavigationCommand FoodNavigationCommand { get; set; }
+        public NavigationCommand ItemNavigationCommand { get; set; }
         public DelegateCommand SeedDatabaseCommand { get; set; }
 
 
@@ -31,6 +28,7 @@ namespace PantryWPF.Main
             RecipeNavigationCommand = new(this, new RecipesListViewModel());
             InventoryNavigationCommand = new(this, new InventoryViewModel());
             FoodNavigationCommand = new(this, new FoodListViewModel());
+            ItemNavigationCommand = new(this, new ItemViewModel());
             SeedDatabaseCommand = new(Seeder.SeedDatabase);
         }
 

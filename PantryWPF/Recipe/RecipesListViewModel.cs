@@ -1,18 +1,16 @@
-﻿using System.Collections.Generic;
-using System.Collections.ObjectModel;
+﻿using System.Collections.ObjectModel;
 using System.Linq;
-using Pantry.Core.Models;
 using Pantry.Data;
 using PantryWPF.Main;
 
-namespace PantryWPF.Recipes
+namespace PantryWPF.Recipe
 {
     public class RecipesListViewModel : VmBase
     {
         private DataBase _dataBase;
         private RecipeDetailViewModel _selectedRecipeDetailViewModel;
         public DelegateCommand AddRecipeCommand { get; set; }
-        public ObservableCollection<Recipe> ACollection { get; set; }
+        public ObservableCollection<Pantry.Core.Models.Recipe> ACollection { get; set; }
         public string NewRecipeName { get; set; }
 
         public RecipeDetailViewModel SelectedRecipeDetailViewModel
@@ -25,9 +23,9 @@ namespace PantryWPF.Recipes
             }
         }
 
-        private Recipe _selectedRecipe;
+        private Pantry.Core.Models.Recipe _selectedRecipe;
 
-        public Recipe SelectedRecipe
+        public Pantry.Core.Models.Recipe SelectedRecipe
         {
             get => _selectedRecipe;
             set

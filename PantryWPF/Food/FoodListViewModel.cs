@@ -2,7 +2,6 @@
 using System.Collections.ObjectModel;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
-using Pantry.Core.Models;
 using Pantry.Data;
 using PantryWPF.Main;
 
@@ -14,7 +13,7 @@ namespace PantryWPF.Food
         private Pantry.Core.Models.Food _selectedFood;
 
         public ObservableCollection<Pantry.Core.Models.Food> Foods { get; set; } = new();
-        public ObservableCollection<Recipe> Recipes { get; set; } = new();
+        public ObservableCollection<Pantry.Core.Models.Recipe> Recipes { get; set; } = new();
         public string NewFoodName { get; set; }
         public Pantry.Core.Models.Food SelectedFood
         {
@@ -31,11 +30,11 @@ namespace PantryWPF.Food
         public DelegateCommand DeleteFoodCommand { get; set; }
         public FoodListViewModel()
         {
-            _dataBase = new DataBase();
+            _dataBase = new();
             KeepOnlyUniqueFoodNames();
             LoadData();
-            AddRecipeCommand = new DelegateCommand(AddFood);
-            DeleteFoodCommand = new DelegateCommand(DeleteSelectedFood);
+            AddRecipeCommand = new(AddFood);
+            DeleteFoodCommand = new(DeleteSelectedFood);
         }
 
         public void DeleteSelectedFood()
@@ -88,7 +87,7 @@ namespace PantryWPF.Food
 
             if (_dataBase.Foods is null)
             {
-                Foods = new ObservableCollection<Pantry.Core.Models.Food>();
+                Foods = new();
                 OnPropertyChanged(nameof(Foods));
                 return;
             }
@@ -105,7 +104,7 @@ namespace PantryWPF.Food
         public void AddFood()
         {
             if (string.IsNullOrWhiteSpace(NewFoodName)) { return; }
-            _dataBase.Foods.Add(new Pantry.Core.Models.Food() { FoodName = NewFoodName });
+            _dataBase.Foods.Add(new() { FoodName = NewFoodName });
             _dataBase.SaveChanges();
             NewFoodName = "";
             OnPropertyChanged(nameof(NewFoodName));

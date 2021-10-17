@@ -6,10 +6,11 @@
         xmlns:local="clr-namespace:PantryWPF"
         xmlns:inventory="clr-namespace:PantryWPF.Inventory"
         xmlns:main="clr-namespace:PantryWPF.Main"
-        xmlns:recipes="clr-namespace:PantryWPF.Recipes"
         xmlns:food="clr-namespace:PantryWPF.Food"
+        xmlns:recipes="clr-namespace:PantryWPF.Recipe"
+        xmlns:item="clr-namespace:PantryWPF.Item"
         mc:Ignorable="d"
-        Title="MainWindow" Height="1000" Width="800">
+        Title="MainWindow" Height="500" Width="800">
 
     <Window.DataContext>
         <main:MainWindowViewModel/>
@@ -24,13 +25,17 @@
         <DataTemplate DataType="{x:Type food:FoodListViewModel}">
             <food:FoodListView/>
         </DataTemplate>
+        <DataTemplate DataType="{x:Type item:ItemViewModel}">
+            <item:ItemView/>
+        </DataTemplate>
     </Window.Resources>
     <DockPanel LastChildFill="True">
         <GroupBox Header="MainWindow Nav">
             <StackPanel>
                 <Button Content="Recipes" Command="{Binding RecipeNavigationCommand}" />
                 <Button Content="Inventory" Command="{Binding InventoryNavigationCommand}" />
-                <Button Content="Food" Command="{Binding FoodNavigationCommand}" />
+                <Button Content="Foods" Command="{Binding FoodNavigationCommand}" />
+                <Button Content="Items" Command="{Binding ItemNavigationCommand}" />
                 <Label Content=""/>
                 <Button Content="Seed" Command="{Binding SeedDatabaseCommand}"/>
             </StackPanel>

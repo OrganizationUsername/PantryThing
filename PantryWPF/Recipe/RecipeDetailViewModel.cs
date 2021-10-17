@@ -12,11 +12,11 @@ using Pantry.Data;
 using PantryWPF.Annotations;
 using PantryWPF.Main;
 
-namespace PantryWPF.Recipes
+namespace PantryWPF.Recipe
 {
-    public class RecipeDetailViewModel : Recipe, INotifyPropertyChanged
+    public class RecipeDetailViewModel : Pantry.Core.Models.Recipe, INotifyPropertyChanged
     {
-        private readonly Recipe _selectedRecipe;
+        private readonly Pantry.Core.Models.Recipe _selectedRecipe;
         public event PropertyChangedEventHandler PropertyChanged;
         public List<Pantry.Core.Models.Food> Foods { get; set; }
         public DelegateCommand SaveStepCommand { get; set; }
@@ -39,7 +39,7 @@ namespace PantryWPF.Recipes
         public string ItemsUsed { get; set; } = "";
         public bool CanCook { get; set; }
 
-        public RecipeDetailViewModel(Recipe selectedRecipe)
+        public RecipeDetailViewModel(Pantry.Core.Models.Recipe selectedRecipe)
         {
             SaveStepCommand = new(SaveNewStep);
             SaveFoodCommand = new(SaveNewFood);
@@ -76,6 +76,20 @@ namespace PantryWPF.Recipes
                 }
             }
 
+            var upc = canCook.TotalOutput.OrderByDescending(x => x.Amount).First().Food.FoodName;
+            var itemToUse = _dataBase.Items.FirstOrDefault(x => x.Upc == upc);
+
+            if (itemToUse is null)
+            {
+                itemToUse = _dataBase.Items.Add(new()
+                {
+                    FoodId = canCook.TotalOutput.OrderByDescending(x => x.Amount).First().Food.FoodId,
+                    Unit = null,
+                    Upc = upc,
+                    Weight = canCook.TotalOutput.First().Amount
+                }).Entity;
+            }
+
             _dataBase.LocationFoods.Add(new()
             {
                 Exists = true,
@@ -84,13 +98,7 @@ namespace PantryWPF.Recipes
                 Location = _dataBase.Locations.First(),
                 OpenDate = DateTime.MinValue,
                 PurchaseDate = DateTime.MinValue,
-                Item = new()
-                {
-                    FoodId = canCook.TotalOutput.First().Food.FoodId,
-                    Unit = null,
-                    Upc = canCook.TotalOutput.First().Food.FoodName,
-                    Weight = canCook.TotalOutput.First().Amount
-                }
+                Item = itemToUse
             });
             _dataBase.SaveChanges();
             CanCook = CalculateCanCook();
@@ -119,8 +127,13 @@ namespace PantryWPF.Recipes
                 Trace.WriteLine("-----");
                 Trace.WriteLine(string.Join(Environment.NewLine, canCook.TotalInput.Select(x => $"{x.Food.FoodName}, {x.Amount}")));
                 ItemsUsed = string.Join(Environment.NewLine, GetRelevantInventoryItems(canCook.TotalInput).Select(x => $"{x.Item.Food.FoodName}- {x.LocationFoodsId}: {x.Quantity}"));
-                OnPropertyChanged(nameof(ItemsUsed));
+
             }
+            else
+            {
+                ItemsUsed = "";
+            }
+            OnPropertyChanged(nameof(ItemsUsed));
             return canCook.CanMake;
         }
 

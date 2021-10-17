@@ -14,8 +14,8 @@ namespace PantryWPF.Inventory
         private Location _selectedLocation;
         public ObservableCollection<LocationFoods> LocationFoodsCollection { get; set; }
         public ObservableCollection<Location> Locations { get; set; }
-        public ObservableCollection<Item> Items { get; set; }
-        public Item SelectedItem { get; set; }
+        public ObservableCollection<Pantry.Core.Models.Item> Items { get; set; }
+        public Pantry.Core.Models.Item SelectedItem { get; set; }
         private readonly DataBase _db;
         private LocationFoods _selectedLocationFood;
         public DelegateCommand SaveChangesDelegateCommand { get; set; }
