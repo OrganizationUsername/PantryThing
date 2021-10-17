@@ -1,11 +1,9 @@
-﻿using System;
-using System.Collections.ObjectModel;
+﻿using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows;
-using Microsoft.EntityFrameworkCore;
 using Pantry.Core.Models;
-using Pantry.Data;
 using PantryWPF.Main;
+using ServiceGateways;
 
 namespace PantryWPF.Inventory
 {
@@ -16,44 +14,10 @@ namespace PantryWPF.Inventory
         public ObservableCollection<Location> Locations { get; set; }
         public ObservableCollection<Pantry.Core.Models.Item> Items { get; set; }
         public Pantry.Core.Models.Item SelectedItem { get; set; }
-        private readonly DataBase _db;
         private LocationFoods _selectedLocationFood;
         public DelegateCommand SaveChangesDelegateCommand { get; set; }
         public DelegateCommand AddLocationFoodDelegateCommand { get; set; }
-
-        public LocationFoods SelectedLocationFood
-        {
-            get => _selectedLocationFood;
-            set
-            {
-                if (_db.ChangeTracker.HasChanges())
-                {
-                    RejectChanges();
-                    //A lot of this would be better if I used a projection.
-                    return;
-                }
-                _selectedLocationFood = value;
-                OnPropertyChanged(nameof(SelectedLocationFood));
-            }
-        }
-
-        public void RejectChanges()
-        {
-            foreach (var entry in _db.ChangeTracker.Entries())
-            {
-                switch (entry.State)
-                {
-                    case EntityState.Modified:
-                    case EntityState.Deleted:
-                        entry.State = EntityState.Modified; //Revert changes made to deleted entity.
-                        entry.State = EntityState.Unchanged;
-                        break;
-                    case EntityState.Added:
-                        entry.State = EntityState.Detached;
-                        break;
-                }
-            }
-        }
+        private readonly ItemService _itemService;
 
         public Location SelectedLocation
         {
@@ -67,53 +31,51 @@ namespace PantryWPF.Inventory
                     return;
                 }
                 OnPropertyChanged(nameof(SelectedLocation));
-                LocationFoodsCollection = new(_db.LocationFoods
-                    .Where(x => x.Location.LocationName == SelectedLocation.LocationName && x.Quantity > 0)
-                    .Include(x => x.Item).ThenInclude(x => x.Food).ToList());
+                LocationFoodsCollection = new(_itemService.GetLocationFoodsAtLocation(SelectedLocation.LocationId));
                 OnPropertyChanged(nameof(LocationFoodsCollection));
+            }
+        }
+
+        public LocationFoods SelectedLocationFood
+        {
+            get => _selectedLocationFood;
+            set
+            {
+                _selectedLocationFood = value;
+                OnPropertyChanged(nameof(SelectedLocationFood));
             }
         }
 
         public InventoryViewModel()
         {
+            _itemService = new(); //TODO: This should be injected.
             SaveChangesDelegateCommand = new(SaveChanges);
             AddLocationFoodDelegateCommand = new(AddNewLocationFood);
-            _db = new();
             LoadData();
         }
 
         public void LoadData()
         {
-            LocationFoodsCollection = new(_db.LocationFoods.Where(x => x.Quantity > 0).Include(x => x.Item).ToList());
-            Locations = new(_db.Locations.ToList());
+            Locations = new(_itemService.GetLocations());
             OnPropertyChanged(nameof(Locations));
-            SelectedLocation = LocationFoodsCollection.FirstOrDefault()?.Location;
-            Items = new(_db.Items.ToList());
+            LocationFoodsCollection = new(_itemService.GetLocationFoodsAtLocation(Locations.First().LocationId));
+            SelectedLocation = Locations.First(x => x.LocationId == LocationFoodsCollection.FirstOrDefault()?.LocationId);
+            Items = new(_itemService.GetItems());
             OnPropertyChanged(nameof(LocationFoodsCollection));
         }
 
         public void AddNewLocationFood()
         {
             if (SelectedItem is null || SelectedLocation is null) { return; }
-            RejectChanges();
-            _db.LocationFoods.Add(new()
-            {
-                PurchaseDate = DateTime.Now,
-                Item = SelectedItem,
-                Exists = true,
-                Location = SelectedLocation,
-                ExpiryDate = DateTime.MinValue,
-                OpenDate = DateTime.MinValue,
-                Quantity = _db.Items.Single(x => x.FoodId == SelectedItem.FoodId).Weight
-            });
-            _db.SaveChanges();
+            _itemService.AddLocationFood(SelectedItem, SelectedLocation);
             ReLoadData();
         }
 
         public void ReLoadData()
         {
             LocationFoodsCollection.Clear();
-            foreach (var x in (_db.LocationFoods.Include(x => x.Item).Where(x => x.Location.LocationName == SelectedLocation.LocationName).ToList()))
+            var xs = _itemService.GetLocationFoodsAtLocation(SelectedLocation.LocationId);
+            foreach (var x in xs)
             {
                 LocationFoodsCollection.Add(x);
             }
@@ -123,12 +85,19 @@ namespace PantryWPF.Inventory
 
         public void SaveChanges()
         {
+            if (SelectedLocationFood is null)
+            {
+                MessageBox.Show("An item must be selected.");
+                return;
+            }
+
             if (SelectedLocationFood?.Location is null)
             {
                 MessageBox.Show("Selected item must have a location.");
                 return;
             }
-            _db.SaveChanges();
+
+            _itemService.SaveLocationFood(SelectedLocationFood);
             ReLoadData();
         }
 

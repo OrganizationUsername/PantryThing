@@ -44,21 +44,63 @@ namespace ServiceGateways
             return true;
         }
 
-        public void AddLocationFood(Item selectedItem)
+        public void AddLocationFood(Item selectedItem, Location SelectedLocation = null)
         {
+
             using (var db = new DataBase())
             {
+                if (SelectedLocation is null)
+                {
+                    SelectedLocation = db.Locations.First();
+                }
+
                 db.LocationFoods.Add(new()
                 {
                     Exists = true,
                     ExpiryDate = DateTime.MinValue,
-                    ItemId = selectedItem.ItemId,
-                    Location = db.Locations.First(),
                     OpenDate = DateTime.MinValue,
-                    Quantity = selectedItem.Weight
+                    ItemId = selectedItem.ItemId,
+                    LocationId = SelectedLocation.LocationId,
+                    Quantity = db.Items.Single(x => x.FoodId == selectedItem.FoodId).Weight
                 });
                 db.SaveChanges();
             }
+        }
+
+        public List<LocationFoods> GetLocationFoodsAtLocation(int selectedLocationId)
+        {
+            using (var db = new DataBase())
+            {
+                return db.LocationFoods
+                    .Where(x => x.Location.LocationId == selectedLocationId)
+                    .Where(x => x.Quantity > 0)
+                    .Include(x => x.Item)
+                    .ThenInclude(x => x.Food)
+                    .Include(x => x.Location)
+                    .ToList();
+            }
+        }
+
+        public void SaveLocationFood(LocationFoods lf)
+        {
+            using (var db = new DataBase())
+            {
+                var x =
+                    db.LocationFoods.First(x => x.LocationFoodsId == lf.LocationFoodsId);
+                x.Quantity = lf.Quantity;
+                x.LocationId = lf.Location.LocationId;
+                db.SaveChanges();
+                
+            }
+        }
+
+        public List<Location> GetLocations()
+        {
+            using (var db = new DataBase())
+            {
+                return db.Locations.ToList();
+            }
+
         }
 
 
