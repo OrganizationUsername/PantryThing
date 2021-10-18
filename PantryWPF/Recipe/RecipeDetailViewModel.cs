@@ -11,6 +11,7 @@ using Pantry.Core.Models;
 using Pantry.Data;
 using PantryWPF.Annotations;
 using PantryWPF.Main;
+using ServiceGateways;
 
 namespace PantryWPF.Recipe
 {
@@ -26,21 +27,22 @@ namespace PantryWPF.Recipe
         public DelegateCommand DeleteThisRecipeCommand { get; set; }
         public string NewDescription { get; set; }
         public DelegateCommand CookCommand { get; set; }
-
         public string NewDuration { get; set; }
         public Pantry.Core.Models.Food NewFood { get; set; }
         public string NewFoodAmount { get; set; }
-
         public RecipeStep SelectedRecipeStep { get; set; }
         public RecipeFood SelectedRecipeFood { get; set; }
         private readonly DataBase _dataBase;
         public ObservableCollection<RecipeStep> RecipeStepsList { get; set; } = new();
         public ObservableCollection<RecipeFood> RecipeFoodsList { get; set; } = new();
+        public ObservableCollection<EquipmentProjection> Equipments { get; set; }
+        private ItemService _itemService;
         public string ItemsUsed { get; set; } = "";
         public bool CanCook { get; set; }
 
         public RecipeDetailViewModel(Pantry.Core.Models.Recipe selectedRecipe)
         {
+            _itemService = new();
             SaveStepCommand = new(SaveNewStep);
             SaveFoodCommand = new(SaveNewFood);
             DeleteStepCommand = new(DeleteSelectedStep);
@@ -49,8 +51,9 @@ namespace PantryWPF.Recipe
             CookCommand = new(CookIt);
 
             _dataBase = new();
-            _selectedRecipe = _dataBase.Recipes.FirstOrDefault(x => x.RecipeId == selectedRecipe.RecipeId);
-            Foods = _dataBase.Foods.ToList();
+            _selectedRecipe = _itemService.GetRecipe(selectedRecipe.RecipeId).FirstOrDefault(x => x.RecipeId == selectedRecipe.RecipeId);
+            Foods = _itemService.GetFoods();
+            Equipments = new(_itemService.GetEquipmentProjections());
             LoadRecipeDetailData();
             CanCook = CalculateCanCook();
         }
@@ -59,16 +62,17 @@ namespace PantryWPF.Recipe
         {
             BetterFoodProcessor foodProcessor = new();
 
-            var collection = _dataBase.LocationFoods
-                .Include(x => x.Item)
-                .ThenInclude(x => x.Food)
-                .ToList()
+            var collection = _itemService.GetLocationFoods()
                 .Select(x => new RecipeFood() { Amount = x.Quantity, Food = x.Item.Food }).ToList();
-            var canCook = foodProcessor.GetCookPlan(collection, _selectedRecipe, _dataBase.Recipes.ToList());
+            var canCook = foodProcessor.GetCookPlan(collection, _selectedRecipe, _itemService.GetRecipes().ToList());
             var inputsToBeConsumed = GetRelevantInventoryItems(canCook.TotalInput);
             foreach (var x in inputsToBeConsumed)
             {
-                var y = _dataBase.LocationFoods.First(z => z.Quantity > 0 && z.LocationFoodsId == x.LocationFoodsId);
+                var y = _itemService.GetLocationFood(x.LocationFoodsId).FirstOrDefault();
+                if (y is null)
+                {
+                    throw new("Lol, something went wrong.");
+                }
                 y.Quantity -= x.Quantity;
                 if (y.Quantity == 0)
                 {
@@ -77,18 +81,7 @@ namespace PantryWPF.Recipe
             }
 
             var upc = canCook.TotalOutput.OrderByDescending(x => x.Amount).First().Food.FoodName;
-            var itemToUse = _dataBase.Items.FirstOrDefault(x => x.Upc == upc);
-
-            if (itemToUse is null)
-            {
-                itemToUse = _dataBase.Items.Add(new()
-                {
-                    FoodId = canCook.TotalOutput.OrderByDescending(x => x.Amount).First().Food.FoodId,
-                    Unit = null,
-                    Upc = upc,
-                    Weight = canCook.TotalOutput.First().Amount
-                }).Entity;
-            }
+            var itemToUse = _dataBase.Items.FirstOrDefault(x => x.Upc == upc) ?? _itemService.AddSomething(canCook);
 
             _dataBase.LocationFoods.Add(new()
             {
@@ -274,7 +267,26 @@ namespace PantryWPF.Recipe
 
             if (!goodNumber || string.IsNullOrWhiteSpace(NewDescription)) { return; }
 
-            _dataBase.RecipeSteps.Add(new() { Instruction = NewDescription, RecipeId = _selectedRecipe.RecipeId, TimeCost = tempDuration });
+            var y = new RecipeStepEquipment() { EquipmentId = 1 };
+
+
+            var entity = _dataBase.RecipeSteps.Add(new()
+            {
+                Instruction = NewDescription,
+                RecipeId = _selectedRecipe.RecipeId,
+                TimeCost = tempDuration
+            }).Entity;
+
+            var stepId = entity.RecipeStepId;
+
+            entity.RecipeStepEquipment = new List<RecipeStepEquipment>(Equipments
+                .Where(x => x.IsSelected)
+                .Select(x => new RecipeStepEquipment()
+                {
+                    EquipmentId = x.EquipmentId,
+                    RecipeStepId = stepId
+                }));
+
             _dataBase.SaveChanges();
             NewDescription = "";
             NewDuration = "";

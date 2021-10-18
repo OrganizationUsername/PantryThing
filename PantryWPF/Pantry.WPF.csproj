@@ -15,7 +15,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\ServiceGateways\ServiceGateways.csproj" />
+    <ProjectReference Include="..\ServiceGateways\Pantry.ServiceGateways.csproj" />
   </ItemGroup>
 
 </Project>

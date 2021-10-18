@@ -7,6 +7,15 @@ using Pantry.Data;
 
 namespace ServiceGateways
 {
+
+    public class EquipmentProjection
+    {
+        public int EquipmentId { get; set; }
+        public string EquipmentName { get; set; }
+        public bool IsSelected { get; set; }
+    }
+
+
     public class ItemService
     {
         private readonly DataBase _database;
@@ -19,28 +28,6 @@ namespace ServiceGateways
         public List<Item> GetItems()
         {
             return _database.Items.Include(x => x.Food).ToList();
-        }
-
-        public List<Food> GetFoods()
-        {
-            return _database.Foods.ToList();
-        }
-
-        public List<Recipe> GetRecipes()
-        {
-            using (var db = new DataBase())
-            {
-                return db.Recipes.ToList();
-            }
-        }
-
-        public void AddEmptyRecipe(string newRecipeName)
-        {
-            using (var db = new DataBase())
-            {
-                db.Recipes.Add(new() { Description = newRecipeName });
-
-            }
         }
 
         public bool AddItem(Food selectedFood, string newItemUpc, double newItemWeight)
@@ -59,6 +46,68 @@ namespace ServiceGateways
                 db.SaveChanges();
             }
             return true;
+        }
+
+
+        public List<Recipe> GetRecipes()
+        {
+            using (var db = new DataBase())
+            {
+                return db.Recipes
+                    .Include(x => x.RecipeFoods)
+                    .ThenInclude(x => x.Food)
+                    .ToList();
+            }
+        }
+
+        public List<Equipment> GetEquipments()
+        {
+            using (var db = new DataBase())
+            {
+                return db.Equipments.ToList();
+            }
+        }
+
+        public List<EquipmentProjection> GetEquipmentProjections()
+        {
+            using (var db = new DataBase())
+            {
+                return db.Equipments.Select(x =>
+                    new EquipmentProjection()
+                    {
+                        IsSelected = false,
+                        EquipmentId = x.EquipmentId,
+                        EquipmentName = x.EquipmentName
+                    }).ToList();
+            }
+        }
+
+
+
+        public List<Recipe> GetRecipe(int recipeId)
+        {
+            using (var db = new DataBase())
+            {
+                return db.Recipes
+                    .Where(x => x.RecipeId == recipeId)
+                    .Include(x => x.RecipeFoods)
+                    .ThenInclude(x => x.Food)
+                    .ToList();
+            }
+        }
+
+        public List<Food> GetFoods()
+        {
+            return _database.Foods.ToList();
+        }
+
+        public void AddEmptyRecipe(string newRecipeName)
+        {
+            using (var db = new DataBase())
+            {
+                db.Recipes.Add(new() { Description = newRecipeName });
+
+            }
         }
 
         public void AddLocationFood(Item selectedItem, Location selectedLocation = null)
@@ -90,6 +139,56 @@ namespace ServiceGateways
             {
                 return db.LocationFoods
                     .Where(x => x.Location.LocationId == selectedLocationId)
+                    .Where(x => x.Quantity > 0)
+                    .Include(x => x.Item)
+                    .ThenInclude(x => x.Food)
+                    .Include(x => x.Location)
+                    .ToList();
+            }
+        }
+
+        public Item AddSomething(CookPlan canCook)
+        {
+            var upc = canCook.TotalOutput.OrderByDescending(x => x.Amount).First().Food.FoodName;
+            try
+            {
+                using (var db = new DataBase())
+                {
+                    var itemToUse = db.Items.Add(new()
+                    {
+                        FoodId = canCook.TotalOutput.OrderByDescending(x => x.Amount).First().Food.FoodId,
+                        Unit = null,
+                        Upc = upc,
+                        Weight = canCook.TotalOutput.First().Amount
+                    }).Entity;
+                    return itemToUse;
+                }
+            }
+            catch (Exception e)
+            {
+                return null;
+            }
+        }
+
+        public List<LocationFoods> GetLocationFood(int locationFoodsId)
+        {
+            using (var db = new DataBase())
+            {
+                return db.LocationFoods
+                    .Where(x => x.LocationFoodsId == locationFoodsId)
+                    .Where(x => x.Quantity > 0)
+                    .Include(x => x.Item)
+                    .ThenInclude(x => x.Food)
+                    .Include(x => x.Location)
+                    .ToList();
+            }
+        }
+
+        public List<LocationFoods> GetLocationFoods()
+        {
+            using (var db = new DataBase())
+            {
+                return db.LocationFoods
                     .Where(x => x.Quantity > 0)
                     .Include(x => x.Item)
                     .ThenInclude(x => x.Food)
