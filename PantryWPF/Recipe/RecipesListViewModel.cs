@@ -1,16 +1,16 @@
 ﻿using System.Collections.ObjectModel;
 using System.Linq;
-using Pantry.Data;
 using PantryWPF.Main;
+using ServiceGateways;
 
 namespace PantryWPF.Recipe
 {
     public class RecipesListViewModel : VmBase
     {
-        private DataBase _dataBase;
         private RecipeDetailViewModel _selectedRecipeDetailViewModel;
         public DelegateCommand AddRecipeCommand { get; set; }
         public ObservableCollection<Pantry.Core.Models.Recipe> ACollection { get; set; }
+        private readonly ItemService _itemService;
         public string NewRecipeName { get; set; }
 
         public RecipeDetailViewModel SelectedRecipeDetailViewModel
@@ -38,7 +38,7 @@ namespace PantryWPF.Recipe
 
         public RecipesListViewModel() //ToDo: Figure out why this isn't called when navigated to.
         {
-            _dataBase = new();
+            _itemService = new();
             LoadData();
             AddRecipeCommand = new(AddRecipe);
         }
@@ -48,12 +48,12 @@ namespace PantryWPF.Recipe
         {
             if (ACollection is null)
             {
-                ACollection = new(_dataBase.Recipes.ToList());
+                ACollection = new(_itemService.GetRecipes());
             }
             else
             {
                 ACollection.Clear();
-                foreach (var x in _dataBase.Recipes)
+                foreach (var x in _itemService.GetRecipes())
                 {
                     ACollection.Add(x);
                 }
@@ -64,10 +64,9 @@ namespace PantryWPF.Recipe
 
         public void AddRecipe()
         {
-            if (string.IsNullOrWhiteSpace(NewRecipeName) || _dataBase.Recipes.Any(x => x.Description == NewRecipeName)) { return; }
-            _dataBase.Recipes.Add(new() { Description = NewRecipeName });
-            _dataBase.SaveChanges();
-            _dataBase = new(); //otherwise recipe is always null if it's the first Recipe to be added.
+            if (string.IsNullOrWhiteSpace(NewRecipeName) || _itemService.GetRecipes().Any(x => x.Description == NewRecipeName)) { return; }
+
+            _itemService.AddEmptyRecipe(NewRecipeName);
 
             LoadData();
             var newRecipe = ACollection.FirstOrDefault(x => x.Description == NewRecipeName);

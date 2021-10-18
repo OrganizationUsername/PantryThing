@@ -26,6 +26,23 @@ namespace ServiceGateways
             return _database.Foods.ToList();
         }
 
+        public List<Recipe> GetRecipes()
+        {
+            using (var db = new DataBase())
+            {
+                return db.Recipes.ToList();
+            }
+        }
+
+        public void AddEmptyRecipe(string newRecipeName)
+        {
+            using (var db = new DataBase())
+            {
+                db.Recipes.Add(new() { Description = newRecipeName });
+
+            }
+        }
+
         public bool AddItem(Food selectedFood, string newItemUpc, double newItemWeight)
         {
             using (var db = new DataBase())
@@ -44,14 +61,14 @@ namespace ServiceGateways
             return true;
         }
 
-        public void AddLocationFood(Item selectedItem, Location SelectedLocation = null)
+        public void AddLocationFood(Item selectedItem, Location selectedLocation = null)
         {
 
             using (var db = new DataBase())
             {
-                if (SelectedLocation is null)
+                if (selectedLocation is null)
                 {
-                    SelectedLocation = db.Locations.First();
+                    selectedLocation = db.Locations.First();
                 }
 
                 db.LocationFoods.Add(new()
@@ -60,7 +77,7 @@ namespace ServiceGateways
                     ExpiryDate = DateTime.MinValue,
                     OpenDate = DateTime.MinValue,
                     ItemId = selectedItem.ItemId,
-                    LocationId = SelectedLocation.LocationId,
+                    LocationId = selectedLocation.LocationId,
                     Quantity = db.Items.Single(x => x.FoodId == selectedItem.FoodId).Weight
                 });
                 db.SaveChanges();
@@ -90,7 +107,7 @@ namespace ServiceGateways
                 x.Quantity = lf.Quantity;
                 x.LocationId = lf.Location.LocationId;
                 db.SaveChanges();
-                
+
             }
         }
 

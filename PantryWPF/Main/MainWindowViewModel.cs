@@ -1,10 +1,8 @@
-﻿using Pantry.Data;
-using Pantry.Data.UtilityFunctions;
+﻿using Pantry.Data.UtilityFunctions;
 using PantryWPF.Food;
 using PantryWPF.Inventory;
 using PantryWPF.Item;
 using PantryWPF.Recipe;
-using Unity;
 
 namespace PantryWPF.Main
 {
@@ -22,8 +20,6 @@ namespace PantryWPF.Main
 
         public MainWindowViewModel()
         {
-            IUnityContainer container = new UnityContainer();
-            container.RegisterType<DataBase, DataBase>();
             Seeder = new();
             RecipeNavigationCommand = new(this, new RecipesListViewModel());
             InventoryNavigationCommand = new(this, new InventoryViewModel());
