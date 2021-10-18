@@ -9,7 +9,7 @@ using Pantry.Data;
 namespace Pantry.Data.Migrations
 {
     [DbContext(typeof(DataBase))]
-    [Migration("20211005003211_Initial")]
+    [Migration("20211018023023_Initial")]
     partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -204,6 +204,9 @@ namespace Pantry.Data.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
+                    b.Property<DateTime>("BirthDate")
+                        .HasColumnType("TEXT");
+
                     b.Property<bool>("Exists")
                         .HasColumnType("INTEGER");
 
@@ -219,7 +222,7 @@ namespace Pantry.Data.Migrations
                     b.Property<DateTime>("OpenDate")
                         .HasColumnType("TEXT");
 
-                    b.Property<DateTime>("PurchaseDate")
+                    b.Property<DateTime>("ProducedDate")
                         .HasColumnType("TEXT");
 
                     b.Property<double>("Quantity")
@@ -312,8 +315,6 @@ namespace Pantry.Data.Migrations
                         .HasColumnType("REAL");
 
                     b.HasKey("RecipeStepId");
-
-                    b.HasIndex("Order");
 
                     b.HasIndex("RecipeId");
 

@@ -1,20 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
 using Pantry.Core.Models;
 using Pantry.Data;
 
-namespace ServiceGateways
+namespace Pantry.ServiceGateways
 {
-
-    public class EquipmentProjection
-    {
-        public int EquipmentId { get; set; }
-        public string EquipmentName { get; set; }
-        public bool IsSelected { get; set; }
-    }
-
 
     public class ItemService
     {
@@ -29,6 +22,18 @@ namespace ServiceGateways
         {
             return _database.Items.Include(x => x.Food).ToList();
         }
+
+        public List<Item> GetItem(string upc)
+        {
+            using (var db = new DataBase())
+            {
+                return _database
+                    .Items
+                    .Include(x => x.Food)
+                    .Where(x => x.Upc == upc).ToList();
+            }
+        }
+
 
         public bool AddItem(Food selectedFood, string newItemUpc, double newItemWeight)
         {
@@ -48,6 +53,14 @@ namespace ServiceGateways
             return true;
         }
 
+        public void DeleteSelectedRecipeFood(RecipeStep selectedRecipeStep)
+        {
+            using (var db = new DataBase())
+            {
+                db.RecipeSteps.Remove(selectedRecipeStep);
+                db.SaveChanges();
+            }
+        }
 
         public List<Recipe> GetRecipes()
         {
@@ -110,7 +123,38 @@ namespace ServiceGateways
             }
         }
 
-        public void AddLocationFood(Item selectedItem, Location selectedLocation = null)
+        public void DecrementThings(List<LocationFoods> inputsToBeConsumed)
+        {
+            using (var db = new DataBase())
+            {
+                foreach (var z in inputsToBeConsumed)
+                {
+                    var y = db.LocationFoods
+                             .Where(x => x.LocationFoodsId == z.LocationFoodsId)
+                             .Where(x => x.Quantity > 0)
+                             .Include(x => x.Item)
+                             .ThenInclude(x => x.Food)
+                             .Include(x => x.Location)
+                             .FirstOrDefault();
+                    if (y is null)
+                    {
+                        throw new("Lol, something went wrong.");
+                    }
+                    y.Quantity -= z.Quantity; //No checking here, but there should be.
+                    //ToDo: In fact, all of the stuff leading up to this should be in a ServiceGateway
+                    if (y.Quantity == 0)
+                    {
+                        y.Exists = false;
+                    }
+                }
+                db.SaveChanges();
+            }
+
+        }
+
+        public void AddLocationFood(Item selectedItem,
+            Location selectedLocation = null,
+            DateTime birthDateTime = default)
         {
 
             using (var db = new DataBase())
@@ -120,15 +164,32 @@ namespace ServiceGateways
                     selectedLocation = db.Locations.First();
                 }
 
-                db.LocationFoods.Add(new()
+                if (selectedItem.ItemId > 0)
                 {
-                    Exists = true,
-                    ExpiryDate = DateTime.MinValue,
-                    OpenDate = DateTime.MinValue,
-                    ItemId = selectedItem.ItemId,
-                    LocationId = selectedLocation.LocationId,
-                    Quantity = db.Items.Single(x => x.FoodId == selectedItem.FoodId).Weight
-                });
+                    db.LocationFoods.Add(new()
+                    {
+                        Exists = true,
+                        ExpiryDate = DateTime.MinValue,
+                        OpenDate = DateTime.MinValue,
+                        ItemId = selectedItem.ItemId,
+                        LocationId = selectedLocation.LocationId,
+                        Quantity = db.Items.Single(x => x.FoodId == selectedItem.FoodId).Weight
+                    });
+                }
+                else
+                {
+                    db.LocationFoods.Add(new()
+                    {
+                        Exists = true,
+                        ExpiryDate = DateTime.MinValue,
+                        OpenDate = DateTime.MinValue,
+                        Item = selectedItem,
+                        LocationId = selectedLocation.LocationId,
+                        Quantity = 0// db.Items.Single(x => x.FoodId == selectedItem.FoodId).Weight
+                    });
+
+                }
+
                 db.SaveChanges();
             }
         }
@@ -166,6 +227,7 @@ namespace ServiceGateways
             }
             catch (Exception e)
             {
+                Trace.WriteLine(e);
                 return null;
             }
         }

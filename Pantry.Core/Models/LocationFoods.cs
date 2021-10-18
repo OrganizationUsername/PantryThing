@@ -10,7 +10,8 @@ namespace Pantry.Core.Models
         public Location Location { get; set; }
         public int LocationId { get; set; }
         public double Quantity { get; set; }
-        public DateTime PurchaseDate { get; set; }
+        public DateTime BirthDate { get; set; }
+        public DateTime ProducedDate { get; set; }
         public DateTime OpenDate { get; set; }
         public DateTime ExpiryDate { get; set; }
         public bool Exists { get; set; }
@@ -33,7 +34,7 @@ namespace Pantry.Core.Models
             }
 
             var a = !(ExpiryDate + TimeSpan.FromDays(1) < check);
-            var b = PurchaseDate < check; //Doesn't yet exist
+            var b = BirthDate < check; //Doesn't yet exist
 
             return a && b;
         }

@@ -1,6 +1,6 @@
 ﻿using Pantry.Data.UtilityFunctions;
+using Pantry.WPF.Inventory;
 using PantryWPF.Food;
-using PantryWPF.Inventory;
 using PantryWPF.Item;
 using PantryWPF.Recipe;
 

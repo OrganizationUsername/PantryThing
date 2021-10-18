@@ -1,7 +1,8 @@
 ﻿using System.Collections.ObjectModel;
 using System.Linq;
+using Pantry.ServiceGateways;
+using Pantry.WPF.Recipe;
 using PantryWPF.Main;
-using ServiceGateways;
 
 namespace PantryWPF.Recipe
 {

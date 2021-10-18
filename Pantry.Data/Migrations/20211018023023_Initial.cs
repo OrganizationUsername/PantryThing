@@ -337,7 +337,8 @@ namespace Pantry.Data.Migrations
                     ItemId = table.Column<int>(type: "INTEGER", nullable: false),
                     LocationId = table.Column<int>(type: "INTEGER", nullable: false),
                     Quantity = table.Column<double>(type: "REAL", nullable: false),
-                    PurchaseDate = table.Column<DateTime>(type: "TEXT", nullable: false),
+                    BirthDate = table.Column<DateTime>(type: "TEXT", nullable: false),
+                    ProducedDate = table.Column<DateTime>(type: "TEXT", nullable: false),
                     OpenDate = table.Column<DateTime>(type: "TEXT", nullable: false),
                     ExpiryDate = table.Column<DateTime>(type: "TEXT", nullable: false),
                     Exists = table.Column<bool>(type: "INTEGER", nullable: false)
@@ -448,11 +449,6 @@ namespace Pantry.Data.Migrations
                 name: "IX_RecipeStepEquipment_RecipeStepId",
                 table: "RecipeStepEquipment",
                 column: "RecipeStepId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_RecipeSteps_Order",
-                table: "RecipeSteps",
-                column: "Order");
 
             migrationBuilder.CreateIndex(
                 name: "IX_RecipeSteps_RecipeId",

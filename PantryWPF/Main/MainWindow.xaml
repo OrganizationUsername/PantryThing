@@ -4,11 +4,11 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:PantryWPF"
-        xmlns:inventory="clr-namespace:PantryWPF.Inventory"
         xmlns:main="clr-namespace:PantryWPF.Main"
         xmlns:food="clr-namespace:PantryWPF.Food"
         xmlns:recipes="clr-namespace:PantryWPF.Recipe"
         xmlns:item="clr-namespace:PantryWPF.Item"
+        xmlns:inventory="clr-namespace:Pantry.WPF.Inventory"
         mc:Ignorable="d"
         Title="MainWindow" Height="500" Width="800">
 

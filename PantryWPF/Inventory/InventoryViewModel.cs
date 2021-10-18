@@ -2,10 +2,10 @@
 using System.Linq;
 using System.Windows;
 using Pantry.Core.Models;
+using Pantry.ServiceGateways;
 using PantryWPF.Main;
-using ServiceGateways;
 
-namespace PantryWPF.Inventory
+namespace Pantry.WPF.Inventory
 {
     public sealed class InventoryViewModel : VmBase
     {
@@ -58,8 +58,17 @@ namespace PantryWPF.Inventory
         {
             Locations = new(_itemService.GetLocations());
             OnPropertyChanged(nameof(Locations));
-            LocationFoodsCollection = new(_itemService.GetLocationFoodsAtLocation(Locations.First().LocationId));
-            SelectedLocation = Locations.First(x => x.LocationId == LocationFoodsCollection.FirstOrDefault()?.LocationId);
+            if (Locations.FirstOrDefault() is null)
+            {
+                LocationFoodsCollection = new();
+
+            }
+            else
+            {
+                LocationFoodsCollection = new(_itemService.GetLocationFoodsAtLocation(Locations.FirstOrDefault().LocationId));
+
+            }
+            SelectedLocation = Locations.FirstOrDefault(x => x.LocationId == LocationFoodsCollection.FirstOrDefault()?.LocationId);
             Items = new(_itemService.GetItems());
             OnPropertyChanged(nameof(LocationFoodsCollection));
         }

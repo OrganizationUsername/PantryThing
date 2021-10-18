@@ -11,4 +11,11 @@ namespace Pantry.Core.Models
         public ICollection<EquipmentCommitment> EquipmentCommitments { get; set; }
         public ICollection<RecipeStepEquipment> RecipeStepEquipment { get; set; }
     }
+
+    public class EquipmentProjection
+    {
+        public int EquipmentId { get; set; }
+        public string EquipmentName { get; set; }
+        public bool IsSelected { get; set; }
+    }
 }

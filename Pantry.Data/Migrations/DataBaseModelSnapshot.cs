@@ -202,6 +202,9 @@ namespace Pantry.Data.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
+                    b.Property<DateTime>("BirthDate")
+                        .HasColumnType("TEXT");
+
                     b.Property<bool>("Exists")
                         .HasColumnType("INTEGER");
 
@@ -217,7 +220,7 @@ namespace Pantry.Data.Migrations
                     b.Property<DateTime>("OpenDate")
                         .HasColumnType("TEXT");
 
-                    b.Property<DateTime>("PurchaseDate")
+                    b.Property<DateTime>("ProducedDate")
                         .HasColumnType("TEXT");
 
                     b.Property<double>("Quantity")
@@ -310,8 +313,6 @@ namespace Pantry.Data.Migrations
                         .HasColumnType("REAL");
 
                     b.HasKey("RecipeStepId");
-
-                    b.HasIndex("Order");
 
                     b.HasIndex("RecipeId");
 

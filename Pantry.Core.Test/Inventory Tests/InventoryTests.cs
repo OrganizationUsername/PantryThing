@@ -54,7 +54,7 @@ namespace Pantry.Core.Test.Inventory_Tests
                     {
                         Food = _slicedBread,
                     },
-                    PurchaseDate = _now,
+                    BirthDate = _now,
                     ExpiryDate = _now + TimeSpan.FromDays(7)
                 },
                 new()
@@ -64,7 +64,7 @@ namespace Pantry.Core.Test.Inventory_Tests
                     {
                         Food = _slicedBread,
                     },
-                    PurchaseDate = _now + TimeSpan.FromDays(-8),
+                    BirthDate = _now + TimeSpan.FromDays(-8),
                     ExpiryDate = _now + TimeSpan.FromDays(-1)
                 }
             };

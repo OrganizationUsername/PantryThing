@@ -5,7 +5,8 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:models="clr-namespace:Pantry.Core.Models;assembly=Pantry.Core"
              xmlns:recipe="clr-namespace:PantryWPF.Recipe"
-             d:DataContext="{d:DesignInstance Type=recipe:RecipeDetailViewModel}"
+             xmlns:recipe1="clr-namespace:Pantry.WPF.Recipe"
+             d:DataContext="{d:DesignInstance Type=recipe1:RecipeDetailViewModel}"
              mc:Ignorable="d">
     <UserControl.Resources>
         <DataTemplate DataType="{x:Type models:RecipeStep}">
@@ -71,7 +72,8 @@
                               SelectionMode="Multiple">
                         <ListBox.ItemContainerStyle>
                             <Style TargetType="{x:Type ListBoxItem}">
-                                <Setter Property="IsSelected" Value="{Binding IsSelected}"/>
+                                <Setter Property="IsSelected" 
+                                        Value="{Binding IsSelected}"/>
                             </Style>
                         </ListBox.ItemContainerStyle>
                     </ListBox>
@@ -84,7 +86,8 @@
                     <TextBlock Text="Duration: "/>
                     <TextBox Width="100" Text="{Binding NewDuration}"/>
                 </StackPanel>
-                <Button Content="Add new step" Command="{Binding SaveStepCommand}"/>
+                <Button Content="Add new step" 
+                        Command="{Binding SaveStepCommand}"/>
             </StackPanel>
         </GroupBox>
         <StackPanel>

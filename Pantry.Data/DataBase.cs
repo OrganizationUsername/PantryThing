@@ -59,31 +59,17 @@ namespace Pantry.Data
         public DbSet<Unit> Units { get; set; }
         public DbSet<Inventory> Inventorys { get; set; }
 
-        /*
-        Another simple recipe is just putting stuff in plastic storage containers.
-        I also need a `Containers`
-        Need a table of food instances=> Inventory.
-            Time Created, Amount, stackable, recipe used, Expiration Date
-            I could stack items if they were created at around the same time and they're stackable
-        How do I deal with items that might have a few minutes of downtime but must be checked by a human once in a while? Prioritize it? (bbq / cakes)
-        What if there were a `FoodInfo`
-            Allowable storage time at different temperatures, Nutrition
-        have `InventoryAdjustment`
-            InventoryAdjustmentReasons, 
-        InventoryAdjustmentReasons
-            Spoiled, Lost, Found, Purchased
-        `Products`
-         */
-
         public DataBase()
         {
-            //this.Database.EnsureCreated();
+            //Database.EnsureCreated();
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             optionsBuilder.EnableSensitiveDataLogging();
-            optionsBuilder.UseSqlite(@"Data Source=..\..\..\..\testDb.db");
+            //optionsBuilder.UseSqlite(@"Data Source=..\..\..\..\testDb.db");
+            //C:\Programming\TotallyNewThing\Pantry
+            optionsBuilder.UseSqlite(@"Data Source=C:\Programming\TotallyNewThing\Pantry\testDb.db");
         }
     }
 }
