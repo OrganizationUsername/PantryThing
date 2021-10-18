@@ -30,6 +30,14 @@ namespace ServiceGateways
             return _database.Items.Include(x => x.Food).ToList();
         }
 
+        public Item GetItem(string upc)
+        {
+            using (var db = new DataBase())
+            {
+                return db.Items.FirstOrDefault(x => x.Upc == upc);
+            }
+        }
+
         public bool AddItem(Food selectedFood, string newItemUpc, double newItemWeight)
         {
             using (var db = new DataBase())
@@ -82,8 +90,6 @@ namespace ServiceGateways
             }
         }
 
-
-
         public List<Recipe> GetRecipe(int recipeId)
         {
             using (var db = new DataBase())
@@ -95,6 +101,16 @@ namespace ServiceGateways
                     .ToList();
             }
         }
+
+        public void DeleteRecipeStep(RecipeStep SelectedRecipeStep)
+        {
+            using (var db = new DataBase())
+            {
+                db.RecipeSteps.Remove(SelectedRecipeStep);
+                db.SaveChanges();
+            }
+        }
+
 
         public List<Food> GetFoods()
         {
@@ -149,14 +165,14 @@ namespace ServiceGateways
 
         public Item AddSomething(CookPlan canCook)
         {
-            var upc = canCook.TotalOutput.OrderByDescending(x => x.Amount).First().Food.FoodName;
+            var upc = canCook.TotalOutput.OrderBy(x => x.Amount).First().Food.FoodName;
             try
             {
                 using (var db = new DataBase())
                 {
                     var itemToUse = db.Items.Add(new()
                     {
-                        FoodId = canCook.TotalOutput.OrderByDescending(x => x.Amount).First().Food.FoodId,
+                        FoodId = canCook.TotalOutput.OrderBy(x => x.Amount).First().Food.FoodId,
                         Unit = null,
                         Upc = upc,
                         Weight = canCook.TotalOutput.First().Amount
@@ -183,6 +199,8 @@ namespace ServiceGateways
                     .ToList();
             }
         }
+
+
 
         public List<LocationFoods> GetLocationFoods()
         {

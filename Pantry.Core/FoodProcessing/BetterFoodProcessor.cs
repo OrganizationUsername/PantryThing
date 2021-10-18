@@ -71,7 +71,22 @@ namespace Pantry.Core.FoodProcessing
 
         public static Recipe RecipeFinder(int FoodId, IList<Recipe> recipes)
         {
-            return recipes.FirstOrDefault(r => r.RecipeFoods is not null && r.RecipeFoods.Any(fi => fi.Food.FoodId == FoodId && fi.Amount < 0));
+            foreach (var r in recipes)
+            {
+                bool any = false;
+                foreach (var fi in r.RecipeFoods)
+                {
+                    if (fi.Food.FoodId == FoodId && fi.Amount < 0)
+                    {
+                        any = true;
+                        break;
+                    }
+                }
+
+                if (r.RecipeFoods is not null && any) return r;
+            }
+
+            return null;
         }
 
         private static RecipeFood[] GetFoodInstancesFromRecipe(Recipe recipe)

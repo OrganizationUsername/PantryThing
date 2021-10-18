@@ -32,7 +32,6 @@ namespace PantryWPF.Recipe
         public string NewFoodAmount { get; set; }
         public RecipeStep SelectedRecipeStep { get; set; }
         public RecipeFood SelectedRecipeFood { get; set; }
-        private readonly DataBase _dataBase;
         public ObservableCollection<RecipeStep> RecipeStepsList { get; set; } = new();
         public ObservableCollection<RecipeFood> RecipeFoodsList { get; set; } = new();
         public ObservableCollection<EquipmentProjection> Equipments { get; set; }
@@ -50,7 +49,6 @@ namespace PantryWPF.Recipe
             DeleteThisRecipeCommand = new(DeleteThisRecipe);
             CookCommand = new(CookIt);
 
-            _dataBase = new();
             _selectedRecipe = _itemService.GetRecipe(selectedRecipe.RecipeId).FirstOrDefault(x => x.RecipeId == selectedRecipe.RecipeId);
             Foods = _itemService.GetFoods();
             Equipments = new(_itemService.GetEquipmentProjections());
@@ -80,8 +78,12 @@ namespace PantryWPF.Recipe
                 }
             }
 
-            var upc = canCook.TotalOutput.OrderByDescending(x => x.Amount).First().Food.FoodName;
-            var itemToUse = _dataBase.Items.FirstOrDefault(x => x.Upc == upc) ?? _itemService.AddSomething(canCook);
+            var upc = canCook.TotalOutput.OrderBy(x => x.Amount).First().Food.FoodName;
+            Pantry.Core.Models.Item itemToUse = _itemService.GetItem(upc);
+            if (itemToUse == null)
+            {
+                itemToUse = _itemService.AddSomething(canCook);
+            }
 
             _dataBase.LocationFoods.Add(new()
             {
@@ -93,7 +95,7 @@ namespace PantryWPF.Recipe
                 PurchaseDate = DateTime.MinValue,
                 Item = itemToUse
             });
-            _dataBase.SaveChanges();
+
             CanCook = CalculateCanCook();
             LoadRecipeDetailData();
             OnPropertyChanged(nameof(canCook));
@@ -102,10 +104,7 @@ namespace PantryWPF.Recipe
         public bool CalculateCanCook()
         {
             BetterFoodProcessor foodProcessor = new();
-            var currentFoodInventory = _dataBase.LocationFoods
-                .Include(x => x.Item)
-                .ThenInclude(x => x.Food)
-                .ToList()
+            var currentFoodInventory = _itemService.GetLocationFoods()
                 .Select(x => new RecipeFood() { Amount = x.Quantity, Food = x.Item.Food }).ToList();
             Trace.WriteLine("-----");
             Trace.WriteLine($"Trying to cook: {string.Join(Environment.NewLine, _selectedRecipe.RecipeFoods.Where(x => x.Amount < 0).Select(x => $"{x.Food.FoodName}: {x.Amount}"))}");
@@ -113,14 +112,13 @@ namespace PantryWPF.Recipe
             Trace.WriteLine($"Ingredients:{string.Join(Environment.NewLine, _selectedRecipe.RecipeFoods.Select(x => $"{x.Food.FoodName}: {x.Amount}"))}");
             Trace.WriteLine("Current inventory:");
             Trace.WriteLine(string.Join(Environment.NewLine, currentFoodInventory.Select(x => $"{x.Food.FoodName}: {x.Amount}")));
-            var canCook = foodProcessor.GetCookPlan(currentFoodInventory, _selectedRecipe, _dataBase.Recipes.Include(x => x.RecipeFoods).ToList());
+            var canCook = foodProcessor.GetCookPlan(currentFoodInventory, _selectedRecipe, _itemService.GetRecipes());
 
             if (canCook.CanMake)
             {
                 Trace.WriteLine("-----");
                 Trace.WriteLine(string.Join(Environment.NewLine, canCook.TotalInput.Select(x => $"{x.Food.FoodName}, {x.Amount}")));
                 ItemsUsed = string.Join(Environment.NewLine, GetRelevantInventoryItems(canCook.TotalInput).Select(x => $"{x.Item.Food.FoodName}- {x.LocationFoodsId}: {x.Quantity}"));
-
             }
             else
             {
@@ -133,11 +131,8 @@ namespace PantryWPF.Recipe
         private List<LocationFoods> GetRelevantInventoryItems(IEnumerable<RecipeFood> recipeFoods)
         {
             List<LocationFoods> outputFoods = new();
-            var locationFoods = _dataBase.LocationFoods
-                .AsNoTracking()
-                .Include(x => x.Item).ThenInclude(x => x.Food)
-                .Where(x => x.Exists && x.Quantity > 0)
-                .OrderBy(x => x.Quantity).ToList();
+            var locationFoods = _itemService.GetLocationFoods()
+                .Select(x => new LocationFoods() { Item = x.Item, Quantity = x.Quantity }).ToList();
             foreach (var x in recipeFoods)
             {
                 var totalAmount = x.Amount;
@@ -195,17 +190,17 @@ namespace PantryWPF.Recipe
             if (_selectedRecipe is null) { return; }
             if (NewFood is not null && double.TryParse(NewFoodAmount, out var foodAmount) && foodAmount != 0)
             {
-                var recipe = _dataBase.Recipes.Include(x => x.RecipeFoods).First(x => x.RecipeId == _selectedRecipe.RecipeId);
+                var recipe = _itemService.GetRecipes().First(x => x.RecipeId == _selectedRecipe.RecipeId);
                 var x = new RecipeFood() { Amount = foodAmount, FoodId = NewFood.FoodId, RecipeId = _selectedRecipe.RecipeId };
                 if (recipe.RecipeFoods is null)
                 {
-                    _dataBase.RecipeFoods.Add(x);
+                    //_dataBase.RecipeFoods.Add(x); //ToDo: Fix whatever this is
                 }
                 else
                 {
                     recipe.RecipeFoods.Add(x);
                 }
-                _dataBase.SaveChanges();
+                //_dataBase.SaveChanges(); //ToDo: Fix whatever this is
                 NewFoodAmount = "";
                 OnPropertyChanged(nameof(NewFoodAmount));
                 LoadRecipeDetailData();
