@@ -159,29 +159,27 @@ namespace PantryWPF.Recipe
 
         private void DeleteThisRecipe()
         {
-            var thisRecipe = _dataBase.Recipes.FirstOrDefault(x => x.RecipeId == _selectedRecipe.RecipeId);
+            var thisRecipe = _itemService.GetRecipe(_selectedRecipe.RecipeId).FirstOrDefault();
             if (thisRecipe is null || _selectedRecipe is null)
             {
                 return;
             }
-            _dataBase.Recipes.Remove(thisRecipe);
-            _dataBase.SaveChanges();
+
+            _itemService.DeleteRecipe(thisRecipe);
             LoadRecipeDetailData();
         }
 
         private void DeleteSelectedFood()
         {
             if (SelectedRecipeFood is null || _selectedRecipe is null) return;
-            _dataBase.RecipeFoods.Remove(SelectedRecipeFood);
-            _dataBase.SaveChanges();
+            _itemService.DeleteFood(SelectedRecipeFood);
             LoadRecipeDetailData();
         }
 
         private void DeleteSelectedStep()
         {
             if (SelectedRecipeStep is null || _selectedRecipe is null) return;
-            _dataBase.RecipeSteps.Remove(SelectedRecipeStep);
-            _dataBase.SaveChanges();
+            _itemService.DeleteRecipeStep(SelectedRecipeStep);
             LoadRecipeDetailData();
         }
 

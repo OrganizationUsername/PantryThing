@@ -102,11 +102,29 @@ namespace ServiceGateways
             }
         }
 
-        public void DeleteRecipeStep(RecipeStep SelectedRecipeStep)
+        public void DeleteRecipe(Recipe recipe)
         {
             using (var db = new DataBase())
             {
-                db.RecipeSteps.Remove(SelectedRecipeStep);
+                db.Recipes.Remove(recipe);
+                db.SaveChanges();
+            }
+        }
+
+        public void DeleteFood(RecipeFood selectedRecipeFood)
+        {
+            using (var db = new DataBase())
+            {
+                db.RecipeFoods.Remove(selectedRecipeFood);
+                db.SaveChanges();
+            }
+        }
+
+        public void DeleteRecipeStep(RecipeStep selectedRecipeStep)
+        {
+            using (var db = new DataBase())
+            {
+                db.RecipeSteps.Remove(selectedRecipeStep);
                 db.SaveChanges();
             }
         }
