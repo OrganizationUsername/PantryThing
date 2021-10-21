@@ -5,21 +5,19 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
 using System.Runtime.CompilerServices;
-using Microsoft.EntityFrameworkCore;
 using Pantry.Core.FoodProcessing;
 using Pantry.Core.Models;
-using Pantry.Data;
 using PantryWPF.Annotations;
 using PantryWPF.Main;
 using ServiceGateways;
 
-namespace PantryWPF.Recipe
+namespace Pantry.WPF.Recipe
 {
     public class RecipeDetailViewModel : Pantry.Core.Models.Recipe, INotifyPropertyChanged
     {
         private readonly Pantry.Core.Models.Recipe _selectedRecipe;
         public event PropertyChangedEventHandler PropertyChanged;
-        public List<Pantry.Core.Models.Food> Foods { get; set; }
+        public List<Food> Foods { get; set; }
         public DelegateCommand SaveStepCommand { get; set; }
         public DelegateCommand SaveFoodCommand { get; set; }
         public DelegateCommand DeleteStepCommand { get; set; }
@@ -28,7 +26,7 @@ namespace PantryWPF.Recipe
         public string NewDescription { get; set; }
         public DelegateCommand CookCommand { get; set; }
         public string NewDuration { get; set; }
-        public Pantry.Core.Models.Food NewFood { get; set; }
+        public Food NewFood { get; set; }
         public string NewFoodAmount { get; set; }
         public RecipeStep SelectedRecipeStep { get; set; }
         public RecipeFood SelectedRecipeFood { get; set; }
@@ -58,6 +56,7 @@ namespace PantryWPF.Recipe
 
         public void CookIt()
         {
+            return;
             BetterFoodProcessor foodProcessor = new();
 
             var collection = _itemService.GetLocationFoods()
@@ -79,22 +78,12 @@ namespace PantryWPF.Recipe
             }
 
             var upc = canCook.TotalOutput.OrderBy(x => x.Amount).First().Food.FoodName;
-            Pantry.Core.Models.Item itemToUse = _itemService.GetItem(upc);
+            Item itemToUse = _itemService.GetItem(upc);
             if (itemToUse == null)
             {
                 itemToUse = _itemService.AddSomething(canCook);
             }
-
-            _dataBase.LocationFoods.Add(new()
-            {
-                Exists = true,
-                ExpiryDate = DateTime.Now,
-                Quantity = canCook.TotalOutput.First().Amount,
-                Location = _dataBase.Locations.First(),
-                OpenDate = DateTime.MinValue,
-                PurchaseDate = DateTime.MinValue,
-                Item = itemToUse
-            });
+            _itemService.AddNewLocationFood(canCook, itemToUse);
 
             CanCook = CalculateCanCook();
             LoadRecipeDetailData();
@@ -120,11 +109,9 @@ namespace PantryWPF.Recipe
                 Trace.WriteLine(string.Join(Environment.NewLine, canCook.TotalInput.Select(x => $"{x.Food.FoodName}, {x.Amount}")));
                 ItemsUsed = string.Join(Environment.NewLine, GetRelevantInventoryItems(canCook.TotalInput).Select(x => $"{x.Item.Food.FoodName}- {x.LocationFoodsId}: {x.Quantity}"));
             }
-            else
-            {
-                ItemsUsed = "";
-            }
+            else { ItemsUsed = ""; }
             OnPropertyChanged(nameof(ItemsUsed));
+
             return canCook.CanMake;
         }
 
@@ -207,40 +194,20 @@ namespace PantryWPF.Recipe
 
         private void LoadFoodInstances()
         {
-            if (_selectedRecipe is null) { return; }
-
-            if (_dataBase.RecipeFoods is null)
-            {
-                RecipeFoodsList = new();
-                return;
-            }
-            var newList = _dataBase.RecipeFoods.Where(x => x.RecipeId == _selectedRecipe.RecipeId).ToList();
+            var newList = _itemService.GetRecipeFoods(_selectedRecipe);
             RecipeFoodsList.Clear();
 
             foreach (var x in newList)
             {
                 RecipeFoodsList.Add(x);
             }
+
             OnPropertyChanged(nameof(RecipeFoodsList));
         }
 
         private void LoadSteps()
         {
-            List<RecipeStep> newList;
-            if (_selectedRecipe is null && (!_dataBase.RecipeSteps.Any() ||
-                                        !_dataBase.RecipeSteps.Any(x => x.RecipeId == _selectedRecipe.RecipeId)))
-            {
-                newList = new();
-            }
-            else
-            {
-                newList = _dataBase.RecipeSteps.Where(x => x.RecipeId == _selectedRecipe.RecipeId)
-                    .Include(y => y.RecipeStepEquipment)
-                    .Include(y => y.RecipeStepEquipment)
-                    .ThenInclude(y => y.Equipment).ToList();
-            }
-
-
+            List<RecipeStep> newList = _itemService.GetRecipeSteps(_selectedRecipe);
 
             RecipeStepsList.Clear();
 
@@ -254,36 +221,19 @@ namespace PantryWPF.Recipe
 
         private void SaveNewStep()
         {
-            if (_selectedRecipe is null) { return; }
+            if (_selectedRecipe is null) return;
+            //ToDo: Why do I not yet have centralized exception handling?
 
             var goodNumber = int.TryParse(NewDuration, out var tempDuration);
 
-            if (!goodNumber || string.IsNullOrWhiteSpace(NewDescription)) { return; }
+            if (!goodNumber || string.IsNullOrWhiteSpace(NewDescription)) return;
 
             var y = new RecipeStepEquipment() { EquipmentId = 1 };
 
+            _itemService.AddRecipeStep(NewDescription, _selectedRecipe.RecipeId, tempDuration);
 
-            var entity = _dataBase.RecipeSteps.Add(new()
-            {
-                Instruction = NewDescription,
-                RecipeId = _selectedRecipe.RecipeId,
-                TimeCost = tempDuration
-            }).Entity;
-
-            var stepId = entity.RecipeStepId;
-
-            entity.RecipeStepEquipment = new List<RecipeStepEquipment>(Equipments
-                .Where(x => x.IsSelected)
-                .Select(x => new RecipeStepEquipment()
-                {
-                    EquipmentId = x.EquipmentId,
-                    RecipeStepId = stepId
-                }));
-
-            _dataBase.SaveChanges();
             NewDescription = "";
             NewDuration = "";
-            Trace.WriteLine(_dataBase.RecipeSteps.Count());
             OnPropertyChanged(nameof(NewDescription));
             OnPropertyChanged(nameof(NewDuration));
             LoadRecipeDetailData();

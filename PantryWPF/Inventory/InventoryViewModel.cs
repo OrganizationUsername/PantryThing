@@ -58,8 +58,15 @@ namespace PantryWPF.Inventory
         {
             Locations = new(_itemService.GetLocations());
             OnPropertyChanged(nameof(Locations));
-            LocationFoodsCollection = new(_itemService.GetLocationFoodsAtLocation(Locations.First().LocationId));
-            SelectedLocation = Locations.First(x => x.LocationId == LocationFoodsCollection.FirstOrDefault()?.LocationId);
+            LocationFoodsCollection = new(_itemService.GetLocationFoodsAtLocation(Locations.FirstOrDefault()));
+            if (LocationFoodsCollection.Count == 0)
+            {
+                SelectedLocation = null;
+            }
+            else
+            {
+                SelectedLocation = Locations.First(x => x.LocationId == LocationFoodsCollection.FirstOrDefault()?.LocationId);
+            }
             Items = new(_itemService.GetItems());
             OnPropertyChanged(nameof(LocationFoodsCollection));
         }
