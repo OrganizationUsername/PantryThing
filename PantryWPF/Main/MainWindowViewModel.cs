@@ -1,11 +1,12 @@
 ﻿using Pantry.Data;
-using Pantry.Data.UtilityFunctions;
-using PantryWPF.Food;
-using PantryWPF.Inventory;
-using PantryWPF.Item;
-using PantryWPF.Recipe;
+using Pantry.ServiceGateways;
+using Pantry.WPF.Food;
+using Pantry.WPF.Inventory;
+using Pantry.WPF.Item;
+using Pantry.WPF.Recipe;
+using Pantry.WPF.Shared;
 
-namespace PantryWPF.Main
+namespace Pantry.WPF.Main
 {
     public class MainWindowViewModel : VmBase
     {

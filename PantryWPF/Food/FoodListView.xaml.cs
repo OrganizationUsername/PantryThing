@@ -1,6 +1,6 @@
 ﻿using System.Windows.Controls;
 
-namespace PantryWPF.Food
+namespace Pantry.WPF.Food
 {
     /// <summary>
     /// Interaction logic for FoodListView.xaml

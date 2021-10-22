@@ -1,8 +1,7 @@
 ﻿using System.ComponentModel;
 using System.Runtime.CompilerServices;
-using PantryWPF.Annotations;
 
-namespace PantryWPF.Main
+namespace Pantry.WPF.Shared
 {
     public class VmBase : INotifyPropertyChanged
     {

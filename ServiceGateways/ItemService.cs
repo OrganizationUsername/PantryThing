@@ -1,11 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
 using Pantry.Core.Models;
 using Pantry.Data;
 
-namespace ServiceGateways
+namespace Pantry.ServiceGateways
 {
 
     public class EquipmentProjection
@@ -14,7 +15,6 @@ namespace ServiceGateways
         public string EquipmentName { get; set; }
         public bool IsSelected { get; set; }
     }
-
 
     public class ItemService
     {
@@ -113,7 +113,6 @@ namespace ServiceGateways
             return newList;
         }
 
-
         public List<Recipe> GetRecipes()
         {
             return _database.Recipes
@@ -183,7 +182,6 @@ namespace ServiceGateways
             }
         }
 
-
         public List<Food> GetFoods()
         {
             return _database.Foods.ToList();
@@ -221,12 +219,12 @@ namespace ServiceGateways
             }
         }
 
-        public List<LocationFoods> GetLocationFoodsAtLocation(Location Locations)
+        public List<LocationFoods> GetLocationFoodsAtLocation(Location locations)
         {
-            if (Locations is null) return new();
+            if (locations is null) return new();
 
             return _database.LocationFoods
-                .Where(x => x.Location.LocationId == Locations.LocationId)
+                .Where(x => x.Location.LocationId == locations.LocationId)
                 .Where(x => x.Quantity > 0)
                 .Include(x => x.Item)
                 .ThenInclude(x => x.Food)
@@ -264,6 +262,7 @@ namespace ServiceGateways
             }
             catch (Exception e)
             {
+                Trace.WriteLine(e);
                 return null;
             }
         }
@@ -316,7 +315,6 @@ namespace ServiceGateways
             {
                 return db.Locations.ToList();
             }
-
         }
 
 

@@ -1,10 +1,9 @@
 ﻿using System.Collections.ObjectModel;
 using System.Linq;
-using Pantry.WPF.Recipe;
-using PantryWPF.Main;
-using ServiceGateways;
+using Pantry.ServiceGateways;
+using Pantry.WPF.Shared;
 
-namespace PantryWPF.Recipe
+namespace Pantry.WPF.Recipe
 {
     public class RecipesListViewModel : VmBase
     {

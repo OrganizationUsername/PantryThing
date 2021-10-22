@@ -1,4 +1,4 @@
-﻿namespace PantryWPF.Recipe
+﻿namespace Pantry.WPF.Recipe
 {
     /// <summary>
     /// Interaction logic for RecipeDetailView.xaml

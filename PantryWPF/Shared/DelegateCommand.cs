@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Windows.Input;
 
-namespace PantryWPF.Main
+namespace Pantry.WPF.Shared
 {
     public class DelegateCommand : ICommand
     {

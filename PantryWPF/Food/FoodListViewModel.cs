@@ -3,9 +3,9 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
 using Pantry.Data;
-using PantryWPF.Main;
+using Pantry.WPF.Shared;
 
-namespace PantryWPF.Food
+namespace Pantry.WPF.Food
 {
     public class FoodListViewModel : VmBase
     {

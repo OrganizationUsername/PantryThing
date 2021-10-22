@@ -3,8 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
 using Pantry.Core.Models;
+using Pantry.Data;
 
-namespace Pantry.Data.UtilityFunctions
+namespace Pantry.ServiceGateways
 {
     public class Seeder
     {

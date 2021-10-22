@@ -1,6 +1,6 @@
 ﻿using System.Windows.Controls;
 
-namespace PantryWPF.Inventory
+namespace Pantry.WPF.Inventory
 {
     /// <summary>
     /// Interaction logic for InventoryView.xaml

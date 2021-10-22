@@ -2,10 +2,10 @@
 using System.Linq;
 using System.Windows;
 using Pantry.Core.Models;
-using PantryWPF.Main;
-using ServiceGateways;
+using Pantry.ServiceGateways;
+using Pantry.WPF.Shared;
 
-namespace PantryWPF.Inventory
+namespace Pantry.WPF.Inventory
 {
     public sealed class InventoryViewModel : VmBase
     {

@@ -1,9 +1,9 @@
 ﻿using System.Collections.ObjectModel;
 using System.Windows;
-using PantryWPF.Main;
-using ServiceGateways;
+using Pantry.ServiceGateways;
+using Pantry.WPF.Shared;
 
-namespace PantryWPF.Item
+namespace Pantry.WPF.Item
 {
     public class ItemViewModel : VmBase
     {

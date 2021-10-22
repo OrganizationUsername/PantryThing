@@ -1,7 +1,8 @@
 ﻿using System;
 using System.Windows.Input;
+using Pantry.WPF.Shared;
 
-namespace PantryWPF.Main
+namespace Pantry.WPF.Main
 {
     public class NavigationCommand : ICommand
     {

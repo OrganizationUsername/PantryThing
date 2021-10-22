@@ -7,9 +7,8 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using Pantry.Core.FoodProcessing;
 using Pantry.Core.Models;
-using PantryWPF.Annotations;
-using PantryWPF.Main;
-using ServiceGateways;
+using Pantry.ServiceGateways;
+using Pantry.WPF.Shared;
 
 namespace Pantry.WPF.Recipe
 {
@@ -17,7 +16,7 @@ namespace Pantry.WPF.Recipe
     {
         private readonly Pantry.Core.Models.Recipe _selectedRecipe;
         public event PropertyChangedEventHandler PropertyChanged;
-        public List<Food> Foods { get; set; }
+        public List<Core.Models.Food> Foods { get; set; }
         public DelegateCommand SaveStepCommand { get; set; }
         public DelegateCommand SaveFoodCommand { get; set; }
         public DelegateCommand DeleteStepCommand { get; set; }
@@ -26,7 +25,7 @@ namespace Pantry.WPF.Recipe
         public string NewDescription { get; set; }
         public DelegateCommand CookCommand { get; set; }
         public string NewDuration { get; set; }
-        public Food NewFood { get; set; }
+        public Core.Models.Food NewFood { get; set; }
         public string NewFoodAmount { get; set; }
         public RecipeStep SelectedRecipeStep { get; set; }
         public RecipeFood SelectedRecipeFood { get; set; }
@@ -78,7 +77,7 @@ namespace Pantry.WPF.Recipe
             }
 
             var upc = canCook.TotalOutput.OrderBy(x => x.Amount).First().Food.FoodName;
-            Item itemToUse = _itemService.GetItem(upc);
+            Core.Models.Item itemToUse = _itemService.GetItem(upc);
             if (itemToUse == null)
             {
                 itemToUse = _itemService.AddSomething(canCook);

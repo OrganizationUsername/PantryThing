@@ -1,6 +1,6 @@
 ﻿using System.Windows;
 
-namespace PantryWPF
+namespace Pantry.WPF
 {
     /// <summary>
     /// Interaction logic for App.xaml
