@@ -19,7 +19,7 @@ namespace Pantry.Core.Models
         public int EquipmentTypeId { get; set; }
         public string EquipmentTypeName { get; set; }
         public int RecipeStepEquipmentTypeId { get; set; }
-        public RecipeStepEquipmentType RecipeStepEquipmentType { get; set; }
+        public ICollection<RecipeStepEquipmentType> RecipeStepEquipmentType { get; set; }
         public ICollection<Equipment> Equipments { get; set; }
     }
 

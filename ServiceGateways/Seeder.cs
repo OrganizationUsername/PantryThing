@@ -13,6 +13,7 @@ namespace Pantry.ServiceGateways
         {
             PopulateFoods();
             PopulateLocations();
+            PopulateEquipmentTypes();
             PopulateEquipment();
             PopulateRecipes();
             PopulateItems();
@@ -39,7 +40,7 @@ namespace Pantry.ServiceGateways
 
             }
         }
-        
+
         private void PopulateInventory()
         {
             using (var dbContext = new DataBase())
@@ -120,7 +121,7 @@ namespace Pantry.ServiceGateways
                 _ = dbContext.SaveChanges();
             }
         }
-        
+
         private void PopulateLocations()
         {
             using (var dbContext = new DataBase())
@@ -137,7 +138,26 @@ namespace Pantry.ServiceGateways
                 _ = dbContext.SaveChanges();
             }
         }
-        
+
+        private void PopulateEquipmentTypes()
+        {
+            using (var dbContext = new DataBase())
+            {
+                string tableName = dbContext.EquipmentTypes.EntityType.GetTableName();
+                _ = dbContext.Database.ExecuteSqlRaw(@$"DELETE FROM {tableName};");
+                if (dbContext.Database.ProviderName == "Microsoft.EntityFrameworkCore.Sqlite")
+                {
+                    _ = dbContext.Database.ExecuteSqlRaw(@$"UPDATE `sqlite_sequence` SET `seq` = 0 WHERE `name` = '{tableName}';");
+                }
+                _ = dbContext.EquipmentTypes.Add(new() { EquipmentTypeName = "Bread Machine" });
+                _ = dbContext.EquipmentTypes.Add(new() { EquipmentTypeName = "Human" });
+                _ = dbContext.EquipmentTypes.Add(new() { EquipmentTypeName = "Fridge" });
+                _ = dbContext.EquipmentTypes.Add(new() { EquipmentTypeName = "Sous Vide" });
+
+                _ = dbContext.SaveChanges();
+            }
+        }
+
         private void PopulateEquipment()
         {
             using (var dbContext = new DataBase())
@@ -147,14 +167,14 @@ namespace Pantry.ServiceGateways
                 {
                     _ = dbContext.Database.ExecuteSqlRaw(@$"UPDATE `sqlite_sequence` SET `seq` = 0 WHERE `name` = '{dbContext.Equipments.EntityType.GetTableName()}';");
                 }
-                _ = dbContext.Equipments.Add(new() { EquipmentName = "Bread Machine", Location = dbContext.Locations.First(x => x.LocationName == "Default") });
-                _ = dbContext.Equipments.Add(new() { EquipmentName = "Human", Location = dbContext.Locations.First(x => x.LocationName == "Default") });
-                _ = dbContext.Equipments.Add(new() { EquipmentName = "Fridge", Location = dbContext.Locations.First(x => x.LocationName == "Default") });
-                _ = dbContext.Equipments.Add(new() { EquipmentName = "Sous Vide", Location = dbContext.Locations.First(x => x.LocationName == "Default") });
+                _ = dbContext.Equipments.Add(new() { EquipmentName = "Bread Machine", Location = dbContext.Locations.First(x => x.LocationName == "Default"), EquipmentTypeId = dbContext.EquipmentTypes.First(x => x.EquipmentTypeName == "Bread Machine").EquipmentTypeId });
+                _ = dbContext.Equipments.Add(new() { EquipmentName = "Human", Location = dbContext.Locations.First(x => x.LocationName == "Default"), EquipmentTypeId = dbContext.EquipmentTypes.First(x => x.EquipmentTypeName == "Human").EquipmentTypeId });
+                _ = dbContext.Equipments.Add(new() { EquipmentName = "Fridge", Location = dbContext.Locations.First(x => x.LocationName == "Default"), EquipmentTypeId = dbContext.EquipmentTypes.First(x => x.EquipmentTypeName == "Fridge").EquipmentTypeId });
+                _ = dbContext.Equipments.Add(new() { EquipmentName = "Sous Vide", Location = dbContext.Locations.First(x => x.LocationName == "Default"), EquipmentTypeId = dbContext.EquipmentTypes.First(x => x.EquipmentTypeName == "Sous Vide").EquipmentTypeId });
                 _ = dbContext.SaveChanges();
             }
         }
-        
+
         private void ClearRecipesTable()
         {
             using (var dbContext = new DataBase())
@@ -169,7 +189,7 @@ namespace Pantry.ServiceGateways
                 _ = dbContext.SaveChanges();
             }
         }
-        
+
         private void AddRecipeCookedChicken()
         {
             using (var dbContext = new DataBase())
@@ -199,11 +219,13 @@ namespace Pantry.ServiceGateways
                             new()
                             {
                                 Equipment = dbContext.Equipments.First(x => x.EquipmentName == "Sous Vide"),
+                                EquipmentTypeId = dbContext.EquipmentTypes.First(x=>x.EquipmentTypeName=="Sous Vide").EquipmentTypeId,
                                 RecipeStepId = 2
                             },
                             new()
                             {
                                 Equipment = dbContext.Equipments.First(x => x.EquipmentName == "Human"),
+                                EquipmentTypeId = dbContext.EquipmentTypes.First(x=>x.EquipmentTypeName=="Human").EquipmentTypeId,
                                 RecipeStepId = 2
                             },
                         },
@@ -221,6 +243,7 @@ namespace Pantry.ServiceGateways
                             new()
                             {
                                 Equipment = dbContext.Equipments.First(x => x.EquipmentName == "Sous Vide"),
+                                EquipmentTypeId = dbContext.EquipmentTypes.First(x=>x.EquipmentTypeName=="Sous Vide").EquipmentTypeId,
                                 RecipeStepId = 2
                             },
                         }
@@ -238,11 +261,13 @@ namespace Pantry.ServiceGateways
                             new()
                             {
                                 Equipment = dbContext.Equipments.First(x => x.EquipmentName == "Sous Vide"),
+                                EquipmentTypeId = dbContext.EquipmentTypes.First(x=>x.EquipmentTypeName=="Sous Vide").EquipmentTypeId,
                                 RecipeStepId = 2
                             },
                             new()
                             {
                                 Equipment = dbContext.Equipments.First(x => x.EquipmentName == "Human"),
+                                EquipmentTypeId = dbContext.EquipmentTypes.First(x=>x.EquipmentTypeName=="Human").EquipmentTypeId,
                                 RecipeStepId = 2
                             },
                         }
@@ -250,7 +275,7 @@ namespace Pantry.ServiceGateways
                 }
             }
         }
-        
+
         private void AddRecipeRawChicken()
         {
             using (var dbContext = new DataBase())
@@ -279,11 +304,13 @@ namespace Pantry.ServiceGateways
                             new()
                             {
                                 Equipment = dbContext.Equipments.First(x => x.EquipmentName == "Fridge"),
+                                EquipmentTypeId = dbContext.EquipmentTypes.First(x=>x.EquipmentTypeName=="Fridge").EquipmentTypeId,
                                 RecipeStepId = 2
                             },
                             new()
                             {
                                 Equipment = dbContext.Equipments.First(x => x.EquipmentName == "Human"),
+                                EquipmentTypeId = dbContext.EquipmentTypes.First(x=>x.EquipmentTypeName=="Human").EquipmentTypeId,
                                 RecipeStepId = 2
                             },
                         },
@@ -301,6 +328,7 @@ namespace Pantry.ServiceGateways
                             new()
                             {
                                 Equipment = dbContext.Equipments.First(x => x.EquipmentName == "Fridge"),
+                                EquipmentTypeId = dbContext.EquipmentTypes.First(x=>x.EquipmentTypeName=="Fridge").EquipmentTypeId,
                                 RecipeStepId = 2
                             },
                         }
@@ -309,7 +337,7 @@ namespace Pantry.ServiceGateways
             }
 
         }
-        
+
         private void AddRecipeSlicedBread()
         {
             using (var dbContext = new DataBase())
@@ -338,6 +366,7 @@ namespace Pantry.ServiceGateways
                             new()
                             {
                                 Equipment = dbContext.Equipments.First(x => x.EquipmentName == "Human"),
+                                EquipmentTypeId = dbContext.EquipmentTypes.First(x=>x.EquipmentTypeName=="Human").EquipmentTypeId,
                                 RecipeStepId = 1
                             },
                         },
@@ -345,7 +374,7 @@ namespace Pantry.ServiceGateways
                 }
             }
         }
-        
+
         private void PopulateRecipes()
         {
             ClearRecipesTable();
