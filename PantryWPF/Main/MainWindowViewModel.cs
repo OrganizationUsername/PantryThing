@@ -19,9 +19,7 @@ namespace Pantry.WPF.Main
         public NavigationCommand FoodNavigationCommand { get; set; }
         public NavigationCommand ItemNavigationCommand { get; set; }
         public NavigationCommand EquipmentNavigationCommand { get; set; }
-
         public DelegateCommand SeedDatabaseCommand { get; set; }
-
 
         public MainWindowViewModel()
         {

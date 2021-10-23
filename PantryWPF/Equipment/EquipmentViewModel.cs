@@ -21,7 +21,6 @@ namespace Pantry.WPF.Equipment
             _itemService = new();
             AddEquipmentDelegateCommand = new(AddEquipment);
             LoadData();
-
         }
 
         private void LoadData()
@@ -30,14 +29,13 @@ namespace Pantry.WPF.Equipment
             if (Equipments is null)
             {
                 Equipments = new(equipments);
+                return;
             }
-            else
+
+            Equipments.Clear();
+            foreach (var equipment in equipments)
             {
-                Equipments.Clear();
-                foreach (var equipment in equipments)
-                {
-                    Equipments.Add(equipment);
-                }
+                Equipments.Add(equipment);
             }
         }
 
