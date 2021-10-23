@@ -29,11 +29,11 @@ namespace Pantry.Core.Scheduler
                     var satisfied = false;
                     for (; !satisfied; offset++)
                     {
-                        if (recipeStep.RecipeStepEquipment.Select(x => x.Equipment).All(y =>
+                        if (recipeStep.RecipeStepEquipmentType.Select(x => x.Equipment).All(y =>
                             y.IsAvailable(goal.AddMinutes(-(offset + recipeStep.TimeCost)), goal.AddMinutes(-offset))))
                         {
                             satisfied = true;
-                            foreach (var y in recipeStep.RecipeStepEquipment.Select(x => x.Equipment))
+                            foreach (var y in recipeStep.RecipeStepEquipmentType.Select(x => x.Equipment))
                             {
                                 y.EquipmentCommitments.Add(new EquipmentCommitment()
                                 {
@@ -97,11 +97,11 @@ namespace Pantry.Core.Scheduler
                     var satisfied = false;
                     for (; !satisfied; offset++)
                     {
-                        if (recipeStep.RecipeStepEquipment.Select(x => x.Equipment).All(y =>
+                        if (recipeStep.RecipeStepEquipmentType.Select(x => x.Equipment).All(y =>
                             y.IsAvailable(goal.AddMinutes(-(offset + recipeStep.TimeCost)), goal.AddMinutes(-offset))))
                         {
                             satisfied = true;
-                            foreach (var y in recipeStep.RecipeStepEquipment.Select(x => x.Equipment))
+                            foreach (var y in recipeStep.RecipeStepEquipmentType.Select(x => x.Equipment))
                             {
                                 y.EquipmentCommitments.Add(new EquipmentCommitment()
                                 {

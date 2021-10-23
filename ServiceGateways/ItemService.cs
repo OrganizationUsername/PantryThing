@@ -36,9 +36,9 @@ namespace Pantry.ServiceGateways
             var stepId = entity.RecipeStepId;
 
             var equipments = this.GetEquipmentProjections();
-            entity.RecipeStepEquipment = new List<RecipeStepEquipment>(equipments
+            entity.RecipeStepEquipmentType = new List<RecipeStepEquipmentType>(equipments
                 .Where(x => x.IsSelected)
-                .Select(x => new RecipeStepEquipment()
+                .Select(x => new RecipeStepEquipmentType()
                 {
                     EquipmentId = x.EquipmentId,
                     RecipeStepId = stepId
@@ -120,8 +120,8 @@ namespace Pantry.ServiceGateways
             {
                 newList = _database.RecipeSteps.Where(
                         x => x.RecipeId == selectedRecipe.RecipeId)
-                    .Include(y => y.RecipeStepEquipment)
-                    .Include(y => y.RecipeStepEquipment)
+                    .Include(y => y.RecipeStepEquipmentType)
+                    .Include(y => y.RecipeStepEquipmentType)
                     .ThenInclude(y => y.Equipment).ToList();
             }
 

@@ -23,6 +23,7 @@ namespace Pantry.Core.Test.ScheduleTests
         private readonly Equipment _sousVide = new()
         { EquipmentName = "Sous Vide", EquipmentCommitments = new List<EquipmentCommitment>() };
         private List<Equipment> _equipments;
+        private List<EquipmentType> equipmentTypes = new();
 
         private readonly List<Recipe> _recipes = new();
         private readonly BetterFoodProcessor _foodProcessor = new();
@@ -41,14 +42,19 @@ namespace Pantry.Core.Test.ScheduleTests
         [SetUp]
         public void Setup()
         {
+            equipmentTypes.Add(new EquipmentType() { EquipmentTypeId = 0, EquipmentTypeName = "Sous Vide", Equipments = new List<Equipment>() { _sousVide } });
+            equipmentTypes.Add(new EquipmentType() { EquipmentTypeId = 1, EquipmentTypeName = "Bread Machine", Equipments = new List<Equipment>() { _breadMachine } });
+            equipmentTypes.Add(new EquipmentType() { EquipmentTypeId = 2, EquipmentTypeName = "Human", Equipments = new List<Equipment>() { _humanMachine } });
+            equipmentTypes.Add(new EquipmentType() { EquipmentTypeId = 3, EquipmentTypeName = "Fridge", Equipments = new List<Equipment>() { _fridge } });
+
             _recipes.Add(
                 new()
                 {
                     RecipeId = 1,
                     RecipeFoods = new()
                     {
-                        new() {Amount = 120, Food = _rawChicken},
-                        new() {Amount = 1, Food = _bbqSauce},
+                        new() { Amount = 120, Food = _rawChicken },
+                        new() { Amount = 1, Food = _bbqSauce },
                         new() { Amount = -120, Food = _cookedChicken }
                     },
                     RecipeSteps = new()
@@ -56,30 +62,33 @@ namespace Pantry.Core.Test.ScheduleTests
                         new()
                         {
                             RecipeStepId = 0,
-                            Instruction = "Put chicken in Sous Vide.", TimeCost = 1,
-                            RecipeStepEquipment = new List<RecipeStepEquipment>()
+                            Instruction = "Put chicken in Sous Vide.",
+                            TimeCost = 1,
+                            RecipeStepEquipmentType = new List<RecipeStepEquipmentType>()
                             {
-                                new(){Equipment =_sousVide, RecipeStepId=0 },
-                                new(){Equipment = _humanMachine, RecipeStepId=0},
+                                new(){Equipment =_sousVide, RecipeStepId=0, EquipmentType = equipmentTypes.First(x=>x.EquipmentTypeName=="Sous Vide")},
+                                new(){Equipment = _humanMachine, RecipeStepId=0, EquipmentType = equipmentTypes.First(x=>x.EquipmentTypeName=="Human")},
                             }
                         },
                         new()
                         {
                             RecipeStepId = 1,
-                            Instruction = "Let it cook.", TimeCost = 120,
-                            RecipeStepEquipment = new List<RecipeStepEquipment>()
+                            Instruction = "Let it cook.",
+                            TimeCost = 120,
+                            RecipeStepEquipmentType = new List<RecipeStepEquipmentType>()
                             {
-                                new(){Equipment =_sousVide, RecipeStepId=1 },
+                                new(){Equipment =_sousVide, RecipeStepId=1, EquipmentType = equipmentTypes.First(x=>x.EquipmentTypeName=="Sous Vide")},
                             }
                         },
                         new()
                         {
                             RecipeStepId = 2,
-                            Instruction = "Take chicken out.", TimeCost = 1,
-                            RecipeStepEquipment = new List<RecipeStepEquipment>()
+                            Instruction = "Take chicken out.",
+                            TimeCost = 1,
+                            RecipeStepEquipmentType = new List<RecipeStepEquipmentType>()
                             {
-                                new(){Equipment =_sousVide, RecipeStepId=2 },
-                                new(){Equipment = _humanMachine, RecipeStepId=2},
+                                new(){Equipment =_sousVide, RecipeStepId=2, EquipmentType = equipmentTypes.First(x=>x.EquipmentTypeName=="Sous Vide")},
+                                new(){Equipment = _humanMachine, RecipeStepId=2, EquipmentType = equipmentTypes.First(x=>x.EquipmentTypeName=="Human")},
                             }
                         },
                     }
@@ -98,20 +107,22 @@ namespace Pantry.Core.Test.ScheduleTests
                         new()
                         {
                             RecipeStepId = 3,
-                            Instruction = "Put chicken in fridge.", TimeCost = 1,
-                            RecipeStepEquipment = new List<RecipeStepEquipment>()
+                            Instruction = "Put chicken in fridge.",
+                            TimeCost = 1,
+                            RecipeStepEquipmentType = new List<RecipeStepEquipmentType>()
                             {
-                                new(){Equipment =_fridge, RecipeStepId=3 },
-                                new(){Equipment = _humanMachine, RecipeStepId=3},
+                                new(){Equipment =_fridge, RecipeStepId=3, EquipmentType = equipmentTypes.First(x=>x.EquipmentTypeName=="Fridge")},
+                                new(){Equipment = _humanMachine, RecipeStepId=3, EquipmentType = equipmentTypes.First(x=>x.EquipmentTypeName=="Human")},
                             }
                         },
                         new()
                         {
                             RecipeStepId = 4,
-                            Instruction = "Let it defrost.", TimeCost = 1440,
-                            RecipeStepEquipment = new List<RecipeStepEquipment>()
+                            Instruction = "Let it defrost.",
+                            TimeCost = 1440,
+                            RecipeStepEquipmentType = new List<RecipeStepEquipmentType>()
                             {
-                                new(){Equipment =_fridge, RecipeStepId=4 },
+                                new(){Equipment =_fridge, RecipeStepId=4 , EquipmentType = equipmentTypes.First(x=>x.EquipmentTypeName=="Fridge")},
                             }
                         }
                     }
@@ -130,10 +141,11 @@ namespace Pantry.Core.Test.ScheduleTests
                         new()
                         {
                             RecipeStepId = 5,
-                            Instruction = "Cut chicken with a knife.", TimeCost = 3,
-                            RecipeStepEquipment = new List<RecipeStepEquipment>()
+                            Instruction = "Cut chicken with a knife.",
+                            TimeCost = 3,
+                            RecipeStepEquipmentType = new List<RecipeStepEquipmentType>()
                             {
-                                new(){Equipment = _humanMachine, RecipeStepId=5},
+                                new(){Equipment = _humanMachine, RecipeStepId=5, EquipmentType = equipmentTypes.First(x=>x.EquipmentTypeName=="Human")},
                             }
                         },
                     }
@@ -152,10 +164,11 @@ namespace Pantry.Core.Test.ScheduleTests
                         new()
                         {
                             RecipeStepId = 6,
-                            Instruction = "Cut Bread", TimeCost = 2,
-                            RecipeStepEquipment = new List<RecipeStepEquipment>()
+                            Instruction = "Cut Bread",
+                            TimeCost = 2,
+                            RecipeStepEquipmentType = new List<RecipeStepEquipmentType>()
                             {
-                                new(){Equipment = _humanMachine, RecipeStepId=6},
+                                new(){Equipment = _humanMachine, RecipeStepId=6, EquipmentType = equipmentTypes.First(x=>x.EquipmentTypeName=="Human")},
                             }
                         },
                     }
@@ -166,8 +179,8 @@ namespace Pantry.Core.Test.ScheduleTests
                     RecipeId = 5,
                     RecipeFoods = new()
                     {
-                        new() {Amount = 2, Food = _slicedBread},
-                        new() {Amount = 120, Food = _slicedChicken},
+                        new() { Amount = 2, Food = _slicedBread },
+                        new() { Amount = 120, Food = _slicedChicken },
                         new() { Amount = -1, Food = _chickenSandwich },
                     },
                     RecipeSteps = new()
@@ -175,10 +188,11 @@ namespace Pantry.Core.Test.ScheduleTests
                         new()
                         {
                             RecipeStepId = 7,
-                            Instruction = "Assemble Sandwich", TimeCost = 1,
-                            RecipeStepEquipment = new List<RecipeStepEquipment>()
+                            Instruction = "Assemble Sandwich",
+                            TimeCost = 1,
+                            RecipeStepEquipmentType = new List<RecipeStepEquipmentType>()
                             {
-                                new(){Equipment = _humanMachine, RecipeStepId=7},
+                                new(){Equipment = _humanMachine, RecipeStepId=7, EquipmentType = equipmentTypes.First(x=>x.EquipmentTypeName=="Human")},
                             }
                         },
                     }
@@ -189,9 +203,9 @@ namespace Pantry.Core.Test.ScheduleTests
                     RecipeId = 6,
                     RecipeFoods = new()
                     {
-                        new() {Amount = 120, Food = _eggs},
-                        new() {Amount = 120, Food = _milk},
-                        new() {Amount = 120, Food = _flour},
+                        new() { Amount = 120, Food = _eggs },
+                        new() { Amount = 120, Food = _milk },
+                        new() { Amount = 120, Food = _flour },
                         new() { Amount = -1, Food = _bread },
                     },
                     RecipeSteps = new()
@@ -199,30 +213,33 @@ namespace Pantry.Core.Test.ScheduleTests
                         new()
                         {
                             RecipeStepId = 8,
-                            Instruction = "Insert into Bread Machine.", TimeCost = 1,
-                            RecipeStepEquipment = new List<RecipeStepEquipment>()
+                            Instruction = "Insert into Bread Machine.",
+                            TimeCost = 1,
+                            RecipeStepEquipmentType = new List<RecipeStepEquipmentType>()
                             {
-                                new(){Equipment =_breadMachine, RecipeStepId=8 },
-                                new(){Equipment = _humanMachine, RecipeStepId=8},
+                                new(){Equipment =_breadMachine, RecipeStepId=8, EquipmentType = equipmentTypes.First(x=>x.EquipmentTypeName=="Bread Machine")},
+                                new(){Equipment = _humanMachine, RecipeStepId=8, EquipmentType = equipmentTypes.First(x=>x.EquipmentTypeName=="Human")},
                             }
                         },
                         new()
                         {
                             RecipeStepId = 9,
-                            Instruction = "Bread Machine cooks.", TimeCost = 180,
-                            RecipeStepEquipment = new List<RecipeStepEquipment>()
+                            Instruction = "Bread Machine cooks.",
+                            TimeCost = 180,
+                            RecipeStepEquipmentType = new List<RecipeStepEquipmentType>()
                             {
-                                new(){Equipment =_breadMachine, RecipeStepId=9 },
+                                new(){Equipment =_breadMachine, RecipeStepId=9, EquipmentType = equipmentTypes.First(x=>x.EquipmentTypeName=="Bread Machine")},
                             }
                         },
                         new()
                         {
                             RecipeStepId = 10,
-                            Instruction = "Extract bread from bread machine.", TimeCost = 1,
-                            RecipeStepEquipment = new List<RecipeStepEquipment>()
+                            Instruction = "Extract bread from bread machine.",
+                            TimeCost = 1,
+                            RecipeStepEquipmentType = new List<RecipeStepEquipmentType>()
                             {
-                                new(){Equipment =_breadMachine, RecipeStepId=10 },
-                                new(){Equipment = _humanMachine, RecipeStepId=10},
+                                new(){Equipment =_breadMachine, RecipeStepId=10, EquipmentType = equipmentTypes.First(x=>x.EquipmentTypeName=="Bread Machine")},
+                                new(){ RecipeStepId=10, EquipmentType = equipmentTypes.First(x=>x.EquipmentTypeName=="Human")},
                             }
                         },
                     }

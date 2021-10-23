@@ -72,12 +72,12 @@ namespace Pantry.Core.Scheduler
                 var recipeStep = dag.MainRecipe.RecipeSteps[index];
                 var satisfied = false;
                 for (; !satisfied; offset++)
-                {
-                    if (recipeStep.RecipeStepEquipment.Select(x => x.Equipment).All(y =>
+                { //ToDo: Make this work with EquipmentType
+                    if (recipeStep.RecipeStepEquipmentType.Select(x => x.Equipment).All(y =>
                         y.IsAvailable(_goal.AddMinutes(-(offset + recipeStep.TimeCost)), _goal.AddMinutes(-offset))))
                     {
                         satisfied = true;
-                        foreach (var y in recipeStep.RecipeStepEquipment.Select(x => x.Equipment))
+                        foreach (var y in recipeStep.RecipeStepEquipmentType.Select(x => x.Equipment))
                         {
                             y.EquipmentCommitments.Add(new EquipmentCommitment()
                             {

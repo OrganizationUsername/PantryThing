@@ -58,6 +58,7 @@ namespace Pantry.Data
         public DbSet<Item> Items { get; set; }
         public DbSet<Unit> Units { get; set; }
         public DbSet<Inventory> Inventorys { get; set; }
+        public DbSet<EquipmentType> EquipmentTypes { get; set; }
 
         /*
         Another simple recipe is just putting stuff in plastic storage containers.

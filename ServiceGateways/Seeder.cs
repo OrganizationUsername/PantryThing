@@ -194,7 +194,7 @@ namespace Pantry.ServiceGateways
                         Instruction = "Put chicken in Sous Vide.",
                         Order = 1,
                         TimeCost = 1,
-                        RecipeStepEquipment = new List<RecipeStepEquipment>()
+                        RecipeStepEquipmentType = new List<RecipeStepEquipmentType>()
                         {
                             new()
                             {
@@ -216,7 +216,7 @@ namespace Pantry.ServiceGateways
                         Instruction = "Let it cook.",
                         Order = 2,
                         TimeCost = 120,
-                        RecipeStepEquipment = new List<RecipeStepEquipment>()
+                        RecipeStepEquipmentType = new List<RecipeStepEquipmentType>()
                         {
                             new()
                             {
@@ -233,7 +233,7 @@ namespace Pantry.ServiceGateways
                         Instruction = "Take chicken out.",
                         Order = 3,
                         TimeCost = 1,
-                        RecipeStepEquipment = new List<RecipeStepEquipment>()
+                        RecipeStepEquipmentType = new List<RecipeStepEquipmentType>()
                         {
                             new()
                             {
@@ -274,7 +274,7 @@ namespace Pantry.ServiceGateways
                         Instruction = "Put chicken in Fridge.",
                         Order = 1,
                         TimeCost = 1,
-                        RecipeStepEquipment = new List<RecipeStepEquipment>()
+                        RecipeStepEquipmentType = new List<RecipeStepEquipmentType>()
                         {
                             new()
                             {
@@ -296,7 +296,7 @@ namespace Pantry.ServiceGateways
                         Instruction = "Let it defrost.",
                         Order = 2,
                         TimeCost = 120,
-                        RecipeStepEquipment = new List<RecipeStepEquipment>()
+                        RecipeStepEquipmentType = new List<RecipeStepEquipmentType>()
                         {
                             new()
                             {
@@ -333,7 +333,7 @@ namespace Pantry.ServiceGateways
                         Instruction = "Cut Bread.",
                         Order = 1,
                         TimeCost = 3,
-                        RecipeStepEquipment = new List<RecipeStepEquipment>()
+                        RecipeStepEquipmentType = new List<RecipeStepEquipmentType>()
                         {
                             new()
                             {
