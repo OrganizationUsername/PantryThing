@@ -8,6 +8,7 @@
         xmlns:inventory="clr-namespace:Pantry.WPF.Inventory"
         xmlns:food="clr-namespace:Pantry.WPF.Food"
         xmlns:item="clr-namespace:Pantry.WPF.Item"
+        xmlns:equipment="clr-namespace:Pantry.WPF.Equipment"
         mc:Ignorable="d"
         Title="MainWindow" Height="500" Width="800">
 
@@ -27,12 +28,16 @@
         <DataTemplate DataType="{x:Type item:ItemViewModel}">
             <item:ItemView/>
         </DataTemplate>
+        <DataTemplate DataType="{x:Type equipment:EquipmentViewModel}">
+            <equipment:EquipmentView/>
+        </DataTemplate>
     </Window.Resources>
     <DockPanel LastChildFill="True">
         <GroupBox Header="MainWindow Nav">
             <StackPanel>
                 <Button Content="Recipe Management" Command="{Binding RecipeNavigationCommand}" />
                 <Button Content="Inventory" Command="{Binding InventoryNavigationCommand}" />
+                <Button Content="Equipment Management" Command="{Binding EquipmentNavigationCommand}" />
                 <Button Content="Food Management" Command="{Binding FoodNavigationCommand}" />
                 <Button Content="Item Management" Command="{Binding ItemNavigationCommand}" />
                 <Label Content=""/>

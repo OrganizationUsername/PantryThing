@@ -43,6 +43,7 @@ namespace Pantry.ServiceGateways
                     EquipmentId = x.EquipmentId,
                     RecipeStepId = stepId
                 }));
+            _database.SaveChanges();
         }
 
         public List<Item> GetItems()
@@ -70,6 +71,19 @@ namespace Pantry.ServiceGateways
             return true;
         }
 
+        public void AddRecipeFood(int recipeId, int foodId, double amount)
+        {
+            var recipe = this.GetRecipes().First(x => x.RecipeId == recipeId);
+            if (recipe.RecipeFoods is null)
+            {
+                return;
+            }
+            var x = new RecipeFood() { Amount = amount, FoodId = foodId, RecipeId = recipeId };
+            recipe.RecipeFoods.Add(x);
+            _database.SaveChanges();
+        }
+
+
         public List<RecipeFood> GetRecipeFoods(Recipe selectedRecipe)
         {
             if (selectedRecipe is null || _database.RecipeFoods is null) return null;
@@ -90,6 +104,7 @@ namespace Pantry.ServiceGateways
                 PurchaseDate = DateTime.MinValue,
                 Item = itemToUse
             });
+            _database.SaveChanges();
         }
 
         public List<RecipeStep> GetRecipeSteps(Recipe selectedRecipe)
@@ -192,9 +207,24 @@ namespace Pantry.ServiceGateways
             using (var db = new DataBase())
             {
                 db.Recipes.Add(new() { Description = newRecipeName });
-
+                db.SaveChanges();
             }
         }
+
+
+        public void AddEquipment(string newEquipmentName)
+        {
+            using (var db = new DataBase())
+            {
+                db.Equipments.Add(new()
+                {
+                    EquipmentName = newEquipmentName,
+                    LocationId = db.Locations.First().LocationId
+                });
+                db.SaveChanges();
+            }
+        }
+
 
         public void AddLocationFood(Item selectedItem, Location selectedLocation = null)
         {
@@ -257,6 +287,7 @@ namespace Pantry.ServiceGateways
                         Upc = upc,
                         Weight = canCook.TotalOutput.First().Amount
                     }).Entity;
+                    db.SaveChanges();
                     return itemToUse;
                 }
             }

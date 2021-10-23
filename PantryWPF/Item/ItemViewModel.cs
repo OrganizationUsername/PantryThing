@@ -23,7 +23,6 @@ namespace Pantry.WPF.Item
             set { _selectedItem = value; OnPropertyChanged(nameof(SelectedItem)); }
         }
 
-
         public Pantry.Core.Models.Food SelectedFood
         {
             get => _selectedFood;

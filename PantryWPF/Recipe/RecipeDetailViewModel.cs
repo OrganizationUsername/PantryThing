@@ -174,17 +174,7 @@ namespace Pantry.WPF.Recipe
             if (_selectedRecipe is null) { return; }
             if (NewFood is not null && double.TryParse(NewFoodAmount, out var foodAmount) && foodAmount != 0)
             {
-                var recipe = _itemService.GetRecipes().First(x => x.RecipeId == _selectedRecipe.RecipeId);
-                var x = new RecipeFood() { Amount = foodAmount, FoodId = NewFood.FoodId, RecipeId = _selectedRecipe.RecipeId };
-                if (recipe.RecipeFoods is null)
-                {
-                    //_dataBase.RecipeFoods.Add(x); //ToDo: Fix whatever this is
-                }
-                else
-                {
-                    recipe.RecipeFoods.Add(x);
-                }
-                //_dataBase.SaveChanges(); //ToDo: Fix whatever this is
+                _itemService.AddRecipeFood(_selectedRecipe.RecipeId, NewFood.FoodId, foodAmount);
                 NewFoodAmount = "";
                 OnPropertyChanged(nameof(NewFoodAmount));
                 LoadRecipeDetailData();
@@ -226,8 +216,6 @@ namespace Pantry.WPF.Recipe
             var goodNumber = int.TryParse(NewDuration, out var tempDuration);
 
             if (!goodNumber || string.IsNullOrWhiteSpace(NewDescription)) return;
-
-            var y = new RecipeStepEquipment() { EquipmentId = 1 };
 
             _itemService.AddRecipeStep(NewDescription, _selectedRecipe.RecipeId, tempDuration);
 

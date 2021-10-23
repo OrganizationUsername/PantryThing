@@ -1,5 +1,6 @@
 ﻿using Pantry.Data;
 using Pantry.ServiceGateways;
+using Pantry.WPF.Equipment;
 using Pantry.WPF.Food;
 using Pantry.WPF.Inventory;
 using Pantry.WPF.Item;
@@ -17,6 +18,8 @@ namespace Pantry.WPF.Main
         public NavigationCommand InventoryNavigationCommand { get; set; }
         public NavigationCommand FoodNavigationCommand { get; set; }
         public NavigationCommand ItemNavigationCommand { get; set; }
+        public NavigationCommand EquipmentNavigationCommand { get; set; }
+
         public DelegateCommand SeedDatabaseCommand { get; set; }
 
 
@@ -27,6 +30,7 @@ namespace Pantry.WPF.Main
             Seeder = new();
             RecipeNavigationCommand = new(this, new RecipesListViewModel());
             InventoryNavigationCommand = new(this, new InventoryViewModel());
+            EquipmentNavigationCommand = new(this, new EquipmentViewModel());
             FoodNavigationCommand = new(this, new FoodListViewModel());
             ItemNavigationCommand = new(this, new ItemViewModel());
             SeedDatabaseCommand = new(Seeder.SeedDatabase);
