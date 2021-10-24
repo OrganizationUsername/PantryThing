@@ -72,21 +72,55 @@ namespace Pantry.Core.Scheduler
                 var recipeStep = dag.MainRecipe.RecipeSteps[index];
                 var satisfied = false;
                 for (; !satisfied; offset++)
-                { //ToDo: Make this work with EquipmentType
-                    if (recipeStep.RecipeStepEquipmentType.Select(x => x.Equipment).All(y =>
-                        y.IsAvailable(_goal.AddMinutes(-(offset + recipeStep.TimeCost)), _goal.AddMinutes(-offset))))
+                {
+                    //ToDo: Make this work with EquipmentType
+
+                    var all = true;
+                    foreach (var x in recipeStep.RecipeStepEquipmentType)
+                    {
+                        var y = x.Equipment;
+                        if (y is not null)
+                        {
+                            if (!y.IsAvailable(_goal.AddMinutes(-(offset + recipeStep.TimeCost)),
+                                _goal.AddMinutes(-offset)))
+                            {
+                                all = false;
+                                break;
+                            }
+                        }
+                        else
+                        {
+                            if (!x.EquipmentType.Equipments.Any(z =>
+                                z.IsAvailable(_goal.AddMinutes(-(offset + recipeStep.TimeCost)),
+                                    _goal.AddMinutes(-offset))))
+                            {
+                                all = false;
+                                break;
+                            }
+                        }
+                    }
+
+                    if (all)
                     {
                         satisfied = true;
-                        foreach (var y in recipeStep.RecipeStepEquipmentType.Select(x => x.Equipment))
+                        if (recipeStep.RecipeStepEquipmentType.Select(x => x.Equipment).Any())
                         {
-                            y.EquipmentCommitments.Add(new EquipmentCommitment()
+                            foreach (var y in recipeStep.RecipeStepEquipmentType.Select(x => x.Equipment).Where(x => x is not null))
                             {
-                                StartTime = _goal.AddMinutes(-(offset + recipeStep.TimeCost)),
-                                EndTime = _goal.AddMinutes(-offset),
-                                Description = $"_ {dag.MainRecipe.RecipeFoods.First(x => x.Amount < 0).Food.FoodName}",
-                                RecipeStep = recipeStep
-                            });
+                                y.EquipmentCommitments.Add(new EquipmentCommitment()
+                                {
+                                    StartTime = _goal.AddMinutes(-(offset + recipeStep.TimeCost)),
+                                    EndTime = _goal.AddMinutes(-offset),
+                                    Description = $"_ {dag.MainRecipe.RecipeFoods.First(x => x.Amount < 0).Food.FoodName}",
+                                    RecipeStep = recipeStep
+                                });
+                            }
                         }
+                        else
+                        {
+
+                        }
+
                     }
                 }
             }
