@@ -1,26 +1,32 @@
-﻿using System.Collections.ObjectModel;
+﻿using System;
+using System.Collections.ObjectModel;
 using System.Linq;
 using Pantry.ServiceGateways;
 using Pantry.WPF.Shared;
+using Stylet;
 
 namespace Pantry.WPF.Recipe
 {
-    public class RecipesListViewModel : VmBase
+    public class RecipesListViewModel : Screen
     {
-        private RecipeDetailViewModel _selectedRecipeDetailViewModel;
-        public DelegateCommand AddRecipeCommand { get; set; }
-        public ObservableCollection<Pantry.Core.Models.Recipe> ACollection { get; set; }
         private readonly ItemService _itemService;
-        public string NewRecipeName { get; set; }
+        private readonly Func<RecipeDetailViewModel> _recipeDetailFactory;
 
+        public DelegateCommand AddRecipeCommand { get; set; }
+        public BindableCollection<Pantry.Core.Models.Recipe> ACollection { get; set; }
+
+        private string _newRecipeName;
+        public string NewRecipeName
+        {
+            get => _newRecipeName;
+            set => SetAndNotify(ref _newRecipeName, value, nameof(NewRecipeName));
+        }
+
+        private RecipeDetailViewModel _selectedRecipeDetailViewModel;
         public RecipeDetailViewModel SelectedRecipeDetailViewModel
         {
             get => _selectedRecipeDetailViewModel;
-            set
-            {
-                _selectedRecipeDetailViewModel = value;
-                OnPropertyChanged();
-            }
+            set => SetAndNotify(ref _selectedRecipeDetailViewModel, value, nameof(SelectedRecipeDetailViewModel));
         }
 
         private Pantry.Core.Models.Recipe _selectedRecipe;
@@ -30,19 +36,27 @@ namespace Pantry.WPF.Recipe
             get => _selectedRecipe;
             set
             {
-                _selectedRecipe = value;
-                _selectedRecipeDetailViewModel = new(_selectedRecipe);
-                OnPropertyChanged(nameof(SelectedRecipeDetailViewModel));
+                if (SetAndNotify(ref _selectedRecipe, value, nameof(SelectedRecipe)))
+                {
+                    SelectedRecipeDetailViewModel = _selectedRecipe is not null ? _recipeDetailFactory() : null;
+                    SelectedRecipeDetailViewModel?.Load(_selectedRecipe.RecipeId, _selectedRecipe.Description);
+                }
             }
         }
 
-        public RecipesListViewModel() //ToDo: Figure out why this isn't called when navigated to.
+        public RecipesListViewModel(ItemService itemService, 
+            Func<RecipeDetailViewModel> recipeDetailFactory)
         {
-            _itemService = new();
-            LoadData();
+            _recipeDetailFactory = recipeDetailFactory;
+            _itemService = itemService;
             AddRecipeCommand = new(AddRecipe);
         }
 
+        protected override void OnActivate()
+        {
+            base.OnActivate();
+            LoadData();
+        }
 
         public void LoadData()
         {
@@ -53,13 +67,8 @@ namespace Pantry.WPF.Recipe
             else
             {
                 ACollection.Clear();
-                foreach (var x in _itemService.GetRecipes())
-                {
-                    ACollection.Add(x);
-                }
+                ACollection.AddRange(_itemService.GetRecipes());
             }
-
-            OnPropertyChanged(nameof(ACollection));
         }
 
         public void AddRecipe()
@@ -77,12 +86,8 @@ namespace Pantry.WPF.Recipe
             }
 
             LoadData();
-            SelectedRecipe = this.ACollection.Last();
-            OnPropertyChanged(nameof(SelectedRecipe));
-
+            SelectedRecipe = ACollection.Last();
             NewRecipeName = "";
-            OnPropertyChanged(nameof(NewRecipeName));
         }
-
     }
 }

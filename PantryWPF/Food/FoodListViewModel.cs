@@ -1,49 +1,64 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
 using Pantry.Data;
 using Pantry.WPF.Shared;
+using Stylet;
 
 namespace Pantry.WPF.Food
 {
-    public class FoodListViewModel : VmBase
+    public class FoodListViewModel : Screen
     {
-        private readonly DataBase _dataBase;
-        private Pantry.Core.Models.Food _selectedFood;
+        private readonly Func<DataBase> _dbFactory;
 
-        public ObservableCollection<Pantry.Core.Models.Food> Foods { get; set; } = new();
-        public ObservableCollection<Pantry.Core.Models.Recipe> Recipes { get; set; } = new();
-        public string NewFoodName { get; set; }
+        public BindableCollection<Pantry.Core.Models.Food> Foods { get; set; } = new();
+        public BindableCollection<Pantry.Core.Models.Recipe> Recipes { get; set; } = new();
+
+        private string _newFoodName;
+        public string NewFoodName
+        {
+            get => _newFoodName;
+            set => SetAndNotify(ref _newFoodName, value, nameof(NewFoodName));
+        }
+
+        private Pantry.Core.Models.Food _selectedFood;
         public Pantry.Core.Models.Food SelectedFood
         {
             get => _selectedFood;
             set
             {
-                _selectedFood = value;
-                OnPropertyChanged(nameof(SelectedFood));
+                SetAndNotify(ref _selectedFood, value, nameof(SelectedFood));
                 GetSelectedRecipes();
             }
         }
 
         public DelegateCommand AddRecipeCommand { get; set; }
         public DelegateCommand DeleteFoodCommand { get; set; }
-        public FoodListViewModel()
+
+        public FoodListViewModel(Func<DataBase> dbFactory)
         {
-            _dataBase = new();
-            KeepOnlyUniqueFoodNames();
-            LoadData();
+            _dbFactory = dbFactory;
             AddRecipeCommand = new(AddFood);
             DeleteFoodCommand = new(DeleteSelectedFood);
+        }
+
+        protected override void OnActivate()
+        {
+            base.OnActivate();
+            KeepOnlyUniqueFoodNames();
+            LoadData();
         }
 
         public void DeleteSelectedFood()
         {
             if (_selectedFood is not null)
             {
-                var foodToDelete = _dataBase.Foods.First(x => x.FoodId == _selectedFood.FoodId);
-                _dataBase.Foods.Remove(foodToDelete);
-                _dataBase.SaveChanges();
+                using var ctx = _dbFactory();
+                var foodToDelete = ctx.Foods.First(x => x.FoodId == _selectedFood.FoodId);
+                ctx.Foods.Remove(foodToDelete);
+                ctx.SaveChanges();
                 LoadData();
             }
         }
@@ -57,17 +72,14 @@ namespace Pantry.WPF.Food
             }
             var tempList = _selectedFood.RecipeFoods.Where(x => x.Amount > 0).Select(x => x.Recipe).Distinct().ToList();
             Recipes.Clear();
-            foreach (var x in tempList)
-            {
-                Recipes.Add(x);
-            }
-            OnPropertyChanged(nameof(Recipes));
+            Recipes.AddRange(tempList);
         }
 
         public void KeepOnlyUniqueFoodNames()
         {
             var names = new List<string>();
-            foreach (var x in _dataBase.Foods)
+            using var ctx = _dbFactory();
+            foreach (var x in ctx.Foods)
             {
                 if (!names.Contains(x.FoodName) && !string.IsNullOrWhiteSpace(x.FoodName))
                 {
@@ -75,39 +87,34 @@ namespace Pantry.WPF.Food
                 }
                 else
                 {
-                    _dataBase.Foods.Remove(x);
+                    ctx.Foods.Remove(x);
                 }
             }
-            _dataBase.SaveChanges();
+            ctx.SaveChanges();
         }
 
 
         public void LoadData()
         {
-
-            if (_dataBase.Foods is null)
+            using var ctx = _dbFactory();
+            if (ctx.Foods is null)
             {
                 Foods = new();
-                OnPropertyChanged(nameof(Foods));
                 return;
             }
 
             Foods.Clear();
-
-            foreach (var x in _dataBase.Foods.Include(x => x.RecipeFoods).ThenInclude(x => x.Recipe))
-            {
-                Foods.Add(x);
-            }
+            Foods.AddRange(ctx.Foods.Include(x => x.RecipeFoods).ThenInclude(x => x.Recipe));
             SelectedFood = Foods.FirstOrDefault();
         }
 
         public void AddFood()
         {
             if (string.IsNullOrWhiteSpace(NewFoodName)) { return; }
-            _dataBase.Foods.Add(new() { FoodName = NewFoodName });
-            _dataBase.SaveChanges();
+            using var ctx = _dbFactory();
+            ctx.Foods.Add(new() { FoodName = NewFoodName });
+            ctx.SaveChanges();
             NewFoodName = "";
-            OnPropertyChanged(nameof(NewFoodName));
             LoadData();
             SelectedFood = Foods.Last();
         }

@@ -7,7 +7,6 @@ namespace Pantry.WPF.Shared
     {
         private readonly Action _action;
 
-
         public DelegateCommand(Action action)
         {
             _action = action;

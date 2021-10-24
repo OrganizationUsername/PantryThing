@@ -3,27 +3,15 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-             xmlns:models="clr-namespace:Pantry.Core.Models;assembly=Pantry.Core"
-             xmlns:food="clr-namespace:Pantry.WPF.Food"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
-    <UserControl.DataContext>
-        <food:FoodListViewModel/>
-    </UserControl.DataContext>
-    <UserControl.Resources>
-        <DataTemplate DataType="{x:Type models:Food}">
-            <TextBlock Text="{Binding FoodName}"/>
-        </DataTemplate>
-    </UserControl.Resources>
     <DockPanel>
         <ScrollViewer HorizontalScrollBarVisibility="Auto">
             <DockPanel DockPanel.Dock="Left" Width="100">
                 <TextBox Text="{Binding NewFoodName}" DockPanel.Dock="Top"/>
                 <Button Content="Add Food" Command="{Binding AddRecipeCommand}" DockPanel.Dock="Top"/>
-                <ListView 
-                DockPanel.Dock="Top" 
-                ItemsSource="{Binding Foods}" 
-                SelectedValue="{Binding SelectedFood, Mode=TwoWay}"/>
+                <ListView ItemsSource="{Binding Foods}" SelectedValue="{Binding SelectedFood, Mode=TwoWay}"
+                    DockPanel.Dock="Top" DisplayMemberPath="FoodName"/>
             </DockPanel>
         </ScrollViewer>
         <StackPanel Width="150">

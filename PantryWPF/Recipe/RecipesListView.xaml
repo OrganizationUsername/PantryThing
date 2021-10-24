@@ -1,35 +1,23 @@
-﻿<UserControl x:Class="Pantry.WPF.Recipe.RecipesView"
+﻿<UserControl x:Class="Pantry.WPF.Recipe.RecipesListView"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-             xmlns:models="clr-namespace:Pantry.Core.Models;assembly=Pantry.Core"
-             xmlns:recipe="clr-namespace:Pantry.WPF.Recipe"
-             xmlns:food="clr-namespace:Pantry.WPF.Food"
+             xmlns:s="https://github.com/canton7/Stylet"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
-    <UserControl.Resources>
-        <DataTemplate DataType="{x:Type models:Recipe}">
-            <TextBlock Text="{Binding Description}"/>
-        </DataTemplate>
-        <DataTemplate DataType="{x:Type recipe:RecipeDetailViewModel}">
-            <recipe:RecipeDetailView/>
-        </DataTemplate>
-        <DataTemplate DataType="{x:Type food:FoodListView}">
-            <food:FoodListView/>
-        </DataTemplate>
-    </UserControl.Resources>
     <DockPanel>
         <StackPanel DockPanel.Dock="Left" >
             <TextBlock Text="Recipes"/>
             <ListView ItemsSource="{Binding ACollection}" 
-                      SelectedItem="{Binding SelectedRecipe}"/>
+                      SelectedItem="{Binding SelectedRecipe}"
+                      DisplayMemberPath="Description"/>
             <TextBox Text="{Binding NewRecipeName}"/>
             <Button Content="Add Recipe" Command="{Binding AddRecipeCommand}"/>
         </StackPanel>
         <StackPanel DockPanel.Dock="Right">
             <TextBlock Text="Recipe Details"/>
-            <ContentControl Content="{Binding SelectedRecipeDetailViewModel}"/>
+            <ContentControl s:View.Model="{Binding SelectedRecipeDetailViewModel}"/>
         </StackPanel>
     </DockPanel>
 </UserControl>

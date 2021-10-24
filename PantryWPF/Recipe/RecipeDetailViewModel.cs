@@ -9,44 +9,98 @@ using Pantry.Core.FoodProcessing;
 using Pantry.Core.Models;
 using Pantry.ServiceGateways;
 using Pantry.WPF.Shared;
+using Stylet;
 
 namespace Pantry.WPF.Recipe
 {
-    public class RecipeDetailViewModel : Pantry.Core.Models.Recipe, INotifyPropertyChanged
+    public class RecipeDetailViewModel : Screen
     {
-        private readonly Pantry.Core.Models.Recipe _selectedRecipe;
-        public event PropertyChangedEventHandler PropertyChanged;
+        private readonly ItemService _itemService;
+        private Pantry.Core.Models.Recipe _selectedRecipe;
+
         public List<Core.Models.Food> Foods { get; set; }
+
         public DelegateCommand SaveStepCommand { get; set; }
         public DelegateCommand SaveFoodCommand { get; set; }
         public DelegateCommand DeleteStepCommand { get; set; }
         public DelegateCommand DeleteFoodCommand { get; set; }
         public DelegateCommand DeleteThisRecipeCommand { get; set; }
-        public string NewDescription { get; set; }
         public DelegateCommand CookCommand { get; set; }
-        public string NewDuration { get; set; }
-        public Core.Models.Food NewFood { get; set; }
-        public string NewFoodAmount { get; set; }
-        public RecipeStep SelectedRecipeStep { get; set; }
-        public RecipeFood SelectedRecipeFood { get; set; }
-        public ObservableCollection<RecipeStep> RecipeStepsList { get; set; } = new();
-        public ObservableCollection<RecipeFood> RecipeFoodsList { get; set; } = new();
-        public ObservableCollection<EquipmentProjection> Equipments { get; set; }
-        private ItemService _itemService;
-        public string ItemsUsed { get; set; } = "";
-        public bool CanCook { get; set; }
 
-        public RecipeDetailViewModel(Pantry.Core.Models.Recipe selectedRecipe)
+        public BindableCollection<RecipeStep> RecipeStepsList { get; set; } = new();
+        public BindableCollection<RecipeFood> RecipeFoodsList { get; set; } = new();
+        public BindableCollection<EquipmentProjection> Equipments { get; set; }
+
+        private string _description;
+        public string Description
         {
-            _itemService = new();
+            get => _description;
+            set => SetAndNotify(ref _description, value, nameof(Description));
+        }
+        private string _newDescription;
+        public string NewDescription
+        { 
+            get => _newDescription;
+            set => SetAndNotify(ref _newDescription, value, nameof(NewDescription));
+        }
+        private string _newDuration;
+        public string NewDuration
+        { 
+            get => _newDuration;
+            set => SetAndNotify(ref _newDuration, value, nameof(NewDuration));
+        }
+        private Core.Models.Food _newFood;
+        public Core.Models.Food NewFood
+        { 
+            get => _newFood;
+            set => SetAndNotify(ref _newFood, value, nameof(NewFood));
+        }
+        private string _newFoodAmount;
+        public string NewFoodAmount
+        { 
+            get => _newFoodAmount;
+            set => SetAndNotify(ref _newFoodAmount, value, nameof(NewFoodAmount));
+        }
+        private RecipeStep _selectedRecipeStep;
+        public RecipeStep SelectedRecipeStep
+        {
+            get => _selectedRecipeStep;
+            set => SetAndNotify(ref _selectedRecipeStep, value, nameof(SelectedRecipeStep));
+        }
+        private RecipeFood _selectedRecipeFood;
+        public RecipeFood SelectedRecipeFood
+        { 
+            get => _selectedRecipeFood;
+            set => SetAndNotify(ref _selectedRecipeFood, value, nameof(SelectedRecipeFood));
+        }
+        private string _itemsUsed;
+        public string ItemsUsed
+        {
+            get => _itemsUsed;
+            set => SetAndNotify(ref _itemsUsed, value, nameof(ItemsUsed));
+        }
+        private bool _canCook;
+        public bool CanCook
+        {
+            get => _canCook;
+            set => SetAndNotify(ref _canCook, value, nameof(CanCook));
+        }
+
+        public RecipeDetailViewModel(ItemService itemService)
+        {
+            _itemService = itemService;
             SaveStepCommand = new(SaveNewStep);
             SaveFoodCommand = new(SaveNewFood);
             DeleteStepCommand = new(DeleteSelectedStep);
             DeleteFoodCommand = new(DeleteSelectedFood);
             DeleteThisRecipeCommand = new(DeleteThisRecipe);
             CookCommand = new(CookIt);
+        }
 
-            _selectedRecipe = _itemService.GetRecipe(selectedRecipe.RecipeId).FirstOrDefault(x => x.RecipeId == selectedRecipe.RecipeId);
+        public void Load(int recipeId, string description)
+        {
+            Description = description;
+            _selectedRecipe = _itemService.GetRecipe(recipeId).FirstOrDefault(x => x.RecipeId == recipeId);
             Foods = _itemService.GetFoods();
             Equipments = new(_itemService.GetEquipmentProjections());
             LoadRecipeDetailData();
@@ -86,7 +140,6 @@ namespace Pantry.WPF.Recipe
 
             CanCook = CalculateCanCook();
             LoadRecipeDetailData();
-            OnPropertyChanged(nameof(canCook));
         }
 
         public bool CalculateCanCook()
@@ -109,7 +162,6 @@ namespace Pantry.WPF.Recipe
                 ItemsUsed = string.Join(Environment.NewLine, GetRelevantInventoryItems(canCook.TotalInput).Select(x => $"{x.Item.Food.FoodName}- {x.LocationFoodsId}: {x.Quantity}"));
             }
             else { ItemsUsed = ""; }
-            OnPropertyChanged(nameof(ItemsUsed));
 
             return canCook.CanMake;
         }
@@ -176,7 +228,6 @@ namespace Pantry.WPF.Recipe
             {
                 _itemService.AddRecipeFood(_selectedRecipe.RecipeId, NewFood.FoodId, foodAmount);
                 NewFoodAmount = "";
-                OnPropertyChanged(nameof(NewFoodAmount));
                 LoadRecipeDetailData();
             }
         }
@@ -190,8 +241,6 @@ namespace Pantry.WPF.Recipe
             {
                 RecipeFoodsList.Add(x);
             }
-
-            OnPropertyChanged(nameof(RecipeFoodsList));
         }
 
         private void LoadSteps()
@@ -204,8 +253,6 @@ namespace Pantry.WPF.Recipe
             {
                 RecipeStepsList.Add(x);
             }
-
-            OnPropertyChanged(nameof(RecipeStepsList));
         }
 
         private void SaveNewStep()
@@ -221,15 +268,7 @@ namespace Pantry.WPF.Recipe
 
             NewDescription = "";
             NewDuration = "";
-            OnPropertyChanged(nameof(NewDescription));
-            OnPropertyChanged(nameof(NewDuration));
             LoadRecipeDetailData();
-        }
-
-        [NotifyPropertyChangedInvocator]
-        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
-        {
-            PropertyChanged?.Invoke(this, new(propertyName));
         }
     }
 }
