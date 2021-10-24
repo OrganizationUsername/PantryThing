@@ -1,18 +1,19 @@
 ﻿using System;
 using System.Windows.Input;
 using Pantry.WPF.Shared;
+using Stylet;
 
 namespace Pantry.WPF.Main
 {
     public class NavigationCommand : ICommand
     {
-        private readonly MainWindowViewModel _vm;
-        private readonly VmBase _vmBase;
+        private readonly RootViewModel _vm;
+        private readonly IScreen _screen;
 
-        public NavigationCommand(MainWindowViewModel vm, VmBase vmBase)
+        public NavigationCommand(RootViewModel vm, IScreen screen)
         {
             _vm = vm;
-            _vmBase = vmBase;
+            _screen = screen;
         }
         public bool CanExecute(object parameter)
         {
@@ -21,10 +22,8 @@ namespace Pantry.WPF.Main
 
         public void Execute(object parameter)
         {
-            _vm.MainView = _vmBase;
-            _vm.VmName = _vmBase.GetType().ToString();
-            _vm.OnPropertyChanged(nameof(_vm.VmName));
-            _vm.OnPropertyChanged(nameof(_vm.MainView));
+            _vm.ActivateItem(_screen);
+            _vm.VmName = _screen.GetType().ToString();
         }
 
         public event EventHandler CanExecuteChanged;

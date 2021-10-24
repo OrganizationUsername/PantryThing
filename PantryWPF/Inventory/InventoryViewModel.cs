@@ -4,60 +4,64 @@ using System.Windows;
 using Pantry.Core.Models;
 using Pantry.ServiceGateways;
 using Pantry.WPF.Shared;
+using Stylet;
 
 namespace Pantry.WPF.Inventory
 {
-    public sealed class InventoryViewModel : VmBase
+    public sealed class InventoryViewModel : Screen
     {
-        private Location _selectedLocation;
-        public ObservableCollection<LocationFoods> LocationFoodsCollection { get; set; }
-        public ObservableCollection<Location> Locations { get; set; }
-        public ObservableCollection<Pantry.Core.Models.Item> Items { get; set; }
-        public Pantry.Core.Models.Item SelectedItem { get; set; }
-        private LocationFoods _selectedLocationFood;
-        public DelegateCommand SaveChangesDelegateCommand { get; set; }
-        public DelegateCommand AddLocationFoodDelegateCommand { get; set; }
         private readonly ItemService _itemService;
 
+        public BindableCollection<LocationFoods> LocationFoodsCollection { get; set; }
+        public BindableCollection<Location> Locations { get; set; }
+        public BindableCollection<Pantry.Core.Models.Item> Items { get; set; }
+
+        public DelegateCommand SaveChangesDelegateCommand { get; set; }
+        public DelegateCommand AddLocationFoodDelegateCommand { get; set; }
+
+        private Pantry.Core.Models.Item _selectedItem;
+        public Pantry.Core.Models.Item SelectedItem
+        { 
+            get => _selectedItem;
+            set => SetAndNotify(ref _selectedItem, value, nameof(SelectedItem));
+        }
+
+        private Location _selectedLocation;
         public Location SelectedLocation
         {
             get => _selectedLocation;
             set
             {
-                _selectedLocation = value;
-                if (_selectedLocation is null)
+                if (SetAndNotify(ref _selectedLocation, value, nameof(SelectedLocation)) && _selectedLocation is not null)
                 {
-                    OnPropertyChanged(nameof(SelectedLocation));
-                    return;
+                    LocationFoodsCollection = new(_itemService.GetLocationFoodsAtLocation(SelectedLocation.LocationId));
                 }
-                OnPropertyChanged(nameof(SelectedLocation));
-                LocationFoodsCollection = new(_itemService.GetLocationFoodsAtLocation(SelectedLocation.LocationId));
-                OnPropertyChanged(nameof(LocationFoodsCollection));
             }
         }
 
+        private LocationFoods _selectedLocationFood;
         public LocationFoods SelectedLocationFood
         {
             get => _selectedLocationFood;
-            set
-            {
-                _selectedLocationFood = value;
-                OnPropertyChanged(nameof(SelectedLocationFood));
-            }
+            set => SetAndNotify(ref _selectedLocationFood, value, nameof(SelectedLocationFood));
         }
 
-        public InventoryViewModel()
+        public InventoryViewModel(ItemService itemService)
         {
-            _itemService = new(); //TODO: This should be injected.
+            _itemService = itemService;
             SaveChangesDelegateCommand = new(SaveChanges);
             AddLocationFoodDelegateCommand = new(AddNewLocationFood);
+        }
+
+        protected override void OnActivate()
+        {
+            base.OnActivate();
             LoadData();
         }
 
         public void LoadData()
         {
             Locations = new(_itemService.GetLocations());
-            OnPropertyChanged(nameof(Locations));
             LocationFoodsCollection = new(_itemService.GetLocationFoodsAtLocation(Locations.FirstOrDefault()));
             if (LocationFoodsCollection.Count == 0)
             {
@@ -68,7 +72,6 @@ namespace Pantry.WPF.Inventory
                 SelectedLocation = Locations.First(x => x.LocationId == LocationFoodsCollection.FirstOrDefault()?.LocationId);
             }
             Items = new(_itemService.GetItems());
-            OnPropertyChanged(nameof(LocationFoodsCollection));
         }
 
         public void AddNewLocationFood()
@@ -81,13 +84,8 @@ namespace Pantry.WPF.Inventory
         public void ReLoadData()
         {
             LocationFoodsCollection.Clear();
-            var xs = _itemService.GetLocationFoodsAtLocation(SelectedLocation.LocationId);
-            foreach (var x in xs)
-            {
-                LocationFoodsCollection.Add(x);
-            }
+            LocationFoodsCollection.AddRange(_itemService.GetLocationFoodsAtLocation(SelectedLocation.LocationId));
             SelectedLocationFood = null;
-            OnPropertyChanged(nameof(LocationFoodsCollection));
         }
 
         public void SaveChanges()

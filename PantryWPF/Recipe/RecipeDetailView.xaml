@@ -3,15 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-             xmlns:models="clr-namespace:Pantry.Core.Models;assembly=Pantry.Core"
-             xmlns:recipe1="clr-namespace:Pantry.WPF.Recipe"
-             d:DataContext="{d:DesignInstance Type=recipe1:RecipeDetailViewModel}"
              mc:Ignorable="d">
-    <UserControl.Resources>
-        <DataTemplate DataType="{x:Type models:RecipeStep}">
-            <recipe1:RecipeInstructionView/>
-        </DataTemplate>
-    </UserControl.Resources>
     <StackPanel>
         <Button Content="Delete this recipe." Command="{Binding DeleteThisRecipeCommand}"/>
         <TextBlock Text="{Binding Description}"/>
@@ -33,17 +25,23 @@
         <GroupBox Header="Instructions:">
             <StackPanel>
                 <ListView ItemsSource="{Binding RecipeStepsList}" SelectedItem="{Binding SelectedRecipeStep}">
-                    <!--<ListView.ItemTemplate>
+                    <ListView.ItemTemplate>
                         <DataTemplate>
-                            <StackPanel Orientation="Horizontal">
+                            <StackPanel>
                                 <TextBlock Text="{Binding Instruction}"/>
-                                <TextBox Text="{Binding TimeCost}"/>
-                                -->
-                    <!--<ListBox ItemsSource="{Binding Equipments}"/>-->
-                    <!--
+                                <TextBlock Text="{Binding TimeCost}"/>
+                                <GroupBox Header="Equipment Required:">
+                                    <ListView ItemsSource="{Binding RecipeStepEquipmentType}">
+                                        <ListView.ItemTemplate>
+                                            <DataTemplate>
+                                                <TextBlock Text="{Binding Equipment.EquipmentName}" />
+                                            </DataTemplate>
+                                        </ListView.ItemTemplate>
+                                    </ListView>
+                                </GroupBox>
                             </StackPanel>
                         </DataTemplate>
-                    </ListView.ItemTemplate>-->
+                    </ListView.ItemTemplate>
                 </ListView>
                 <Button Content="Delete Selected Step" Command="{Binding DeleteStepCommand}"/>
             </StackPanel>

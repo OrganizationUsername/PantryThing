@@ -1,40 +1,62 @@
-﻿using System.Collections.ObjectModel;
+﻿using System;
+using System.Collections.ObjectModel;
 using System.Windows;
 using Pantry.ServiceGateways;
 using Pantry.WPF.Shared;
+using Stylet;
 
 namespace Pantry.WPF.Item
 {
-    public class ItemViewModel : VmBase
+    public class ItemViewModel : Screen
     {
         private Pantry.Core.Models.Item _selectedItem;
         private Pantry.Core.Models.Food _selectedFood;
 
-        public ObservableCollection<Pantry.Core.Models.Item> Items { get; set; }
+        public BindableCollection<Pantry.Core.Models.Item> Items { get; set; }
+        public BindableCollection<Pantry.Core.Models.Food> Foods { get; set; }
+
         public DelegateCommand AddItemCommand { get; set; }
         public DelegateCommand AddLocationFoodCommand { get; set; }
-        public ObservableCollection<Pantry.Core.Models.Food> Foods { get; set; }
+
         private readonly ItemService _itemService;
-        public string NewItemUpc { get; set; }
-        public double NewItemWeight { get; set; }
+
+        private string _newItemUpc;
+        public string NewItemUpc
+        {
+            get => _newItemUpc;
+            set => SetAndNotify(ref _newItemUpc, value, nameof(NewItemUpc));
+        }
+
+        private double _newItemWeight;
+        public double NewItemWeight
+        {
+            get => _newItemWeight;
+            set => SetAndNotify(ref _newItemWeight, value, nameof(NewItemWeight));
+        }
+
         public Pantry.Core.Models.Item SelectedItem
         {
             get => _selectedItem;
-            set { _selectedItem = value; OnPropertyChanged(nameof(SelectedItem)); }
+            set => SetAndNotify(ref _selectedItem, value, nameof(SelectedItem));
         }
 
         public Pantry.Core.Models.Food SelectedFood
         {
             get => _selectedFood;
-            set { _selectedFood = value; OnPropertyChanged(nameof(SelectedFood)); }
+            set => SetAndNotify(ref _selectedFood, value, nameof(SelectedFood));
         }
 
 
-        public ItemViewModel()
+        public ItemViewModel(ItemService itemService)
         {
-            _itemService = new(); //This should be injected.
+            _itemService = itemService;
             AddItemCommand = new(AddItem);
             AddLocationFoodCommand = new(AddLocationFood);
+        }
+
+        protected override void OnActivate()
+        {
+            base.OnActivate();
             LoadData();
         }
 
@@ -50,9 +72,6 @@ namespace Pantry.WPF.Item
             bool addItemSuccess = _itemService.AddItem(SelectedFood, NewItemUpc, NewItemWeight);
             if (addItemSuccess)
             {
-                OnPropertyChanged(nameof(SelectedFood));
-                OnPropertyChanged(nameof(NewItemUpc));
-                OnPropertyChanged(nameof(NewItemWeight));
                 LoadData();
             }
             else
@@ -65,11 +84,6 @@ namespace Pantry.WPF.Item
         {
             Items = new(_itemService.GetItems());
             Foods = new(_itemService.GetFoods());
-            OnPropertyChanged(nameof(Items));
-            OnPropertyChanged(nameof(Foods));
         }
-
     }
-
-
 }

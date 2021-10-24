@@ -9,6 +9,12 @@ namespace Pantry.ServiceGateways
 {
     public class Seeder
     {
+        private readonly Func<DataBase> _dbFactory;
+        public Seeder(Func<DataBase> dbFactory)
+        {
+            _dbFactory = dbFactory;
+        }
+
         public void SeedDatabase()
         {
             PopulateFoods();
@@ -22,7 +28,7 @@ namespace Pantry.ServiceGateways
 
         private void PopulateItems()
         {
-            using (var dbContext = new DataBase())
+            using (var dbContext = _dbFactory())
             {
                 _ = dbContext.Database.ExecuteSqlRaw(@$"DELETE FROM {dbContext.Items.EntityType.GetTableName()};");
                 if (dbContext.Database.ProviderName == "Microsoft.EntityFrameworkCore.Sqlite")
@@ -43,7 +49,7 @@ namespace Pantry.ServiceGateways
 
         private void PopulateInventory()
         {
-            using (var dbContext = new DataBase())
+            using (var dbContext = _dbFactory())
             {
                 _ = dbContext.Database.ExecuteSqlRaw(@$"DELETE FROM {dbContext.LocationFoods.EntityType.GetTableName()};");
                 if (dbContext.Database.ProviderName == "Microsoft.EntityFrameworkCore.Sqlite")
@@ -124,7 +130,7 @@ namespace Pantry.ServiceGateways
 
         private void PopulateLocations()
         {
-            using (var dbContext = new DataBase())
+            using (var dbContext = _dbFactory())
             {
                 _ = dbContext.Database.ExecuteSqlRaw(@$"DELETE FROM {dbContext.Locations.EntityType.GetTableName()};");
                 if (dbContext.Database.ProviderName == "Microsoft.EntityFrameworkCore.Sqlite")
@@ -141,7 +147,7 @@ namespace Pantry.ServiceGateways
 
         private void PopulateEquipmentTypes()
         {
-            using (var dbContext = new DataBase())
+            using (var dbContext = _dbFactory())
             {
                 string tableName = dbContext.EquipmentTypes.EntityType.GetTableName();
                 _ = dbContext.Database.ExecuteSqlRaw(@$"DELETE FROM {tableName};");
@@ -160,7 +166,7 @@ namespace Pantry.ServiceGateways
 
         private void PopulateEquipment()
         {
-            using (var dbContext = new DataBase())
+            using (var dbContext = _dbFactory())
             {
                 _ = dbContext.Database.ExecuteSqlRaw(@$"DELETE FROM {dbContext.Equipments.EntityType.GetTableName()};");
                 if (dbContext.Database.ProviderName == "Microsoft.EntityFrameworkCore.Sqlite")
@@ -177,7 +183,7 @@ namespace Pantry.ServiceGateways
 
         private void ClearRecipesTable()
         {
-            using (var dbContext = new DataBase())
+            using (var dbContext = _dbFactory())
             {
                 _ = dbContext.Database.ExecuteSqlRaw(@$"DELETE FROM {dbContext.Recipes.EntityType.GetTableName()};");
                 _ = dbContext.Database.ExecuteSqlRaw(@$"DELETE FROM {dbContext.RecipeSteps.EntityType.GetTableName()};");
@@ -192,7 +198,7 @@ namespace Pantry.ServiceGateways
 
         private void AddRecipeCookedChicken()
         {
-            using (var dbContext = new DataBase())
+            using (var dbContext = _dbFactory())
             {
                 {
                     var recipe = dbContext.Recipes.Add(new()
@@ -278,7 +284,7 @@ namespace Pantry.ServiceGateways
 
         private void AddRecipeRawChicken()
         {
-            using (var dbContext = new DataBase())
+            using (var dbContext = _dbFactory())
             {
                 {
                     var recipe = dbContext.Recipes.Add(new()
@@ -340,7 +346,7 @@ namespace Pantry.ServiceGateways
 
         private void AddRecipeSlicedBread()
         {
-            using (var dbContext = new DataBase())
+            using (var dbContext = _dbFactory())
             {
                 {
                     var recipe = dbContext.Recipes.Add(new()
@@ -384,7 +390,7 @@ namespace Pantry.ServiceGateways
         }
         private void PopulateFoods()
         {
-            using (var dbContext = new DataBase())
+            using (var dbContext = _dbFactory())
             {
                 _ = dbContext.Database.ExecuteSqlRaw(@$"DELETE FROM {dbContext.Foods.EntityType.GetTableName()};");
                 if (dbContext.Database.ProviderName == "Microsoft.EntityFrameworkCore.Sqlite")

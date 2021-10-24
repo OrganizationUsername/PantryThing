@@ -6,20 +6,33 @@ using System.Text;
 using System.Threading.Tasks;
 using Pantry.ServiceGateways;
 using Pantry.WPF.Shared;
+using Stylet;
 
 namespace Pantry.WPF.Equipment
 {
-    public class EquipmentViewModel : VmBase
+    public class EquipmentViewModel : Screen
     {
-        private ItemService _itemService;
+        private readonly ItemService _itemService;
 
-        public ObservableCollection<Core.Models.Equipment> Equipments { get; set; }
-        public DelegateCommand AddEquipmentDelegateCommand { get; set; }
-        public string NewEquipmentName { get; set; }
-        public EquipmentViewModel()
+        public BindableCollection<Core.Models.Equipment> Equipments { get; set; }
+        public DelegateCommand AddEquipmentDelegateCommand { get; }
+
+        private string _newEquipmentName;
+        public string NewEquipmentName
+        { 
+            get => _newEquipmentName;
+            set => SetAndNotify(ref _newEquipmentName, value, nameof(NewEquipmentName));
+        }
+
+        public EquipmentViewModel(ItemService itemService)
         {
-            _itemService = new();
+            _itemService = itemService;
             AddEquipmentDelegateCommand = new(AddEquipment);
+        }
+
+        protected override void OnActivate()
+        {
+            base.OnActivate();
             LoadData();
         }
 
@@ -29,13 +42,11 @@ namespace Pantry.WPF.Equipment
             if (Equipments is null)
             {
                 Equipments = new(equipments);
-                return;
             }
-
-            Equipments.Clear();
-            foreach (var equipment in equipments)
+            else
             {
-                Equipments.Add(equipment);
+                Equipments.Clear();
+                Equipments.AddRange(equipments);
             }
         }
 
@@ -44,10 +55,7 @@ namespace Pantry.WPF.Equipment
             if (string.IsNullOrWhiteSpace(NewEquipmentName)) { return; } //ToDo: Now I know that Equipment needs to be connected to EquipmentInstance or I need to have EquipmentTypes.
             _itemService.AddEquipment(NewEquipmentName);
             NewEquipmentName = "";
-            OnPropertyChanged(nameof(NewEquipmentName));
             LoadData();
         }
-
-
     }
 }
