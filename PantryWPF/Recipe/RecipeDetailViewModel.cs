@@ -39,25 +39,25 @@ namespace Pantry.WPF.Recipe
         }
         private string _newDescription;
         public string NewDescription
-        { 
+        {
             get => _newDescription;
             set => SetAndNotify(ref _newDescription, value, nameof(NewDescription));
         }
         private string _newDuration;
         public string NewDuration
-        { 
+        {
             get => _newDuration;
             set => SetAndNotify(ref _newDuration, value, nameof(NewDuration));
         }
         private Core.Models.Food _newFood;
         public Core.Models.Food NewFood
-        { 
+        {
             get => _newFood;
             set => SetAndNotify(ref _newFood, value, nameof(NewFood));
         }
         private string _newFoodAmount;
         public string NewFoodAmount
-        { 
+        {
             get => _newFoodAmount;
             set => SetAndNotify(ref _newFoodAmount, value, nameof(NewFoodAmount));
         }
@@ -69,7 +69,7 @@ namespace Pantry.WPF.Recipe
         }
         private RecipeFood _selectedRecipeFood;
         public RecipeFood SelectedRecipeFood
-        { 
+        {
             get => _selectedRecipeFood;
             set => SetAndNotify(ref _selectedRecipeFood, value, nameof(SelectedRecipeFood));
         }
@@ -234,25 +234,14 @@ namespace Pantry.WPF.Recipe
 
         private void LoadFoodInstances()
         {
-            var newList = _itemService.GetRecipeFoods(_selectedRecipe);
             RecipeFoodsList.Clear();
-
-            foreach (var x in newList)
-            {
-                RecipeFoodsList.Add(x);
-            }
+            RecipeFoodsList.AddRange(_itemService.GetRecipeFoods(_selectedRecipe));
         }
 
         private void LoadSteps()
         {
-            List<RecipeStep> newList = _itemService.GetRecipeSteps(_selectedRecipe);
-
             RecipeStepsList.Clear();
-
-            foreach (var x in newList)
-            {
-                RecipeStepsList.Add(x);
-            }
+            RecipeStepsList.AddRange(_itemService.GetRecipeSteps(_selectedRecipe));
         }
 
         private void SaveNewStep()

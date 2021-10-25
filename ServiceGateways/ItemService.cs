@@ -93,7 +93,7 @@ namespace Pantry.ServiceGateways
         {
             using var db = _dbFactory();
             if (selectedRecipe is null || db.RecipeFoods is null) return null;
-            var newList = db.RecipeFoods.Where(x => x.RecipeId == selectedRecipe.RecipeId).ToList();
+            var newList = db.RecipeFoods.Include(x => x.Food).Where(x => x.RecipeId == selectedRecipe.RecipeId).ToList();
 
             return newList;
         }

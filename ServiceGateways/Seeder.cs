@@ -168,10 +168,11 @@ namespace Pantry.ServiceGateways
         {
             using (var dbContext = _dbFactory())
             {
-                _ = dbContext.Database.ExecuteSqlRaw(@$"DELETE FROM {dbContext.Equipments.EntityType.GetTableName()};");
+                var tableName = dbContext.Equipments.EntityType.GetTableName();
+                _ = dbContext.Database.ExecuteSqlRaw(@$"DELETE FROM {tableName};");
                 if (dbContext.Database.ProviderName == "Microsoft.EntityFrameworkCore.Sqlite")
                 {
-                    _ = dbContext.Database.ExecuteSqlRaw(@$"UPDATE `sqlite_sequence` SET `seq` = 0 WHERE `name` = '{dbContext.Equipments.EntityType.GetTableName()}';");
+                    _ = dbContext.Database.ExecuteSqlRaw(@$"UPDATE `sqlite_sequence` SET `seq` = 0 WHERE `name` = '{tableName}';");
                 }
                 _ = dbContext.Equipments.Add(new() { EquipmentName = "Bread Machine", Location = dbContext.Locations.First(x => x.LocationName == "Default"), EquipmentTypeId = dbContext.EquipmentTypes.First(x => x.EquipmentTypeName == "Bread Machine").EquipmentTypeId });
                 _ = dbContext.Equipments.Add(new() { EquipmentName = "Human", Location = dbContext.Locations.First(x => x.LocationName == "Default"), EquipmentTypeId = dbContext.EquipmentTypes.First(x => x.EquipmentTypeName == "Human").EquipmentTypeId });
