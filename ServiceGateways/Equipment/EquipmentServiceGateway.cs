@@ -50,18 +50,23 @@ namespace Pantry.ServiceGateways.Equipment
         }
 
 
-        public void AddEquipment(string newEquipmentName, int newEquipmentTypeId)
+        public bool AddEquipment(string newEquipmentName, int newEquipmentTypeId)
         {
             using (var db = _dbFactory())
             {
+                if (!db.Locations.Any())
+                {
+                    return false;
+                }
                 db.Equipments.Add(new()
                 {
                     EquipmentName = newEquipmentName,
-                    LocationId = db.Locations.First().LocationId,
                     EquipmentTypeId = newEquipmentTypeId
                 });
                 db.SaveChanges();
             }
+
+            return true;
         }
 
         public List<Core.Models.Equipment> GetEquipments(int equipmentTypeId)

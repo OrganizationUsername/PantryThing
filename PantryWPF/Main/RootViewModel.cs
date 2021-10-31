@@ -49,7 +49,7 @@ namespace Pantry.WPF.Main
             ItemNavigationCommand = new(this, itemViewModel);
             EquipmentTypeNavigationCommand = new(this, equipmentTypeViewModel);
             SeedDatabaseCommand = new(seed.SeedDatabase);
-
+            seed.PopulateLocationIfNone();
             _logger.Debug("Opened application.");
         }
     }

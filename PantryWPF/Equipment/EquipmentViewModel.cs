@@ -1,4 +1,5 @@
-﻿using Pantry.Core.Models;
+﻿using System.Windows;
+using Pantry.Core.Models;
 using Pantry.ServiceGateways.Equipment;
 using Pantry.WPF.Shared;
 using Serilog.Core;
@@ -81,7 +82,12 @@ namespace Pantry.WPF.Equipment
         private void AddEquipment()
         {
             if (string.IsNullOrWhiteSpace(NewEquipmentName) || SelectedEquipmentType is null) { return; }
-            _equipmentSg.AddEquipment(NewEquipmentName, SelectedEquipmentType.EquipmentTypeId);
+            var addSuccess = _equipmentSg.AddEquipment(NewEquipmentName, SelectedEquipmentType.EquipmentTypeId);
+            if (!addSuccess)
+            {
+                MessageBox.Show("Locations must first be populated");
+                return;
+            }
             NewEquipmentName = "";
             SelectedEquipmentType = null;
             LoadEquipments();

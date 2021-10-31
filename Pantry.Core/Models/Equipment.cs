@@ -6,8 +6,6 @@ namespace Pantry.Core.Models
     {
         public int EquipmentId { get; set; }
         public string EquipmentName { get; set; }
-        public Location Location { get; set; }
-        public int LocationId { get; set; }
         public int EquipmentTypeId { get; set; }
         public EquipmentType EquipmentType { get; set; }
         public ICollection<EquipmentCommitment> EquipmentCommitments { get; set; }

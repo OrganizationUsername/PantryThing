@@ -19,6 +19,19 @@ namespace Pantry.ServiceGateways
             _logger = logger;
         }
 
+        public void PopulateLocationIfNone()
+        {
+            using (var dbContext = _dbFactory())
+            {
+                if (!dbContext.Locations.Any())
+                {
+                    _ = dbContext.Locations.Add(new() { LocationName = "Default" });
+                    _logger.Debug("Added default Location.");
+
+                }
+            }
+        }
+
         public void SeedDatabase()
         {
             _logger.Debug("Beginning seed.");
@@ -180,10 +193,10 @@ namespace Pantry.ServiceGateways
                 {
                     _ = dbContext.Database.ExecuteSqlRaw(@$"UPDATE `sqlite_sequence` SET `seq` = 0 WHERE `name` = '{tableName}';");
                 }
-                _ = dbContext.Equipments.Add(new() { EquipmentName = "Bread Machine", Location = dbContext.Locations.First(x => x.LocationName == "Default"), EquipmentTypeId = dbContext.EquipmentTypes.First(x => x.EquipmentTypeName == "Bread Machine").EquipmentTypeId });
-                _ = dbContext.Equipments.Add(new() { EquipmentName = "Human", Location = dbContext.Locations.First(x => x.LocationName == "Default"), EquipmentTypeId = dbContext.EquipmentTypes.First(x => x.EquipmentTypeName == "Human").EquipmentTypeId });
-                _ = dbContext.Equipments.Add(new() { EquipmentName = "Fridge", Location = dbContext.Locations.First(x => x.LocationName == "Default"), EquipmentTypeId = dbContext.EquipmentTypes.First(x => x.EquipmentTypeName == "Fridge").EquipmentTypeId });
-                _ = dbContext.Equipments.Add(new() { EquipmentName = "Sous Vide", Location = dbContext.Locations.First(x => x.LocationName == "Default"), EquipmentTypeId = dbContext.EquipmentTypes.First(x => x.EquipmentTypeName == "Sous Vide").EquipmentTypeId });
+                _ = dbContext.Equipments.Add(new() { EquipmentName = "Bread Machine",  EquipmentTypeId = dbContext.EquipmentTypes.First(x => x.EquipmentTypeName == "Bread Machine").EquipmentTypeId });
+                _ = dbContext.Equipments.Add(new() { EquipmentName = "Human",  EquipmentTypeId = dbContext.EquipmentTypes.First(x => x.EquipmentTypeName == "Human").EquipmentTypeId });
+                _ = dbContext.Equipments.Add(new() { EquipmentName = "Fridge",  EquipmentTypeId = dbContext.EquipmentTypes.First(x => x.EquipmentTypeName == "Fridge").EquipmentTypeId });
+                _ = dbContext.Equipments.Add(new() { EquipmentName = "Sous Vide", EquipmentTypeId = dbContext.EquipmentTypes.First(x => x.EquipmentTypeName == "Sous Vide").EquipmentTypeId });
                 _ = dbContext.SaveChanges();
             }
         }
