@@ -1,6 +1,7 @@
 ﻿using Pantry.Core.Models;
 using Pantry.ServiceGateways.Equipment;
 using Pantry.WPF.Shared;
+using Serilog.Core;
 using Stylet;
 
 namespace Pantry.WPF.Equipment
@@ -8,6 +9,7 @@ namespace Pantry.WPF.Equipment
     public class EquipmentViewModel : Screen
     {
         private readonly EquipmentServiceGateway _equipmentSg;
+        private readonly Logger _logger;
 
         public BindableCollection<Core.Models.Equipment> Equipments { get; set; }
         public BindableCollection<EquipmentType> EquipmentTypes { get; set; }
@@ -27,9 +29,10 @@ namespace Pantry.WPF.Equipment
             set => SetAndNotify(ref _newEquipmentName, value, nameof(NewEquipmentName));
         }
 
-        public EquipmentViewModel(EquipmentServiceGateway equipmentSg)
+        public EquipmentViewModel(EquipmentServiceGateway equipmentSg, Logger logger)
         {
             _equipmentSg = equipmentSg;
+            _logger = logger;
             AddEquipmentDelegateCommand = new(AddEquipment);
         }
 
@@ -41,8 +44,10 @@ namespace Pantry.WPF.Equipment
 
         private void LoadData()
         {
+            _logger.Debug("Loading EquipmentViewModel.");
             LoadEquipments();
             LoadEquipmentTypes();
+            _logger.Debug("Loaded EquipmentViewModel.");
         }
 
         private void LoadEquipmentTypes()

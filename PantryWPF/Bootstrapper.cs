@@ -29,10 +29,12 @@ namespace Pantry.WPF
         private void ConfigureLogger(IStyletIoCBuilder builder)
         {
             builder
-                .Bind<Logger>().ToFactory(container => new LoggerConfiguration()
+                .Bind<Logger>()
+                .ToInstance(new LoggerConfiguration()
                     .MinimumLevel.Debug()
-                    .WriteTo.File(@"..\..\..\..\PantryLogs.log", rollingInterval: RollingInterval.Day)
-                    .CreateLogger());
+                    .WriteTo.File(@"..\..\..\..\PantryLogs.log")
+                    .CreateLogger()
+                );
         }
 
         private void ConfigureService(IStyletIoCBuilder builder)

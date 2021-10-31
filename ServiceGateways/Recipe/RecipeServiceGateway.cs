@@ -2,8 +2,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using Pantry.Core.Models;
 using Pantry.Data;
+using Serilog.Core;
 
 namespace Pantry.ServiceGateways.Recipe
 {
@@ -17,10 +19,12 @@ namespace Pantry.ServiceGateways.Recipe
     public class FoodServiceGateWay
     {
         private readonly Func<DataBase> _dbFactory;
+        private readonly Logger _logger;
 
-        public FoodServiceGateWay(Func<DataBase> dbFactory)
+        public FoodServiceGateWay(Func<DataBase> dbFactory, Logger logger)
         {
             _dbFactory = dbFactory;
+            _logger = logger;
         }
 
         public void DeleteFood(int foodId)
@@ -47,13 +51,14 @@ namespace Pantry.ServiceGateways.Recipe
         {
             using (var db = _dbFactory())
             {
-                db.Foods.Add(new() { FoodName = newFoodName });
+                var x = db.Foods.Add(new() { FoodName = newFoodName });
                 db.SaveChanges();
+                _logger.Debug($"Added {x.Entity.FoodName} with ID= {x.Entity.FoodId}");
             }
         }
 
         public void KeepOnlyUniqueFoodNames()
-        { 
+        {
             //ToDo: This method should be a part of another Service Gateway that finds issues.
             using (var db = _dbFactory())
             {

@@ -50,7 +50,7 @@ namespace Pantry.WPF.Main
             EquipmentTypeNavigationCommand = new(this, equipmentTypeViewModel);
             SeedDatabaseCommand = new(seed.SeedDatabase);
 
-            _logger.Debug($"Started at {DateTime.Now}");
+            _logger.Debug("Opened application.");
         }
     }
 }

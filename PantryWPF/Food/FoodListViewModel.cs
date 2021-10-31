@@ -1,6 +1,7 @@
 ﻿using System.Linq;
 using Pantry.ServiceGateways.Recipe;
 using Pantry.WPF.Shared;
+using Serilog.Core;
 using Stylet;
 
 namespace Pantry.WPF.Food
@@ -8,6 +9,7 @@ namespace Pantry.WPF.Food
     public class FoodListViewModel : Screen
     {
         private readonly FoodServiceGateWay _foodServiceGateway;
+        private readonly Logger _logger;
 
         public BindableCollection<Pantry.Core.Models.Food> Foods { get; set; } = new();
         public BindableCollection<Pantry.Core.Models.Recipe> Recipes { get; set; } = new();
@@ -33,9 +35,10 @@ namespace Pantry.WPF.Food
         public DelegateCommand AddRecipeCommand { get; set; }
         public DelegateCommand DeleteFoodCommand { get; set; }
 
-        public FoodListViewModel(FoodServiceGateWay foodServiceGateway)
+        public FoodListViewModel(FoodServiceGateWay foodServiceGateway, Logger logger)
         {
             _foodServiceGateway = foodServiceGateway;
+            _logger = logger;
             AddRecipeCommand = new(AddFood);
             DeleteFoodCommand = new(DeleteSelectedFood);
         }
@@ -76,11 +79,13 @@ namespace Pantry.WPF.Food
 
         public void LoadData()
         {
+            _logger.Debug("FoodListViewModel.LoadData() Start");
             Foods.Clear();
             var tempList = _foodServiceGateway.GetAllFoods();
             if (tempList is null) return;
             Foods.AddRange(tempList);
             SelectedFood = Foods.FirstOrDefault();
+            _logger.Debug("FoodListViewModel.LoadData() End");
         }
 
         public void AddFood()
