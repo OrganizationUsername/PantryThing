@@ -10,15 +10,6 @@ namespace Pantry.Core.Test.Recipe_Tests
 
     public class NewRecipeTests
     {
-        private readonly Equipment _breadMachine = new()
-        { EquipmentName = "Bread Machine", EquipmentCommitments = new List<EquipmentCommitment>() };
-        private readonly Equipment _humanMachine = new()
-        { EquipmentName = "Human", EquipmentCommitments = new List<EquipmentCommitment>() };
-        private readonly Equipment _fridge = new()
-        { EquipmentName = "Fridge", EquipmentCommitments = new List<EquipmentCommitment>() };
-        private readonly Equipment _sousVide = new()
-        { EquipmentName = "Sous Vide", EquipmentCommitments = new List<EquipmentCommitment>() };
-
         private readonly List<Recipe> _recipes = new();
         private readonly BetterFoodProcessor _foodProcessor = new();
         private readonly Food _frozenChicken = new() { FoodId = 0, FoodName = "Frozen Chicken" };
@@ -196,7 +187,7 @@ namespace Pantry.Core.Test.Recipe_Tests
                 new RecipeFood() { Food = _bread, Amount = 10 },
                 new RecipeFood() { Food = _cookedChicken, Amount = 120 },
             };
-            var recipe = _recipes.First(x => x.RecipeFoods.Any(y => y.Food == _chickenSandwich && y.Amount < 0)); ;
+            var recipe = _recipes.First(x => x.RecipeFoods.Any(y => y.Food == _chickenSandwich && y.Amount < 0));
             //recipe = _recipes.First(x => x.MainOutput == _chickenSandwich);
             var canCook = _foodProcessor.GetCookPlan(pantry, recipe, _recipes);
             canCook.ConsoleResult();

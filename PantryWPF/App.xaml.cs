@@ -1,11 +1,9 @@
-﻿using System.Windows;
-
-namespace Pantry.WPF
+﻿namespace Pantry.WPF
 {
     /// <summary>
     /// Interaction logic for App.xaml
     /// </summary>
-    public partial class App : Application
+    public partial class App
     {
     }
 }

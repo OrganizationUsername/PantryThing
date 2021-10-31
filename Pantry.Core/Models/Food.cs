@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+// ReSharper disable UnusedMember.Global
 
 namespace Pantry.Core.Models
 {
@@ -15,6 +16,6 @@ namespace Pantry.Core.Models
         public ICollection<Item> Items { get; set; }
         public bool IsEdible { get; set; }
         public static bool operator ==(Food lhs, Food rhs) => rhs is not null && lhs is not null && lhs.FoodId == rhs.FoodId;
-        public static bool operator !=(Food lhs, Food rhs) => !(lhs.FoodId == rhs.FoodId);
+        public static bool operator !=(Food lhs, Food rhs) => rhs is not null && lhs is not null && lhs.FoodId != rhs.FoodId;
     }
 }

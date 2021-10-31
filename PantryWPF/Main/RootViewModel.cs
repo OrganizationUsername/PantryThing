@@ -1,5 +1,4 @@
-﻿using System;
-using Pantry.ServiceGateways;
+﻿using Pantry.ServiceGateways;
 using Pantry.WPF.Equipment;
 using Pantry.WPF.Food;
 using Pantry.WPF.Inventory;
@@ -13,7 +12,6 @@ namespace Pantry.WPF.Main
 {
     public class RootViewModel : Conductor<IScreen>.StackNavigation
     {
-        private readonly Logger _logger;
         private string _vmName;
         public string VmName
         {
@@ -41,7 +39,6 @@ namespace Pantry.WPF.Main
             Seeder seed,
             Logger logger)
         {
-            _logger = logger;
             RecipeNavigationCommand = new(this, recipesListViewModel);
             InventoryNavigationCommand = new(this, inventoryViewModel);
             EquipmentNavigationCommand = new(this, equipmentViewModel);
@@ -50,7 +47,7 @@ namespace Pantry.WPF.Main
             EquipmentTypeNavigationCommand = new(this, equipmentTypeViewModel);
             SeedDatabaseCommand = new(seed.SeedDatabase);
             seed.PopulateLocationIfNone();
-            _logger.Debug("Opened application.");
+            logger.Debug("Opened application.");
         }
     }
 }

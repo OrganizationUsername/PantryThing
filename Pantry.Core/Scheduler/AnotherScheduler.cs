@@ -46,7 +46,6 @@ namespace Pantry.Core.Scheduler
 
         public void TrySchedule()
         {
-            var scheduledTasks = _manyDags.SelectMany(DecomposeDags).OrderBy(GetDagTime);
             foreach (var scheduledTask in _manyDags)
             {
                 Schedule(scheduledTask);
@@ -57,6 +56,8 @@ namespace Pantry.Core.Scheduler
             {
                 if (equipment.EquipmentCommitments is null || !equipment.EquipmentCommitments.Any()) { Console.WriteLine(equipment.EquipmentName + "- Nothing."); }
                 else { Console.WriteLine($"{equipment.EquipmentName}"); }
+
+                if (equipment.EquipmentCommitments == null) continue;
                 foreach (var x in equipment.EquipmentCommitments.OrderBy(z => z.StartTime))
                 {
                     Console.WriteLine($"{x.StartTime.ToShortTimeString()}:{x.EndTime.ToShortTimeString()}: {x.Description} {x.RecipeStep.Instruction}");

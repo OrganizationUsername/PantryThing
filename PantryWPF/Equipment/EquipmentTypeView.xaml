@@ -10,7 +10,6 @@
              d:DesignHeight="450" d:DesignWidth="800">
     <DockPanel>
         <StackPanel DockPanel.Dock="Left">
-            <TextBox Text="{Binding Test}"/>
             <ListView ItemsSource="{Binding EquipmentTypes}" DisplayMemberPath="EquipmentTypeName" SelectedItem="{Binding SelectedEquipmentType}"/>
             <GroupBox Header="Add New Equipment Type">
                 <StackPanel>

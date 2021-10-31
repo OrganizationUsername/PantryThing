@@ -1,5 +1,7 @@
-﻿using System;
+﻿// ReSharper disable UnusedMember.Global
+using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using Microsoft.EntityFrameworkCore;
 using Pantry.Core.Models;
 
@@ -9,6 +11,7 @@ namespace Pantry.Data
     //dotnet ef migrations add foodConstraint
     //dotnet ef database update foodConstraint
 
+    [SuppressMessage("ReSharper", "UnusedMember.Global")]
     public enum TemperatureState
     {
         Unopened = 1,
@@ -33,8 +36,8 @@ namespace Pantry.Data
 
     public class FoodInfo
     {
-        private IEnumerable<string> asdf;
         public int FoodInfoId { get; set; }
+        // ReSharper disable once IdentifierTypo
         public ICollection<ExpiryInformation> ExpiryInformations { get; set; }
         public string UnitName { get; set; }
         public double UnitConversion { get; set; }
@@ -57,6 +60,7 @@ namespace Pantry.Data
         public DbSet<RecipeRecipeTag> RecipeRecipeTags { get; set; }
         public DbSet<Item> Items { get; set; }
         public DbSet<Unit> Units { get; set; }
+        // ReSharper disable once IdentifierTypo
         public DbSet<Inventory> Inventorys { get; set; }
         public DbSet<EquipmentType> EquipmentTypes { get; set; }
 
@@ -75,11 +79,6 @@ namespace Pantry.Data
             Spoiled, Lost, Found, Purchased
         `Products`
          */
-
-        public DataBase()
-        {
-            //this.Database.EnsureCreated();
-        }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {

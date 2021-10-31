@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿// ReSharper disable UnusedMember.Global
+using System.Collections.Generic;
 
 namespace Pantry.Core.Models
 {

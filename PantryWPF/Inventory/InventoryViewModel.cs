@@ -64,14 +64,7 @@ namespace Pantry.WPF.Inventory
         {
             Locations = new(_itemService.GetLocations());
             LocationFoodsCollection = new(_itemService.GetLocationFoodsAtLocation(Locations.FirstOrDefault()));
-            if (LocationFoodsCollection.Count == 0)
-            {
-                SelectedLocation = null;
-            }
-            else
-            {
-                SelectedLocation = Locations.First(x => x.LocationId == LocationFoodsCollection.FirstOrDefault()?.LocationId);
-            }
+            SelectedLocation = LocationFoodsCollection.Count == 0 ? null : Locations.First(x => x.LocationId == LocationFoodsCollection.FirstOrDefault()?.LocationId);
             Items = new(_itemService.GetItems());
         }
 

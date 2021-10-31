@@ -69,21 +69,21 @@ namespace Pantry.Core.FoodProcessing
             };
         }
 
-        public static Recipe RecipeFinder(int FoodId, IList<Recipe> recipes)
+        public static Recipe RecipeFinder(int foodId, IList<Recipe> recipes)
         {
             foreach (var r in recipes)
             {
                 bool any = false;
                 foreach (var fi in r.RecipeFoods)
                 {
-                    if (fi.Food.FoodId == FoodId && fi.Amount < 0)
+                    if (fi.Food.FoodId == foodId && fi.Amount < 0)
                     {
                         any = true;
                         break;
                     }
                 }
 
-                if (r.RecipeFoods is not null && any) return r;
+                if (any) return r;
             }
 
             return null;

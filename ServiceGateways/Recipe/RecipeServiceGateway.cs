@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
 using Pantry.Core.Models;
 using Pantry.Data;
 using Serilog.Core;
@@ -264,20 +263,5 @@ namespace Pantry.ServiceGateways.Recipe
                         }).ToList();
             }
         }
-
-
-        public List<LocationFoods> GetLocationFoods()
-        {
-            using (var db = _dbFactory())
-            {
-                return db.LocationFoods
-                    .Where(x => x.Quantity > 0)
-                    .Include(x => x.Item)
-                    .ThenInclude(x => x.Food)
-                    .Include(x => x.Location)
-                    .ToList();
-            }
-        }
-
     }
 }

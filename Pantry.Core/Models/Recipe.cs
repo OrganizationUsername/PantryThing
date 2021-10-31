@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-
+// ReSharper disable UnusedMember.Global
 namespace Pantry.Core.Models
 {
     public class Recipe

@@ -7,6 +7,7 @@ using Serilog;
 using Serilog.Core;
 using Stylet;
 using StyletIoC;
+// ReSharper disable MemberCanBeMadeStatic.Local
 
 namespace Pantry.WPF
 {
@@ -23,7 +24,7 @@ namespace Pantry.WPF
         {
             builder
                 .Bind<DataBase>()
-                .ToFactory(container => new DataBase());
+                .ToFactory(_ => new DataBase());
         }
 
         private void ConfigureLogger(IStyletIoCBuilder builder)

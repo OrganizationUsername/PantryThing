@@ -19,7 +19,7 @@ namespace Pantry.Core.Test.Inventory_Tests
             var x = new LocationFoods()
             {
                 Location = fridge,
-                Item = new Item()
+                Item = new()
                 {
                     Food = _slicedBread,
                 },
@@ -29,7 +29,7 @@ namespace Pantry.Core.Test.Inventory_Tests
             var y = new LocationFoods()
             {
                 Location = fridge,
-                Item = new Item()
+                Item = new()
                 {
                     Food = _slicedBread,
                 },
@@ -50,7 +50,7 @@ namespace Pantry.Core.Test.Inventory_Tests
                 new ()
                 {
                     Location = fridge,
-                    Item = new Item()
+                    Item = new()
                     {
                         Food = _slicedBread,
                     },
@@ -60,7 +60,7 @@ namespace Pantry.Core.Test.Inventory_Tests
                 new()
                 {
                     Location = fridge,
-                    Item = new Item()
+                    Item = new()
                     {
                         Food = _slicedBread,
                     },
@@ -77,16 +77,6 @@ namespace Pantry.Core.Test.Inventory_Tests
                 _now + TimeSpan.FromDays(-2))).ToList().Count);
             Assert.AreEqual(0, locationFoods.Where(x => x.IsOkayAtTime(
                 _now + TimeSpan.FromDays(9))).ToList().Count);
-        }
-
-        [Test]
-        public void doSomething()
-        {
-            var x = new Inventory();
-            x.Items = new List<Item>();
-
-
-
         }
     }
 }

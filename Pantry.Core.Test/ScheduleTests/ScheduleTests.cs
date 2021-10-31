@@ -23,7 +23,7 @@ namespace Pantry.Core.Test.ScheduleTests
         private readonly Equipment _sousVide = new()
         { EquipmentName = "Sous Vide", EquipmentCommitments = new List<EquipmentCommitment>() };
         private List<Equipment> _equipments;
-        private List<EquipmentType> equipmentTypes = new();
+        private readonly List<EquipmentType> _equipmentTypes = new();
 
         private readonly List<Recipe> _recipes = new();
         private readonly BetterFoodProcessor _foodProcessor = new();
@@ -42,10 +42,10 @@ namespace Pantry.Core.Test.ScheduleTests
         [SetUp]
         public void Setup()
         {
-            equipmentTypes.Add(new EquipmentType() { EquipmentTypeId = 0, EquipmentTypeName = "Sous Vide", Equipments = new List<Equipment>() { _sousVide } });
-            equipmentTypes.Add(new EquipmentType() { EquipmentTypeId = 1, EquipmentTypeName = "Bread Machine", Equipments = new List<Equipment>() { _breadMachine } });
-            equipmentTypes.Add(new EquipmentType() { EquipmentTypeId = 2, EquipmentTypeName = "Human", Equipments = new List<Equipment>() { _humanMachine } });
-            equipmentTypes.Add(new EquipmentType() { EquipmentTypeId = 3, EquipmentTypeName = "Fridge", Equipments = new List<Equipment>() { _fridge } });
+            _equipmentTypes.Add(new EquipmentType() { EquipmentTypeId = 0, EquipmentTypeName = "Sous Vide", Equipments = new List<Equipment>() { _sousVide } });
+            _equipmentTypes.Add(new EquipmentType() { EquipmentTypeId = 1, EquipmentTypeName = "Bread Machine", Equipments = new List<Equipment>() { _breadMachine } });
+            _equipmentTypes.Add(new EquipmentType() { EquipmentTypeId = 2, EquipmentTypeName = "Human", Equipments = new List<Equipment>() { _humanMachine } });
+            _equipmentTypes.Add(new EquipmentType() { EquipmentTypeId = 3, EquipmentTypeName = "Fridge", Equipments = new List<Equipment>() { _fridge } });
 
             _recipes.Add(
                 new()
@@ -66,8 +66,8 @@ namespace Pantry.Core.Test.ScheduleTests
                             TimeCost = 1,
                             RecipeStepEquipmentType = new List<RecipeStepEquipmentType>()
                             {
-                                new(){Equipment =_sousVide, RecipeStepId=0, EquipmentType = equipmentTypes.First(x=>x.EquipmentTypeName=="Sous Vide")},
-                                new(){Equipment = _humanMachine, RecipeStepId=0, EquipmentType = equipmentTypes.First(x=>x.EquipmentTypeName=="Human")},
+                                new(){Equipment =_sousVide, RecipeStepId=0, EquipmentType = _equipmentTypes.First(x=>x.EquipmentTypeName=="Sous Vide")},
+                                new(){Equipment = _humanMachine, RecipeStepId=0, EquipmentType = _equipmentTypes.First(x=>x.EquipmentTypeName=="Human")},
                             }
                         },
                         new()
@@ -77,7 +77,7 @@ namespace Pantry.Core.Test.ScheduleTests
                             TimeCost = 120,
                             RecipeStepEquipmentType = new List<RecipeStepEquipmentType>()
                             {
-                                new(){Equipment =_sousVide, RecipeStepId=1, EquipmentType = equipmentTypes.First(x=>x.EquipmentTypeName=="Sous Vide")},
+                                new(){Equipment =_sousVide, RecipeStepId=1, EquipmentType = _equipmentTypes.First(x=>x.EquipmentTypeName=="Sous Vide")},
                             }
                         },
                         new()
@@ -87,8 +87,8 @@ namespace Pantry.Core.Test.ScheduleTests
                             TimeCost = 1,
                             RecipeStepEquipmentType = new List<RecipeStepEquipmentType>()
                             {
-                                new(){Equipment =_sousVide, RecipeStepId=2, EquipmentType = equipmentTypes.First(x=>x.EquipmentTypeName=="Sous Vide")},
-                                new(){Equipment = _humanMachine, RecipeStepId=2, EquipmentType = equipmentTypes.First(x=>x.EquipmentTypeName=="Human")},
+                                new(){Equipment =_sousVide, RecipeStepId=2, EquipmentType = _equipmentTypes.First(x=>x.EquipmentTypeName=="Sous Vide")},
+                                new(){Equipment = _humanMachine, RecipeStepId=2, EquipmentType = _equipmentTypes.First(x=>x.EquipmentTypeName=="Human")},
                             }
                         },
                     }
@@ -111,8 +111,8 @@ namespace Pantry.Core.Test.ScheduleTests
                             TimeCost = 1,
                             RecipeStepEquipmentType = new List<RecipeStepEquipmentType>()
                             {
-                                new(){Equipment =_fridge, RecipeStepId=3, EquipmentType = equipmentTypes.First(x=>x.EquipmentTypeName=="Fridge")},
-                                new(){Equipment = _humanMachine, RecipeStepId=3, EquipmentType = equipmentTypes.First(x=>x.EquipmentTypeName=="Human")},
+                                new(){Equipment =_fridge, RecipeStepId=3, EquipmentType = _equipmentTypes.First(x=>x.EquipmentTypeName=="Fridge")},
+                                new(){Equipment = _humanMachine, RecipeStepId=3, EquipmentType = _equipmentTypes.First(x=>x.EquipmentTypeName=="Human")},
                             }
                         },
                         new()
@@ -122,7 +122,7 @@ namespace Pantry.Core.Test.ScheduleTests
                             TimeCost = 1440,
                             RecipeStepEquipmentType = new List<RecipeStepEquipmentType>()
                             {
-                                new(){Equipment =_fridge, RecipeStepId=4 , EquipmentType = equipmentTypes.First(x=>x.EquipmentTypeName=="Fridge")},
+                                new(){Equipment =_fridge, RecipeStepId=4 , EquipmentType = _equipmentTypes.First(x=>x.EquipmentTypeName=="Fridge")},
                             }
                         }
                     }
@@ -145,7 +145,7 @@ namespace Pantry.Core.Test.ScheduleTests
                             TimeCost = 3,
                             RecipeStepEquipmentType = new List<RecipeStepEquipmentType>()
                             {
-                                new(){Equipment = _humanMachine, RecipeStepId=5, EquipmentType = equipmentTypes.First(x=>x.EquipmentTypeName=="Human")},
+                                new(){Equipment = _humanMachine, RecipeStepId=5, EquipmentType = _equipmentTypes.First(x=>x.EquipmentTypeName=="Human")},
                             }
                         },
                     }
@@ -168,7 +168,7 @@ namespace Pantry.Core.Test.ScheduleTests
                             TimeCost = 2,
                             RecipeStepEquipmentType = new List<RecipeStepEquipmentType>()
                             {
-                                new(){Equipment = _humanMachine, RecipeStepId=6, EquipmentType = equipmentTypes.First(x=>x.EquipmentTypeName=="Human")},
+                                new(){Equipment = _humanMachine, RecipeStepId=6, EquipmentType = _equipmentTypes.First(x=>x.EquipmentTypeName=="Human")},
                             }
                         },
                     }
@@ -192,7 +192,7 @@ namespace Pantry.Core.Test.ScheduleTests
                             TimeCost = 1,
                             RecipeStepEquipmentType = new List<RecipeStepEquipmentType>()
                             {
-                                new(){Equipment = _humanMachine, RecipeStepId=7, EquipmentType = equipmentTypes.First(x=>x.EquipmentTypeName=="Human")},
+                                new(){Equipment = _humanMachine, RecipeStepId=7, EquipmentType = _equipmentTypes.First(x=>x.EquipmentTypeName=="Human")},
                             }
                         },
                     }
@@ -217,8 +217,8 @@ namespace Pantry.Core.Test.ScheduleTests
                             TimeCost = 1,
                             RecipeStepEquipmentType = new List<RecipeStepEquipmentType>()
                             {
-                                new(){Equipment =_breadMachine, RecipeStepId=8, EquipmentType = equipmentTypes.First(x=>x.EquipmentTypeName=="Bread Machine")},
-                                new(){Equipment = _humanMachine, RecipeStepId=8, EquipmentType = equipmentTypes.First(x=>x.EquipmentTypeName=="Human")},
+                                new(){Equipment =_breadMachine, RecipeStepId=8, EquipmentType = _equipmentTypes.First(x=>x.EquipmentTypeName=="Bread Machine")},
+                                new(){Equipment = _humanMachine, RecipeStepId=8, EquipmentType = _equipmentTypes.First(x=>x.EquipmentTypeName=="Human")},
                             }
                         },
                         new()
@@ -228,7 +228,7 @@ namespace Pantry.Core.Test.ScheduleTests
                             TimeCost = 180,
                             RecipeStepEquipmentType = new List<RecipeStepEquipmentType>()
                             {
-                                new(){Equipment =_breadMachine, RecipeStepId=9, EquipmentType = equipmentTypes.First(x=>x.EquipmentTypeName=="Bread Machine")},
+                                new(){Equipment =_breadMachine, RecipeStepId=9, EquipmentType = _equipmentTypes.First(x=>x.EquipmentTypeName=="Bread Machine")},
                             }
                         },
                         new()
@@ -238,8 +238,8 @@ namespace Pantry.Core.Test.ScheduleTests
                             TimeCost = 1,
                             RecipeStepEquipmentType = new List<RecipeStepEquipmentType>()
                             {
-                                new(){Equipment =_breadMachine, RecipeStepId=10, EquipmentType = equipmentTypes.First(x=>x.EquipmentTypeName=="Bread Machine")},
-                                new(){ RecipeStepId=10, EquipmentType = equipmentTypes.First(x=>x.EquipmentTypeName=="Human")},
+                                new(){Equipment =_breadMachine, RecipeStepId=10, EquipmentType = _equipmentTypes.First(x=>x.EquipmentTypeName=="Bread Machine")},
+                                new(){ RecipeStepId=10, EquipmentType = _equipmentTypes.First(x=>x.EquipmentTypeName=="Human")},
                             }
                         },
                     }
@@ -265,20 +265,20 @@ namespace Pantry.Core.Test.ScheduleTests
                 new() { Food = _cookedChicken, Amount = 500 },
             };
             PantryProvider pp = new(pantry);
-            var recipe = _recipes.First(x => x.RecipeFoods.First(x => x.Amount < 0).Food == _chickenSandwich);
+            var recipe = _recipes.First(x => x.RecipeFoods.First(y => y.Amount < 0).Food == _chickenSandwich);
             CookPlan canCook = null;
-            RecipeDag daggy = null;
+            RecipeDag dag = null;
             for (var i = 0; i < 4; i++)
             {
                 canCook = _foodProcessor.GetCookPlan(pp.GetFoodInstances(), recipe, _recipes);
                 canCook.ConsoleResult();
-                daggy ??= canCook.RecipeDag;
+                dag ??= canCook.RecipeDag;
                 pp.AdjustOnHandQuantity(canCook);
             }
             pp.GetFoodInstances().OutputRemaining();
             Assert.IsNotNull(canCook); Assert.IsTrue(canCook.CanMake);
             //182 + 1 + 2
-            var result = AnotherScheduler.GetDagTime(daggy);
+            var result = AnotherScheduler.GetDagTime(dag);
             Assert.IsTrue(result.HasValue);
             Assert.AreEqual(result.Value, 185, 0.1);
         }
@@ -294,7 +294,7 @@ namespace Pantry.Core.Test.ScheduleTests
                 new() { Food = _cookedChicken, Amount = 500 },
             };
             PantryProvider pp = new(pantry);
-            var recipe = _recipes.First(x => x.RecipeFoods.First(x => x.Amount < 0).Food == _chickenSandwich);
+            var recipe = _recipes.First(x => x.RecipeFoods.First(y => y.Amount < 0).Food == _chickenSandwich);
             CookPlan canCook = null;
             List<RecipeDag> dags = new();
             for (var i = 0; i < 4; i++)
@@ -326,7 +326,7 @@ namespace Pantry.Core.Test.ScheduleTests
                 new() { Food = _cookedChicken, Amount = 500 },
             };
             PantryProvider pp = new(pantry);
-            var recipe = _recipes.First(x => x.RecipeFoods.First(x => x.Amount < 0).Food == _chickenSandwich);
+            var recipe = _recipes.First(x => x.RecipeFoods.First(y => y.Amount < 0).Food == _chickenSandwich);
             CookPlan canCook = null;
             List<RecipeDag> dags = new();
             for (var i = 0; i < 4; i++)
@@ -361,7 +361,7 @@ namespace Pantry.Core.Test.ScheduleTests
                 new() { Food = _cookedChicken, Amount = 500 },
             };
             PantryProvider pp = new(pantry);
-            var recipe = _recipes.First(x => x.RecipeFoods.First(x => x.Amount < 0).Food == _chickenSandwich);
+            var recipe = _recipes.First(x => x.RecipeFoods.First(y => y.Amount < 0).Food == _chickenSandwich);
             CookPlan canCook = default;
             var dags = new List<RecipeDag>();
             for (var i = 0; i < 4; i++)
@@ -398,7 +398,7 @@ namespace Pantry.Core.Test.ScheduleTests
                 new() { Food = _bbqSauce, Amount = 500 },
             };
             PantryProvider pp = new(pantry);
-            var recipe = _recipes.First(x => x.RecipeFoods.First(x => x.Amount < 0).Food == _chickenSandwich);
+            var recipe = _recipes.First(x => x.RecipeFoods.First(y => y.Amount < 0).Food == _chickenSandwich);
             CookPlan canCook = default;
             var dags = new List<RecipeDag>();
             for (var i = 0; i < 5; i++)
@@ -440,7 +440,7 @@ namespace Pantry.Core.Test.ScheduleTests
                 new() { Food = _bbqSauce, Amount = 500 },
             };
             PantryProvider pp = new(pantry);
-            var recipe = _recipes.First(x => x.RecipeFoods.First(x => x.Amount < 0).Food == _chickenSandwich);
+            var recipe = _recipes.First(x => x.RecipeFoods.First(y => y.Amount < 0).Food == _chickenSandwich);
             CookPlan canCook = default;
             var dags = new List<RecipeDag>();
             for (var i = 0; i < 5; i++)
@@ -481,7 +481,7 @@ namespace Pantry.Core.Test.ScheduleTests
                 new() { Food = _cookedChicken, Amount = 500 },
             };
             PantryProvider pp = new(pantry);
-            var recipe = _recipes.First(x => x.RecipeFoods.First(x => x.Amount < 0).Food == _chickenSandwich);
+            var recipe = _recipes.First(x => x.RecipeFoods.First(y => y.Amount < 0).Food == _chickenSandwich);
             CookPlan canCook = null;
             List<RecipeDag> dags = new();
             for (var i = 0; i < 4; i++)
@@ -493,7 +493,6 @@ namespace Pantry.Core.Test.ScheduleTests
             }
             pp.GetFoodInstances().OutputRemaining();
             Assert.IsNotNull(canCook); Assert.IsTrue(canCook.CanMake);
-            var result = AnotherScheduler.GetLongestUnresolvedDag(dags);
             Console.WriteLine("-----");
             Console.WriteLine("Last");
             Console.WriteLine(ExtensionMethods.GetDagString(dags.Last()));
@@ -514,7 +513,7 @@ namespace Pantry.Core.Test.ScheduleTests
                 new() { Food = _bbqSauce, Amount = 500 },
             };
             PantryProvider pp = new(pantry);
-            var recipe = _recipes.First(x => x.RecipeFoods.First(x => x.Amount < 0).Food == _chickenSandwich);
+            var recipe = _recipes.First(x => x.RecipeFoods.First(y => y.Amount < 0).Food == _chickenSandwich);
             CookPlan canCook = default;
             var dags = new List<RecipeDag>();
             for (var i = 0; i < 5; i++)

@@ -1,12 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using Pantry.Core.Extensions;
-using Pantry.Core.Models;
-
+﻿// ReSharper disable once EmptyNamespace
 namespace Pantry.Core.Scheduler
 {
 
+/*
     public class NaiveScheduler : IScheduler
     {
         public List<CookPlan> ScheduledTasks { get; set; }
@@ -74,8 +70,10 @@ namespace Pantry.Core.Scheduler
             }
         }
     }
+*/
 
 
+/*
     public class SimpleScheduler : IScheduler
     {
         public SimpleScheduler(List<CookPlan> scheduledTasks, List<Equipment> equipments)
@@ -138,4 +136,5 @@ namespace Pantry.Core.Scheduler
             }
         }
     }
+*/
 }

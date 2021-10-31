@@ -1,4 +1,5 @@
-﻿namespace Pantry.Core.Models
+﻿// ReSharper disable UnusedMember.Global
+namespace Pantry.Core.Models
 {
     public class FoodFoodTag
     {

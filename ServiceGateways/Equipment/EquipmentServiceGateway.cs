@@ -40,7 +40,7 @@ namespace Pantry.ServiceGateways.Equipment
                 var existingIdentical = db.EquipmentTypes.FirstOrDefault(x => x.EquipmentTypeName == equipmentTypeName.Trim());
                 if (existingIdentical is null)
                 {
-                    db.EquipmentTypes.Add(new EquipmentType() { EquipmentTypeName = equipmentTypeName.Trim() });
+                    db.EquipmentTypes.Add(new() { EquipmentTypeName = equipmentTypeName.Trim() });
                     db.SaveChanges();
                     return true;
                 }

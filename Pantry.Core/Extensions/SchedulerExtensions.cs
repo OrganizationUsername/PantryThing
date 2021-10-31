@@ -19,8 +19,7 @@ namespace Pantry.Core.Extensions
 
             foreach (var x in e.EquipmentCommitments)
             {
-                if (false
-                    || (x.StartTime < end && x.EndTime >= start))
+                if (x.StartTime < end && x.EndTime >= start)
                 {
                     return false;
                 }

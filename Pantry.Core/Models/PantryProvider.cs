@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace Pantry.Core.Models
 {
-    public class PantryProvider : IPantryProvider
+    public class PantryProvider 
     {
         private List<RecipeFood> _foodInstances;
         public PantryProvider(List<RecipeFood> foodInstances)
