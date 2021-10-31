@@ -5,7 +5,8 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:main="clr-namespace:Pantry.WPF.Main"
         xmlns:s="https://github.com/canton7/Stylet"
-        mc:Ignorable="d"
+        mc:Ignorable="d"  
+        d:DataContext="{d:DesignInstance Type=main:RootViewModel}"
         Title="MainWindow" Height="500" Width="800">
     <DockPanel LastChildFill="True">
         <GroupBox Header="MainWindow Nav">
@@ -13,6 +14,7 @@
                 <Button Content="Recipe Management" Command="{Binding RecipeNavigationCommand}" />
                 <Button Content="Inventory" Command="{Binding InventoryNavigationCommand}" />
                 <Button Content="Equipment Management" Command="{Binding EquipmentNavigationCommand}" />
+                <Button Content="Equipment Type Management" Command="{Binding EquipmentTypeNavigationCommand}" />
                 <Button Content="Food Management" Command="{Binding FoodNavigationCommand}" />
                 <Button Content="Item Management" Command="{Binding ItemNavigationCommand}" />
                 <Label Content=""/>

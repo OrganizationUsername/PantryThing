@@ -1,5 +1,4 @@
-﻿using System.Collections.ObjectModel;
-using System.Linq;
+﻿using System.Linq;
 using System.Windows;
 using Pantry.Core.Models;
 using Pantry.ServiceGateways;

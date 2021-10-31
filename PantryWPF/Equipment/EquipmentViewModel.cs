@@ -1,10 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Pantry.ServiceGateways;
+﻿using Pantry.Core.Models;
+using Pantry.ServiceGateways.Equipment;
 using Pantry.WPF.Shared;
 using Stylet;
 
@@ -12,21 +7,29 @@ namespace Pantry.WPF.Equipment
 {
     public class EquipmentViewModel : Screen
     {
-        private readonly ItemService _itemService;
+        private readonly EquipmentServiceGateway _equipmentSg;
 
         public BindableCollection<Core.Models.Equipment> Equipments { get; set; }
+        public BindableCollection<EquipmentType> EquipmentTypes { get; set; }
         public DelegateCommand AddEquipmentDelegateCommand { get; }
+
+        private EquipmentType _selectedEquipmentType;
+        public EquipmentType SelectedEquipmentType
+        {
+            get => _selectedEquipmentType;
+            set => SetAndNotify(ref _selectedEquipmentType, value, nameof(SelectedEquipmentType));
+        }
 
         private string _newEquipmentName;
         public string NewEquipmentName
-        { 
+        {
             get => _newEquipmentName;
             set => SetAndNotify(ref _newEquipmentName, value, nameof(NewEquipmentName));
         }
 
-        public EquipmentViewModel(ItemService itemService)
+        public EquipmentViewModel(EquipmentServiceGateway equipmentSg)
         {
-            _itemService = itemService;
+            _equipmentSg = equipmentSg;
             AddEquipmentDelegateCommand = new(AddEquipment);
         }
 
@@ -38,7 +41,27 @@ namespace Pantry.WPF.Equipment
 
         private void LoadData()
         {
-            var equipments = _itemService.GetEquipments();
+            LoadEquipments();
+            LoadEquipmentTypes();
+        }
+
+        private void LoadEquipmentTypes()
+        {
+            var equipmentTypes = _equipmentSg.GetEquipmentTypes();
+            if (EquipmentTypes is null)
+            {
+                EquipmentTypes = new(equipmentTypes);
+            }
+            else
+            {
+                EquipmentTypes.Clear();
+                EquipmentTypes.AddRange(equipmentTypes);
+            }
+        }
+
+        private void LoadEquipments()
+        {
+            var equipments = _equipmentSg.GetEquipments();
             if (Equipments is null)
             {
                 Equipments = new(equipments);
@@ -52,10 +75,12 @@ namespace Pantry.WPF.Equipment
 
         private void AddEquipment()
         {
-            if (string.IsNullOrWhiteSpace(NewEquipmentName)) { return; } //ToDo: Now I know that Equipment needs to be connected to EquipmentInstance or I need to have EquipmentTypes.
-            _itemService.AddEquipment(NewEquipmentName);
+            if (string.IsNullOrWhiteSpace(NewEquipmentName) || SelectedEquipmentType is null) { return; }
+            _equipmentSg.AddEquipment(NewEquipmentName, SelectedEquipmentType.EquipmentTypeId);
             NewEquipmentName = "";
-            LoadData();
+            SelectedEquipmentType = null;
+            LoadEquipments();
         }
+
     }
 }

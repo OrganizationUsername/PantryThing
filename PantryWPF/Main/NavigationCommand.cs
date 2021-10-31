@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Windows.Input;
-using Pantry.WPF.Shared;
 using Stylet;
 
 namespace Pantry.WPF.Main

@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.ObjectModel;
-using System.Windows;
+﻿using System.Windows;
 using Pantry.ServiceGateways;
 using Pantry.WPF.Shared;
 using Stylet;

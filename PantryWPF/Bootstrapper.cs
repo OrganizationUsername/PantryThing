@@ -1,11 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net;
-using System.Text;
-using System.Threading.Tasks;
-using Pantry.Data;
+﻿using Pantry.Data;
 using Pantry.ServiceGateways;
+using Pantry.ServiceGateways.Equipment;
 using Pantry.WPF.Main;
 using Stylet;
 using StyletIoC;
@@ -30,6 +25,7 @@ namespace Pantry.WPF
         private void ConfigureService(IStyletIoCBuilder builder)
         {
             builder.Bind<ItemService>().ToSelf();
+            builder.Bind<EquipmentServiceGateway>().ToSelf();
             builder.Bind<Seeder>().ToSelf();
         }
 

@@ -3,13 +3,32 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:equipment="clr-namespace:Pantry.WPF.Equipment" 
+             d:DataContext="{d:DesignInstance Type=equipment:EquipmentViewModel}"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
     <StackPanel>
         <DockPanel>
             <StackPanel DockPanel.Dock="Left">
-                <ListView  ItemsSource="{Binding Equipments}" DisplayMemberPath="EquipmentName"/>
-                <TextBox Text="{Binding NewEquipmentName}"/>
+                <ListView  ItemsSource="{Binding Equipments}">
+                    <ListView.ItemTemplate>
+                        <DataTemplate>
+                            <TextBlock>
+                                <Run Text="{Binding EquipmentName}"/>
+                                <Run Text=": "/>
+                                <Run Text="{Binding EquipmentType.EquipmentTypeName}"/>
+                            </TextBlock>
+                        </DataTemplate>
+                    </ListView.ItemTemplate>
+                </ListView>
+                <DockPanel>
+                    <TextBlock Text="New Equipment Name: " DockPanel.Dock="Left"/>
+                    <TextBox Text="{Binding NewEquipmentName}"/>
+                </DockPanel>
+                <DockPanel>
+                    <TextBlock Text="New Equipment Type: " DockPanel.Dock="Left"/>
+                    <ComboBox ItemsSource="{Binding EquipmentTypes}" DisplayMemberPath="EquipmentTypeName" SelectedItem="{Binding SelectedEquipmentType}"/>
+                </DockPanel>
                 <Button Content="Add Equipment" Command="{Binding AddEquipmentDelegateCommand}"/>
             </StackPanel>
         </DockPanel>
