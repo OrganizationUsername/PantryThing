@@ -54,10 +54,6 @@ namespace Pantry.ServiceGateways.Equipment
         {
             using (var db = _dbFactory())
             {
-                if (!db.Locations.Any())
-                {
-                    return false;
-                }
                 db.Equipments.Add(new()
                 {
                     EquipmentName = newEquipmentName,
@@ -65,7 +61,6 @@ namespace Pantry.ServiceGateways.Equipment
                 });
                 db.SaveChanges();
             }
-
             return true;
         }
 
