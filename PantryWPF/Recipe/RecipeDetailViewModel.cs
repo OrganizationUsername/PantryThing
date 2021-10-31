@@ -1,12 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
-using Pantry.Core.FoodProcessing;
 using Pantry.Core.Models;
-using Pantry.ServiceGateways;
-using Pantry.ServiceGateways.Equipment;
 using Pantry.ServiceGateways.Recipe;
 using Pantry.WPF.Shared;
 using Stylet;
@@ -29,7 +24,7 @@ namespace Pantry.WPF.Recipe
 
         public BindableCollection<RecipeStep> RecipeStepsList { get; set; } = new();
         public BindableCollection<RecipeFood> RecipeFoodsList { get; set; } = new();
-        public BindableCollection<EquipmentProjection> Equipments { get; set; }
+        public BindableCollection<EquipmentTypeProjection> EquipmentTypeProjections { get; set; }
 
         private string _description;
         public string Description
@@ -102,13 +97,14 @@ namespace Pantry.WPF.Recipe
             Description = description;
             _selectedRecipe = _recipeServiceGateway.GetRecipe(recipeId).FirstOrDefault(x => x.RecipeId == recipeId);
             Foods = _recipeServiceGateway.GetFoods();
-            Equipments = new(_recipeServiceGateway.GetEquipmentProjections());
+            EquipmentTypeProjections = new(_recipeServiceGateway.GetEquipmentTypeProjections());
             LoadRecipeDetailData();
             CanCook = CalculateCanCook();
         }
 
         public void CookIt()
         {
+            // ReSharper disable once RedundantJumpStatement
             return;
         }
 
@@ -117,28 +113,6 @@ namespace Pantry.WPF.Recipe
             return false;
         }
 
-        private List<LocationFoods> GetRelevantInventoryItems(IEnumerable<RecipeFood> recipeFoods)
-        {
-            List<LocationFoods> outputFoods = new();
-            var locationFoods = _recipeServiceGateway.GetLocationFoods()
-                .Select(x => new LocationFoods() { Item = x.Item, Quantity = x.Quantity }).ToList();
-            foreach (var x in recipeFoods)
-            {
-                var totalAmount = x.Amount;
-                while (totalAmount > 0)
-                {
-                    var locationFood = locationFoods.FirstOrDefault(y => y.Quantity > 0 && y.Item.FoodId == x.Food.FoodId);
-                    if (locationFood is null) { throw new("Thought we could make it, but we cannot."); }
-
-                    var amountToRemove = Math.Min(totalAmount, locationFood.Quantity);
-                    locationFood.Quantity -= amountToRemove;
-                    totalAmount -= amountToRemove;
-
-                    outputFoods.Add(new() { Item = locationFood.Item, Quantity = amountToRemove, LocationFoodsId = locationFood.LocationFoodsId });
-                }
-            }
-            return outputFoods;
-        }
 
         private void LoadRecipeDetailData()
         {
@@ -149,7 +123,7 @@ namespace Pantry.WPF.Recipe
         private void DeleteThisRecipe()
         {
             var thisRecipe = _recipeServiceGateway.GetRecipe(_selectedRecipe.RecipeId).FirstOrDefault();
-            if (thisRecipe is null || _selectedRecipe is null)
+            if (thisRecipe is null)
             {
                 return;
             }
@@ -199,7 +173,8 @@ namespace Pantry.WPF.Recipe
         private void LoadSteps()
         {
             RecipeStepsList.Clear();
-            RecipeStepsList.AddRange(_recipeServiceGateway.GetRecipeSteps(_selectedRecipe));
+            RecipeStepsList.AddRange(_recipeServiceGateway.GetRecipeSteps(_selectedRecipe.RecipeId));
+            NotifyOfPropertyChange(nameof(RecipeStepsList));
         }
 
         private void SaveNewStep()
@@ -210,8 +185,8 @@ namespace Pantry.WPF.Recipe
             var goodNumber = int.TryParse(NewDuration, out var tempDuration);
 
             if (!goodNumber || string.IsNullOrWhiteSpace(NewDescription)) return;
-
-            _recipeServiceGateway.AddRecipeStep(NewDescription, _selectedRecipe.RecipeId, tempDuration);
+            var equipmentTypeIds = EquipmentTypeProjections.Where(x => x.IsSelected).Select(x => x.EquipmentTypeId);
+            _recipeServiceGateway.AddRecipeStep(NewDescription, _selectedRecipe.RecipeId, tempDuration, equipmentTypeIds);
 
             NewDescription = "";
             NewDuration = "";

@@ -33,10 +33,10 @@
                                 <TextBlock Text="{Binding Instruction}"/>
                                 <TextBlock Text="{Binding TimeCost}"/>
                                 <GroupBox Header="Equipment Required:">
-                                    <ListView ItemsSource="{Binding RecipeStepEquipmentType}">
+                                    <ListView ItemsSource="{Binding RecipeStepEquipmentType}" DisplayMemberPath="EquipmentType.EquipmentTypeName">
                                         <ListView.ItemTemplate>
                                             <DataTemplate>
-                                                <TextBlock Text="{Binding Equipment.EquipmentName}" />
+                                                <TextBlock Text="{Binding EquipmentType.EquipmentTypeName}" />
                                             </DataTemplate>
                                         </ListView.ItemTemplate>
                                     </ListView>
@@ -66,8 +66,8 @@
                 <StackPanel Orientation="Horizontal">
                     <TextBlock Text="Equipment used:"/>
                     <ListBox  Width="100" 
-                              ItemsSource="{Binding Equipments}"
-                              DisplayMemberPath="EquipmentName" 
+                              ItemsSource="{Binding EquipmentTypeProjections}"
+                              DisplayMemberPath="EquipmentTypeName" 
                               SelectionMode="Multiple">
                         <ListBox.ItemContainerStyle>
                             <Style TargetType="{x:Type ListBoxItem}">

@@ -7,6 +7,12 @@ using Pantry.Data;
 
 namespace Pantry.ServiceGateways.Recipe
 {
+    public class EquipmentTypeProjection
+    {
+        public int EquipmentTypeId { get; set; }
+        public string EquipmentTypeName { get; set; }
+        public bool IsSelected { get; set; }
+    }
 
     public class FoodServiceGateWay
     {
@@ -47,7 +53,8 @@ namespace Pantry.ServiceGateways.Recipe
         }
 
         public void KeepOnlyUniqueFoodNames()
-        { //ToDo: This method should be a part of another Service Gateway that finds issues.
+        { 
+            //ToDo: This method should be a part of another Service Gateway that finds issues.
             using (var db = _dbFactory())
             {
                 var names = new List<string>();
@@ -66,7 +73,7 @@ namespace Pantry.ServiceGateways.Recipe
             }
         }
 
-        public List<Core.Models.Recipe> GetRecipes(Core.Models.Food selectedFood)
+        public List<Core.Models.Recipe> GetRecipes(Food selectedFood)
         {
             using (var db = _dbFactory())
             {
@@ -157,24 +164,24 @@ namespace Pantry.ServiceGateways.Recipe
                 db.SaveChanges();
             }
         }
-        public List<RecipeStep> GetRecipeSteps(Core.Models.Recipe selectedRecipe)
+        public List<RecipeStep> GetRecipeSteps(int selectedRecipeId)
         {
-            List<RecipeStep> newList;
             using (var db = _dbFactory())
             {
-                if (selectedRecipe is null && (!db.RecipeSteps.Any() ||
-                                               !db.RecipeSteps.Any(x =>
-                                                   x.RecipeId == selectedRecipe.RecipeId)))
+                List<RecipeStep> newList;
+                if (!db.RecipeSteps.Any() ||
+                     !db.RecipeSteps.Any(x =>
+                         x.RecipeId == selectedRecipeId))
                 {
                     newList = new();
                 }
                 else
                 {
                     newList = db.RecipeSteps.Where(
-                            x => x.RecipeId == selectedRecipe.RecipeId)
+                            x => x.RecipeId == selectedRecipeId)
                         .Include(y => y.RecipeStepEquipmentType)
-                        .Include(y => y.RecipeStepEquipmentType)
-                        .ThenInclude(y => y.Equipment).ToList();
+                        .ThenInclude(x => x.EquipmentType)
+                        .ToList();
                 }
 
                 return newList;
@@ -213,7 +220,7 @@ namespace Pantry.ServiceGateways.Recipe
             }
         }
 
-        public void AddRecipeStep(string newDescription, int recipeId, double tempDuration)
+        public void AddRecipeStep(string newDescription, int recipeId, double tempDuration, IEnumerable<int> equipmentTypeIds)
         {
 
             using (var db = _dbFactory())
@@ -226,31 +233,33 @@ namespace Pantry.ServiceGateways.Recipe
                 }).Entity;
                 var stepId = entity.RecipeStepId;
 
-                var equipments = this.GetEquipmentProjections();
-                entity.RecipeStepEquipmentType = new List<RecipeStepEquipmentType>(equipments
-                    .Where(x => x.IsSelected)
+                entity.RecipeStepEquipmentType = new List<RecipeStepEquipmentType>(equipmentTypeIds
                     .Select(x => new RecipeStepEquipmentType()
                     {
-                        EquipmentId = x.EquipmentId,
-                        RecipeStepId = stepId
+                        EquipmentTypeId = x,
+                        RecipeStepId = stepId,
+                        EquipmentId = 1,
                     }));
                 db.SaveChanges();
             }
         }
 
-        public List<EquipmentProjection> GetEquipmentProjections()
+        public List<EquipmentTypeProjection> GetEquipmentTypeProjections()
         {
             using (var db = _dbFactory())
             {
-                return db.Equipments.Select(x =>
-                    new EquipmentProjection()
-                    {
-                        IsSelected = false,
-                        EquipmentId = x.EquipmentId,
-                        EquipmentName = x.EquipmentName
-                    }).ToList();
+                return db.EquipmentTypes
+                    .Select(x =>
+                        new EquipmentTypeProjection()
+                        {
+                            EquipmentTypeId = x.EquipmentTypeId,
+                            EquipmentTypeName = x.EquipmentTypeName,
+                            IsSelected = false,
+                        }).ToList();
             }
         }
+
+
         public List<LocationFoods> GetLocationFoods()
         {
             using (var db = _dbFactory())
