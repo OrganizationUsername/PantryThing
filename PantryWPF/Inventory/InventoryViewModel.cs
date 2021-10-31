@@ -11,7 +11,7 @@ namespace Pantry.WPF.Inventory
     {
         private readonly ItemService _itemService;
 
-        public BindableCollection<LocationFoods> LocationFoodsCollection { get; set; }
+        public BindableCollection<LocationFoods> LocationFoodsCollection { get; set; } = new();
         public BindableCollection<Location> Locations { get; set; }
         public BindableCollection<Pantry.Core.Models.Item> Items { get; set; }
 
@@ -20,7 +20,7 @@ namespace Pantry.WPF.Inventory
 
         private Pantry.Core.Models.Item _selectedItem;
         public Pantry.Core.Models.Item SelectedItem
-        { 
+        {
             get => _selectedItem;
             set => SetAndNotify(ref _selectedItem, value, nameof(SelectedItem));
         }
@@ -33,7 +33,9 @@ namespace Pantry.WPF.Inventory
             {
                 if (SetAndNotify(ref _selectedLocation, value, nameof(SelectedLocation)) && _selectedLocation is not null)
                 {
-                    LocationFoodsCollection = new(_itemService.GetLocationFoodsAtLocation(SelectedLocation.LocationId));
+                    LocationFoodsCollection.Clear();
+                    LocationFoodsCollection.AddRange(_itemService.GetLocationFoodsAtLocation(SelectedLocation.LocationId));
+                    NotifyOfPropertyChange(nameof(LocationFoodsCollection));
                 }
             }
         }

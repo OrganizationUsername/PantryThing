@@ -1,6 +1,7 @@
 ﻿using Pantry.Data;
 using Pantry.ServiceGateways;
 using Pantry.ServiceGateways.Equipment;
+using Pantry.ServiceGateways.Recipe;
 using Pantry.WPF.Main;
 using Stylet;
 using StyletIoC;
@@ -26,6 +27,8 @@ namespace Pantry.WPF
         {
             builder.Bind<ItemService>().ToSelf();
             builder.Bind<EquipmentServiceGateway>().ToSelf();
+            builder.Bind<RecipeServiceGateway>().ToSelf();
+            builder.Bind<FoodServiceGateWay>().ToSelf();
             builder.Bind<Seeder>().ToSelf();
         }
 

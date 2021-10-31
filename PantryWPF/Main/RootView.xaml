@@ -11,14 +11,14 @@
     <DockPanel LastChildFill="True">
         <GroupBox Header="MainWindow Nav">
             <StackPanel>
-                <Button Content="Recipe Management" Command="{Binding RecipeNavigationCommand}" />
-                <Button Content="Inventory" Command="{Binding InventoryNavigationCommand}" />
-                <Button Content="Equipment Management" Command="{Binding EquipmentNavigationCommand}" />
-                <Button Content="Equipment Type Management" Command="{Binding EquipmentTypeNavigationCommand}" />
-                <Button Content="Food Management" Command="{Binding FoodNavigationCommand}" />
-                <Button Content="Item Management" Command="{Binding ItemNavigationCommand}" />
+                <Button Content="Recipe Management" Command="{Binding RecipeNavigationCommand}" Margin="5"/>
+                <Button Content="Inventory" Command="{Binding InventoryNavigationCommand}" Margin="5"/>
+                <Button Content="Equipment Management" Command="{Binding EquipmentNavigationCommand}" Margin="5"/>
+                <Button Content="Equipment Type Management" Command="{Binding EquipmentTypeNavigationCommand}" Margin="5"/>
+                <Button Content="Food Management" Command="{Binding FoodNavigationCommand}" Margin="5"/>
+                <Button Content="Item Management" Command="{Binding ItemNavigationCommand}" Margin="5"/>
                 <Label Content=""/>
-                <Button Content="Seed" Command="{Binding SeedDatabaseCommand}"/>
+                <Button Content="Seed" Command="{Binding SeedDatabaseCommand}" Margin="5"/>
             </StackPanel>
         </GroupBox>
         <GroupBox Header="{Binding VmName}">

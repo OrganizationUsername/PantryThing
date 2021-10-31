@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Linq;
-using Pantry.ServiceGateways;
+using Pantry.ServiceGateways.Recipe;
 using Pantry.WPF.Shared;
 using Stylet;
 
@@ -8,7 +8,7 @@ namespace Pantry.WPF.Recipe
 {
     public class RecipesListViewModel : Screen
     {
-        private readonly ItemService _itemService;
+        private readonly RecipeServiceGateway _recipeServiceGateway;
         private readonly Func<RecipeDetailViewModel> _recipeDetailFactory;
 
         public DelegateCommand AddRecipeCommand { get; set; }
@@ -38,16 +38,18 @@ namespace Pantry.WPF.Recipe
                 if (SetAndNotify(ref _selectedRecipe, value, nameof(SelectedRecipe)))
                 {
                     SelectedRecipeDetailViewModel = _selectedRecipe is not null ? _recipeDetailFactory() : null;
-                    SelectedRecipeDetailViewModel?.Load(_selectedRecipe.RecipeId, _selectedRecipe.Description);
+                    if (_selectedRecipe != null)
+                    {
+                        SelectedRecipeDetailViewModel?.Load(_selectedRecipe.RecipeId, _selectedRecipe.Description);
+                    }
                 }
             }
         }
 
-        public RecipesListViewModel(ItemService itemService, 
-            Func<RecipeDetailViewModel> recipeDetailFactory)
+        public RecipesListViewModel( RecipeServiceGateway recipeServiceGateway, Func<RecipeDetailViewModel> recipeDetailFactory)
         {
             _recipeDetailFactory = recipeDetailFactory;
-            _itemService = itemService;
+            _recipeServiceGateway = recipeServiceGateway;
             AddRecipeCommand = new(AddRecipe);
         }
 
@@ -61,20 +63,20 @@ namespace Pantry.WPF.Recipe
         {
             if (ACollection is null)
             {
-                ACollection = new(_itemService.GetRecipes());
+                ACollection = new(_recipeServiceGateway.GetRecipes());
             }
             else
             {
                 ACollection.Clear();
-                ACollection.AddRange(_itemService.GetRecipes());
+                ACollection.AddRange(_recipeServiceGateway.GetRecipes());
             }
         }
 
         public void AddRecipe()
         {
-            if (string.IsNullOrWhiteSpace(NewRecipeName) || _itemService.GetRecipes().Any(x => x.Description == NewRecipeName)) { return; }
+            if (string.IsNullOrWhiteSpace(NewRecipeName) || _recipeServiceGateway.GetRecipes().Any(x => x.Description == NewRecipeName)) { return; }
 
-            _itemService.AddEmptyRecipe(NewRecipeName);
+            _recipeServiceGateway.AddEmptyRecipe(NewRecipeName);
 
             LoadData();
             var newRecipe = ACollection.FirstOrDefault(x => x.Description == NewRecipeName);

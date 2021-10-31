@@ -25,30 +25,7 @@ namespace Pantry.ServiceGateways
             _dbFactory = dbFactory;
         }
 
-        public void AddRecipeStep(string newDescription, int recipeId, double tempDuration)
-        {
 
-            using (var db = _dbFactory())
-            {
-                var entity = db.RecipeSteps.Add(new()
-                {
-                    Instruction = newDescription,
-                    RecipeId = recipeId,
-                    TimeCost = tempDuration
-                }).Entity;
-                var stepId = entity.RecipeStepId;
-
-                var equipments = this.GetEquipmentProjections();
-                entity.RecipeStepEquipmentType = new List<RecipeStepEquipmentType>(equipments
-                    .Where(x => x.IsSelected)
-                    .Select(x => new RecipeStepEquipmentType()
-                    {
-                        EquipmentId = x.EquipmentId,
-                        RecipeStepId = stepId
-                    }));
-                db.SaveChanges();
-            }
-        }
 
         public List<Item> GetItems()
         {
@@ -88,33 +65,10 @@ namespace Pantry.ServiceGateways
             }
         }
 
-        public void AddRecipeFood(int recipeId, int foodId, double amount)
-        {
-            var recipe = GetRecipes().First(x => x.RecipeId == recipeId);
-            if (recipe.RecipeFoods is null)
-            {
-                return;
-            }
-            var x = new RecipeFood() { Amount = amount, FoodId = foodId, RecipeId = recipeId };
-            recipe.RecipeFoods.Add(x);
-            using (var db = _dbFactory())
-            {
-                db.SaveChanges();
-            }
-        }
 
 
-        public List<RecipeFood> GetRecipeFoods(Recipe selectedRecipe)
-        {
-            using (var db = _dbFactory())
-            {
-                if (selectedRecipe is null || db.RecipeFoods is null) return null;
-                var newList = db.RecipeFoods.Include(x => x.Food).Where(x => x.RecipeId == selectedRecipe.RecipeId)
-                    .ToList();
 
-                return newList;
-            }
-        }
+
 
         public void AddNewLocationFood(CookPlan canCook, Item itemToUse)
         {
@@ -134,31 +88,9 @@ namespace Pantry.ServiceGateways
             }
         }
 
-        public List<RecipeStep> GetRecipeSteps(Recipe selectedRecipe)
-        {
-            List<RecipeStep> newList;
-            using (var db = _dbFactory())
-            {
-                if (selectedRecipe is null && (!db.RecipeSteps.Any() ||
-                                               !db.RecipeSteps.Any(x =>
-                                                   x.RecipeId == selectedRecipe.RecipeId)))
-                {
-                    newList = new();
-                }
-                else
-                {
-                    newList = db.RecipeSteps.Where(
-                            x => x.RecipeId == selectedRecipe.RecipeId)
-                        .Include(y => y.RecipeStepEquipmentType)
-                        .Include(y => y.RecipeStepEquipmentType)
-                        .ThenInclude(y => y.Equipment).ToList();
-                }
 
-                return newList;
-            }
-        }
 
-        public List<Recipe> GetRecipes()
+        public List<Core.Models.Recipe> GetRecipes()
         {
             using (var db = _dbFactory())
             {
@@ -169,29 +101,9 @@ namespace Pantry.ServiceGateways
             }
         }
 
-        public List<Core.Models.Equipment> GetEquipments()
-        {
-            using (var db = _dbFactory())
-            {
-                return db.Equipments.Include(x => x.EquipmentType).ToList();
-            }
-        }
 
-        public List<EquipmentProjection> GetEquipmentProjections()
-        {
-            using (var db = _dbFactory())
-            {
-                return db.Equipments.Select(x =>
-                    new EquipmentProjection()
-                    {
-                        IsSelected = false,
-                        EquipmentId = x.EquipmentId,
-                        EquipmentName = x.EquipmentName
-                    }).ToList();
-            }
-        }
 
-        public List<Recipe> GetRecipe(int recipeId)
+        public List<Core.Models.Recipe> GetRecipe(int recipeId)
         {
             using (var db = _dbFactory())
             {
@@ -203,32 +115,17 @@ namespace Pantry.ServiceGateways
             }
         }
 
-        public void DeleteRecipe(Recipe recipe)
+
+        public void DeleteFood(int foodId)
         {
             using (var db = _dbFactory())
             {
-                db.Recipes.Remove(recipe);
+                var x = db.Foods.First(x => x.FoodId == foodId);
+                db.Foods.Remove(x);
                 db.SaveChanges();
             }
         }
 
-        public void DeleteFood(RecipeFood selectedRecipeFood)
-        {
-            using (var db = _dbFactory())
-            {
-                db.RecipeFoods.Remove(selectedRecipeFood);
-                db.SaveChanges();
-            }
-        }
-
-        public void DeleteRecipeStep(RecipeStep selectedRecipeStep)
-        {
-            using (var db = _dbFactory())
-            {
-                db.RecipeSteps.Remove(selectedRecipeStep);
-                db.SaveChanges();
-            }
-        }
 
         public List<Food> GetFoods()
         {
@@ -238,14 +135,7 @@ namespace Pantry.ServiceGateways
             }
         }
 
-        public void AddEmptyRecipe(string newRecipeName)
-        {
-            using (var db = _dbFactory())
-            {
-                db.Recipes.Add(new() { Description = newRecipeName });
-                db.SaveChanges();
-            }
-        }
+
 
         public void AddLocationFood(Item selectedItem, Location selectedLocation = null)
         {
@@ -284,6 +174,9 @@ namespace Pantry.ServiceGateways
                     .ToList();
             }
         }
+
+       
+
 
         public List<LocationFoods> GetLocationFoodsAtLocation(int selectedLocationId)
         {
@@ -338,18 +231,7 @@ namespace Pantry.ServiceGateways
             }
         }
 
-        public List<LocationFoods> GetLocationFoods()
-        {
-            using (var db = _dbFactory())
-            {
-                return db.LocationFoods
-                    .Where(x => x.Quantity > 0)
-                    .Include(x => x.Item)
-                    .ThenInclude(x => x.Food)
-                    .Include(x => x.Location)
-                    .ToList();
-            }
-        }
+
 
         public void SaveLocationFood(LocationFoods lf)
         {

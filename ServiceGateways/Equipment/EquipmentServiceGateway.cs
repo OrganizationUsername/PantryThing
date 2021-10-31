@@ -32,6 +32,24 @@ namespace Pantry.ServiceGateways.Equipment
             }
         }
 
+        public bool AddEquipmentType(string equipmentTypeName)
+        {
+            if (string.IsNullOrWhiteSpace(equipmentTypeName)) return false;
+            using (var db = _dbFactory())
+            {
+                var existingIdentical = db.EquipmentTypes.FirstOrDefault(x => x.EquipmentTypeName == equipmentTypeName.Trim());
+                if (existingIdentical is null)
+                {
+                    db.EquipmentTypes.Add(new EquipmentType() { EquipmentTypeName = equipmentTypeName.Trim() });
+                    db.SaveChanges();
+                    return true;
+                }
+
+                return false;
+            }
+        }
+
+
         public void AddEquipment(string newEquipmentName, int newEquipmentTypeId)
         {
             using (var db = _dbFactory())
@@ -43,6 +61,14 @@ namespace Pantry.ServiceGateways.Equipment
                     EquipmentTypeId = newEquipmentTypeId
                 });
                 db.SaveChanges();
+            }
+        }
+
+        public List<Core.Models.Equipment> GetEquipments(int equipmentTypeId)
+        {
+            using (var db = _dbFactory())
+            {
+                return db.Equipments.Where(x => x.EquipmentTypeId == equipmentTypeId).ToList();
             }
         }
 
