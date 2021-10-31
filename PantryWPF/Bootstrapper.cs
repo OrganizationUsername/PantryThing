@@ -3,6 +3,8 @@ using Pantry.ServiceGateways;
 using Pantry.ServiceGateways.Equipment;
 using Pantry.ServiceGateways.Recipe;
 using Pantry.WPF.Main;
+using Serilog;
+using Serilog.Core;
 using Stylet;
 using StyletIoC;
 
@@ -14,6 +16,7 @@ namespace Pantry.WPF
         {
             ConfigureDatabase(builder);
             ConfigureService(builder);
+            ConfigureLogger(builder);
         }
 
         private void ConfigureDatabase(IStyletIoCBuilder builder)
@@ -21,6 +24,15 @@ namespace Pantry.WPF
             builder
                 .Bind<DataBase>()
                 .ToFactory(container => new DataBase());
+        }
+
+        private void ConfigureLogger(IStyletIoCBuilder builder)
+        {
+            builder
+                .Bind<Logger>().ToFactory(container => new LoggerConfiguration()
+                    .MinimumLevel.Debug()
+                    .WriteTo.File(@"..\..\..\..\PantryLogs.log", rollingInterval: RollingInterval.Day)
+                    .CreateLogger());
         }
 
         private void ConfigureService(IStyletIoCBuilder builder)

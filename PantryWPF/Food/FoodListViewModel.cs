@@ -1,6 +1,4 @@
-﻿using System;
-using System.Linq;
-using Pantry.Data;
+﻿using System.Linq;
 using Pantry.ServiceGateways.Recipe;
 using Pantry.WPF.Shared;
 using Stylet;
