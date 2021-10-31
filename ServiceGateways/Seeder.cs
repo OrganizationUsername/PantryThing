@@ -4,19 +4,24 @@ using System.Linq;
 using Microsoft.EntityFrameworkCore;
 using Pantry.Core.Models;
 using Pantry.Data;
+using Serilog.Core;
 
 namespace Pantry.ServiceGateways
 {
     public class Seeder
     {
         private readonly Func<DataBase> _dbFactory;
-        public Seeder(Func<DataBase> dbFactory)
+        private readonly Logger _logger;
+
+        public Seeder(Func<DataBase> dbFactory, Logger logger)
         {
             _dbFactory = dbFactory;
+            _logger = logger;
         }
 
         public void SeedDatabase()
         {
+            _logger.Debug("Beginning seed.");
             PopulateFoods();
             PopulateLocations();
             PopulateEquipmentTypes();
@@ -24,6 +29,7 @@ namespace Pantry.ServiceGateways
             PopulateRecipes();
             PopulateItems();
             PopulateInventory();
+            _logger.Debug("Finished seed.");
         }
 
         private void PopulateItems()

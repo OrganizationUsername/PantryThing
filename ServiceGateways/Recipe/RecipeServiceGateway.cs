@@ -52,8 +52,9 @@ namespace Pantry.ServiceGateways.Recipe
             using (var db = _dbFactory())
             {
                 var x = db.Foods.Add(new() { FoodName = newFoodName });
-                db.SaveChanges();
-                _logger.Debug($"Added {x.Entity.FoodName} with ID= {x.Entity.FoodId}");
+                var rowCount = db.SaveChanges();
+                if (rowCount != 1) { _logger.Error($"{rowCount} rows modified. Should only be 1."); }
+                _logger.Debug($"Added {x.Entity.FoodName} with ID= {x.Entity.FoodId}.");
             }
         }
 
