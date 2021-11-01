@@ -12,7 +12,7 @@ namespace Pantry.WPF.Inventory
         private readonly ItemService _itemService;
 
         public BindableCollection<LocationFoods> LocationFoodsCollection { get; set; } = new();
-        public BindableCollection<Location> Locations { get; set; }
+        public BindableCollection<Core.Models.Location> Locations { get; set; } = new();
         public BindableCollection<Pantry.Core.Models.Item> Items { get; set; }
 
         public DelegateCommand SaveChangesDelegateCommand { get; set; }
@@ -25,8 +25,8 @@ namespace Pantry.WPF.Inventory
             set => SetAndNotify(ref _selectedItem, value, nameof(SelectedItem));
         }
 
-        private Location _selectedLocation;
-        public Location SelectedLocation
+        private Core.Models.Location _selectedLocation;
+        public Core.Models.Location SelectedLocation
         {
             get => _selectedLocation;
             set
@@ -52,6 +52,7 @@ namespace Pantry.WPF.Inventory
             _itemService = itemService;
             SaveChangesDelegateCommand = new(SaveChanges);
             AddLocationFoodDelegateCommand = new(AddNewLocationFood);
+            LoadData();
         }
 
         protected override void OnActivate()
@@ -62,8 +63,9 @@ namespace Pantry.WPF.Inventory
 
         public void LoadData()
         {
-            Locations = new(_itemService.GetLocations());
-            LocationFoodsCollection = new(_itemService.GetLocationFoodsAtLocation(Locations.FirstOrDefault()));
+            Locations.Clear();
+            Locations.AddRange(_itemService.GetLocations());
+            LocationFoodsCollection = new(_itemService.GetLocationFoodsAtLocation(Locations.First().LocationId));
             SelectedLocation = LocationFoodsCollection.Count == 0 ? null : Locations.First(x => x.LocationId == LocationFoodsCollection.FirstOrDefault()?.LocationId);
             Items = new(_itemService.GetItems());
         }

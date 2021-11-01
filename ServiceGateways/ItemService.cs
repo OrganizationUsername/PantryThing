@@ -17,8 +17,6 @@ namespace Pantry.ServiceGateways
             _dbFactory = dbFactory;
         }
 
-
-
         public List<Item> GetItems()
         {
             using (var db = _dbFactory())
@@ -57,7 +55,7 @@ namespace Pantry.ServiceGateways
             }
         }
 
-        public void AddLocationFood(Item selectedItem, Location selectedLocation = null)
+        public void AddLocationFood(Item selectedItem, Core.Models.Location selectedLocation = null)
         {
             using (var db = _dbFactory())
             {
@@ -80,25 +78,6 @@ namespace Pantry.ServiceGateways
             }
         }
 
-        public List<LocationFoods> GetLocationFoodsAtLocation(Location locations)
-        {
-            if (locations is null) return new();
-
-            using (var db = _dbFactory())
-            {
-                return db.LocationFoods
-                    .Where(x => x.Location.LocationId == locations.LocationId)
-                    .Where(x => x.Quantity > 0)
-                    .Include(x => x.Item)
-                    .ThenInclude(x => x.Food)
-                    .Include(x => x.Location)
-                    .ToList();
-            }
-        }
-
-       
-
-
         public List<LocationFoods> GetLocationFoodsAtLocation(int selectedLocationId)
         {
             using (var db = _dbFactory())
@@ -108,7 +87,6 @@ namespace Pantry.ServiceGateways
                     .Where(x => x.Quantity > 0)
                     .Include(x => x.Item)
                     .ThenInclude(x => x.Food)
-                    .Include(x => x.Location)
                     .ToList();
             }
         }
@@ -125,7 +103,7 @@ namespace Pantry.ServiceGateways
             }
         }
 
-        public List<Location> GetLocations()
+        public List<Core.Models.Location> GetLocations()
         {
             using (var db = _dbFactory())
             {

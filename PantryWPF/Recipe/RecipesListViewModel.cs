@@ -12,7 +12,7 @@ namespace Pantry.WPF.Recipe
         private readonly Func<RecipeDetailViewModel> _recipeDetailFactory;
 
         public DelegateCommand AddRecipeCommand { get; set; }
-        public BindableCollection<Pantry.Core.Models.Recipe> ACollection { get; set; }
+        public BindableCollection<Pantry.Core.Models.Recipe> ACollection { get; set; } = new();
 
         private string _newRecipeName;
         public string NewRecipeName
@@ -46,7 +46,7 @@ namespace Pantry.WPF.Recipe
             }
         }
 
-        public RecipesListViewModel( RecipeServiceGateway recipeServiceGateway, Func<RecipeDetailViewModel> recipeDetailFactory)
+        public RecipesListViewModel(RecipeServiceGateway recipeServiceGateway, Func<RecipeDetailViewModel> recipeDetailFactory)
         {
             _recipeDetailFactory = recipeDetailFactory;
             _recipeServiceGateway = recipeServiceGateway;
@@ -61,15 +61,8 @@ namespace Pantry.WPF.Recipe
 
         public void LoadData()
         {
-            if (ACollection is null)
-            {
-                ACollection = new(_recipeServiceGateway.GetRecipes());
-            }
-            else
-            {
-                ACollection.Clear();
-                ACollection.AddRange(_recipeServiceGateway.GetRecipes());
-            }
+            ACollection.Clear();
+            ACollection.AddRange(_recipeServiceGateway.GetRecipes());
         }
 
         public void AddRecipe()

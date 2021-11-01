@@ -3,6 +3,7 @@ using Pantry.WPF.Equipment;
 using Pantry.WPF.Food;
 using Pantry.WPF.Inventory;
 using Pantry.WPF.Item;
+using Pantry.WPF.Location;
 using Pantry.WPF.Recipe;
 using Pantry.WPF.Shared;
 using Serilog.Core;
@@ -24,6 +25,7 @@ namespace Pantry.WPF.Main
         public NavigationCommand FoodNavigationCommand { get; set; }
         public NavigationCommand ItemNavigationCommand { get; set; }
         public NavigationCommand EquipmentNavigationCommand { get; set; }
+        public NavigationCommand LocationNavigationCommand { get; set; }
         public NavigationCommand EquipmentTypeNavigationCommand { get; set; }
 
         public DelegateCommand SeedDatabaseCommand { get; set; }
@@ -36,6 +38,7 @@ namespace Pantry.WPF.Main
             FoodListViewModel foodListViewModel,
             ItemViewModel itemViewModel,
             EquipmentTypeViewModel equipmentTypeViewModel,
+            LocationViewModel locationViewModel,
             Seeder seed,
             Logger logger)
         {
@@ -43,6 +46,7 @@ namespace Pantry.WPF.Main
             InventoryNavigationCommand = new(this, inventoryViewModel);
             EquipmentNavigationCommand = new(this, equipmentViewModel);
             FoodNavigationCommand = new(this, foodListViewModel);
+            LocationNavigationCommand = new(this, locationViewModel);
             ItemNavigationCommand = new(this, itemViewModel);
             EquipmentTypeNavigationCommand = new(this, equipmentTypeViewModel);
             SeedDatabaseCommand = new(seed.SeedDatabase);

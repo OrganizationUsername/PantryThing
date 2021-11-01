@@ -1,6 +1,7 @@
 ﻿using Pantry.Data;
 using Pantry.ServiceGateways;
 using Pantry.ServiceGateways.Equipment;
+using Pantry.ServiceGateways.Location;
 using Pantry.ServiceGateways.Recipe;
 using Pantry.WPF.Main;
 using Serilog;
@@ -32,7 +33,7 @@ namespace Pantry.WPF
             builder
                 .Bind<Logger>()
                 .ToInstance(new LoggerConfiguration()
-                    .MinimumLevel.Debug()
+                    .MinimumLevel.Verbose()
                     .WriteTo.File(@"..\..\..\..\PantryLogs.log")
                     .CreateLogger()
                 );
@@ -44,6 +45,7 @@ namespace Pantry.WPF
             builder.Bind<EquipmentServiceGateway>().ToSelf();
             builder.Bind<RecipeServiceGateway>().ToSelf();
             builder.Bind<FoodServiceGateWay>().ToSelf();
+            builder.Bind<LocationServiceGateway>().ToSelf();
             builder.Bind<Seeder>().ToSelf();
         }
 
