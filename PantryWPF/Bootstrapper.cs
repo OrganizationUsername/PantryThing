@@ -44,9 +44,10 @@ namespace Pantry.WPF
             builder.Bind<ItemService>().ToSelf();
             builder.Bind<EquipmentServiceGateway>().ToSelf();
             builder.Bind<RecipeServiceGateway>().ToSelf();
-            builder.Bind<FoodServiceGateWay>().ToSelf();
+            builder.Bind<FoodServiceGateway>().ToSelf();
             builder.Bind<LocationServiceGateway>().ToSelf();
             builder.Bind<Seeder>().ToSelf();
+            builder.Bind<IStyletIoCBuilder>().ToInstance(builder);
         }
 
         protected override void Configure()

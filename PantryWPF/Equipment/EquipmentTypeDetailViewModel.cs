@@ -18,7 +18,7 @@ namespace Pantry.WPF.Equipment
             var equipments = _equipmentServiceGateway.GetEquipments(equipmentTypeId);
             if (Equipments is null)
             {
-                Equipments = new BindableCollection<Core.Models.Equipment>(equipments);
+                Equipments = new(equipments);
             }
             else
             {

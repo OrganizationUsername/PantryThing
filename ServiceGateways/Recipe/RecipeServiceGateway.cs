@@ -15,12 +15,12 @@ namespace Pantry.ServiceGateways.Recipe
         public bool IsSelected { get; set; }
     }
 
-    public class FoodServiceGateWay
+    public class FoodServiceGateway
     {
         private readonly Func<DataBase> _dbFactory;
         private readonly Logger _logger;
 
-        public FoodServiceGateWay(Func<DataBase> dbFactory, Logger logger)
+        public FoodServiceGateway(Func<DataBase> dbFactory, Logger logger)
         {
             _dbFactory = dbFactory;
             _logger = logger;

@@ -3,6 +3,8 @@ using System.Linq;
 using System.Windows;
 using Pantry.Core.Models;
 using Pantry.ServiceGateways.Recipe;
+using Pantry.WPF.Food;
+using Pantry.WPF.Main;
 using Pantry.WPF.Shared;
 using Stylet;
 
@@ -11,6 +13,7 @@ namespace Pantry.WPF.Recipe
     public class RecipeDetailViewModel : Screen
     {
         private readonly RecipeServiceGateway _recipeServiceGateway;
+        private readonly FoodListViewModel _foodListViewModel;
         private Pantry.Core.Models.Recipe _selectedRecipe;
 
         public List<Core.Models.Food> Foods { get; set; }
@@ -21,9 +24,11 @@ namespace Pantry.WPF.Recipe
         public DelegateCommand DeleteFoodCommand { get; set; }
         public DelegateCommand DeleteThisRecipeCommand { get; set; }
         public DelegateCommand CookCommand { get; set; }
-
+        public DelegateCommand GoToFoodCommand { get; set; }
+        public NavigationCommand NavigateToFood { get; set; }
         public BindableCollection<RecipeStep> RecipeStepsList { get; set; } = new();
         public BindableCollection<RecipeFood> RecipeFoodsList { get; set; } = new();
+
         public BindableCollection<EquipmentTypeProjection> EquipmentTypeProjections { get; set; }
 
         private string _description;
@@ -81,16 +86,29 @@ namespace Pantry.WPF.Recipe
             set => SetAndNotify(ref _canCook, value, nameof(CanCook));
         }
 
-        public RecipeDetailViewModel(RecipeServiceGateway recipeServiceGateway)
+        public RecipeDetailViewModel(RecipeServiceGateway recipeServiceGateway, FoodListViewModel foodListViewModel)
         {
             _recipeServiceGateway = recipeServiceGateway;
+            _foodListViewModel = foodListViewModel;
             SaveStepCommand = new(SaveNewStep);
             SaveFoodCommand = new(SaveNewFood);
             DeleteStepCommand = new(DeleteSelectedStep);
             DeleteFoodCommand = new(DeleteSelectedFood);
             DeleteThisRecipeCommand = new(DeleteThisRecipe);
             CookCommand = new(CookIt);
+            GoToFoodCommand = new(GoToFood);
         }
+
+        public void GoToFood()
+        {
+            if (SelectedRecipeFood is null) return;
+            _foodListViewModel.SelectedFood = SelectedRecipeFood.Food;
+            var x = this.Parent;
+            
+            this.ConductWith(_foodListViewModel);
+
+        }
+
 
         public void Load(int recipeId, string description)
         {

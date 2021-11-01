@@ -8,7 +8,7 @@ namespace Pantry.WPF.Food
 {
     public class FoodListViewModel : Screen
     {
-        private readonly FoodServiceGateWay _foodServiceGateway;
+        private readonly FoodServiceGateway _foodServiceGateway;
         private readonly Logger _logger;
 
         public BindableCollection<Pantry.Core.Models.Food> Foods { get; set; } = new();
@@ -35,7 +35,7 @@ namespace Pantry.WPF.Food
         public DelegateCommand AddRecipeCommand { get; set; }
         public DelegateCommand DeleteFoodCommand { get; set; }
 
-        public FoodListViewModel(FoodServiceGateWay foodServiceGateway, Logger logger)
+        public FoodListViewModel(FoodServiceGateway foodServiceGateway, Logger logger)
         {
             _foodServiceGateway = foodServiceGateway;
             _logger = logger;

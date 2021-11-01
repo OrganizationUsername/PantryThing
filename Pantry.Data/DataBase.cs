@@ -11,7 +11,7 @@ namespace Pantry.Data
     //dotnet ef migrations add foodConstraint
     //dotnet ef database update foodConstraint
 
-    [SuppressMessage("ReSharper", "UnusedMember.Global")]
+    [global::System.Diagnostics.CodeAnalysis.SuppressMessage("ReSharper", "UnusedMember.Global")]
     public enum TemperatureState
     {
         Unopened = 1,
