@@ -7,7 +7,6 @@ using Pantry.Data;
 
 namespace Pantry.ServiceGateways
 {
-
     public class ItemService
     {
         private readonly Func<DataBase> _dbFactory;
@@ -25,7 +24,7 @@ namespace Pantry.ServiceGateways
             }
         }
 
-        public bool AddItem(Food selectedFood, string newItemUpc, double newItemWeight)
+        public bool AddItem(Core.Models.Food selectedFood, string newItemUpc, double newItemWeight)
         {
             using (var db = _dbFactory())
             {
@@ -47,7 +46,7 @@ namespace Pantry.ServiceGateways
             }
         }
 
-        public List<Food> GetFoods()
+        public List<Core.Models.Food> GetFoods()
         {
             using (var db = _dbFactory())
             {

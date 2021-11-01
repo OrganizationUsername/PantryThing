@@ -1,4 +1,5 @@
 ﻿using System.Linq;
+using Pantry.ServiceGateways.Food;
 using Pantry.ServiceGateways.Recipe;
 using Pantry.WPF.Shared;
 using Serilog.Core;

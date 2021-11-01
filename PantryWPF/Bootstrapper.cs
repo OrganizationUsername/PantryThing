@@ -1,6 +1,7 @@
 ﻿using Pantry.Data;
 using Pantry.ServiceGateways;
 using Pantry.ServiceGateways.Equipment;
+using Pantry.ServiceGateways.Food;
 using Pantry.ServiceGateways.Location;
 using Pantry.ServiceGateways.Recipe;
 using Pantry.WPF.Main;
@@ -47,7 +48,6 @@ namespace Pantry.WPF
             builder.Bind<FoodServiceGateway>().ToSelf();
             builder.Bind<LocationServiceGateway>().ToSelf();
             builder.Bind<Seeder>().ToSelf();
-            builder.Bind<IStyletIoCBuilder>().ToInstance(builder);
         }
 
         protected override void Configure()
