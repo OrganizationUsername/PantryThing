@@ -48,6 +48,12 @@
                 <TextBlock Text="Food name: "/>
                 <TextBlock Text="{Binding SelectedLocationFood.Item.Food.FoodName}"/>
             </StackPanel>
+            <StackPanel>
+                <TextBlock>
+                    <Run Text="Purchase Date: "/>
+                    <Run Text="{Binding SelectedLocationFood.PurchaseDate}"/>
+                </TextBlock>
+            </StackPanel>
             <ComboBox ItemsSource="{Binding Locations}"
                       DisplayMemberPath="LocationName" DockPanel.Dock="Top"
                       SelectedItem="{Binding SelectedLocationFood.Location}"/>

@@ -16,6 +16,25 @@ namespace Pantry.Data.Migrations
             modelBuilder
                 .HasAnnotation("ProductVersion", "5.0.9");
 
+            modelBuilder.Entity("Pantry.Core.Models.Consumer", b =>
+                {
+                    b.Property<int>("ConsumerId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("ConsumerName")
+                        .HasColumnType("TEXT");
+
+                    b.Property<int?>("MealOfTheDayId")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("ConsumerId");
+
+                    b.HasIndex("MealOfTheDayId");
+
+                    b.ToTable("Consumers");
+                });
+
             modelBuilder.Entity("Pantry.Core.Models.Equipment", b =>
                 {
                     b.Property<int>("EquipmentId")
@@ -50,9 +69,6 @@ namespace Pantry.Data.Migrations
                     b.Property<int>("EquipmentId")
                         .HasColumnType("INTEGER");
 
-                    b.Property<int>("RecipeId")
-                        .HasColumnType("INTEGER");
-
                     b.Property<int>("RecipeStepId")
                         .HasColumnType("INTEGER");
 
@@ -62,8 +78,6 @@ namespace Pantry.Data.Migrations
                     b.HasKey("EquipmentCommitmentId");
 
                     b.HasIndex("EquipmentId");
-
-                    b.HasIndex("RecipeId");
 
                     b.HasIndex("RecipeStepId");
 
@@ -199,6 +213,30 @@ namespace Pantry.Data.Migrations
                     b.ToTable("Items");
                 });
 
+            modelBuilder.Entity("Pantry.Core.Models.ItemReservation", b =>
+                {
+                    b.Property<int>("ItemReservationId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("ItemId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("PlannedCookId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<double>("Quantity")
+                        .HasColumnType("REAL");
+
+                    b.HasKey("ItemReservationId");
+
+                    b.HasIndex("ItemId");
+
+                    b.HasIndex("PlannedCookId");
+
+                    b.ToTable("ItemReservations");
+                });
+
             modelBuilder.Entity("Pantry.Core.Models.Location", b =>
                 {
                     b.Property<int>("LocationId")
@@ -247,6 +285,115 @@ namespace Pantry.Data.Migrations
                     b.HasIndex("LocationId");
 
                     b.ToTable("LocationFoods");
+                });
+
+            modelBuilder.Entity("Pantry.Core.Models.MealInstance", b =>
+                {
+                    b.Property<int>("MealInstanceId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("ConsumerId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("DaySinceMillennium")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<DateTime>("MealInstanceDateTime")
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("MealOfTheDayId")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("MealInstanceId");
+
+                    b.HasIndex("ConsumerId");
+
+                    b.HasIndex("MealOfTheDayId");
+
+                    b.ToTable("MealInstances");
+                });
+
+            modelBuilder.Entity("Pantry.Core.Models.MealInstanceRow", b =>
+                {
+                    b.Property<int>("MealInstanceRowId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("FoodId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("MealInstanceId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<double>("Quantity")
+                        .HasColumnType("REAL");
+
+                    b.HasKey("MealInstanceRowId");
+
+                    b.HasIndex("FoodId");
+
+                    b.HasIndex("MealInstanceId");
+
+                    b.ToTable("MealInstanceRows");
+                });
+
+            modelBuilder.Entity("Pantry.Core.Models.MealOfTheDay", b =>
+                {
+                    b.Property<int>("MealOfTheDayId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<DateTime>("MealOfTheDayDateTime")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("MealOfTheDayName")
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("MealOfTheDayId");
+
+                    b.ToTable("MealOfTheDays");
+                });
+
+            modelBuilder.Entity("Pantry.Core.Models.PlannedCook", b =>
+                {
+                    b.Property<int>("PlannedCookId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<DateTime>("EndTime")
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("RecipeId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<double>("RecipeMultiplier")
+                        .HasColumnType("REAL");
+
+                    b.HasKey("PlannedCookId");
+
+                    b.HasIndex("RecipeId");
+
+                    b.ToTable("PlannedCooks");
+                });
+
+            modelBuilder.Entity("Pantry.Core.Models.PlannedCookStep", b =>
+                {
+                    b.Property<int>("PlannedCookStepId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("PlannedCookId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<DateTime>("StartTime")
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("PlannedCookStepId");
+
+                    b.HasIndex("PlannedCookId");
+
+                    b.ToTable("PlannedCookSteps");
                 });
 
             modelBuilder.Entity("Pantry.Core.Models.Recipe", b =>
@@ -390,6 +537,13 @@ namespace Pantry.Data.Migrations
                     b.ToTable("Units");
                 });
 
+            modelBuilder.Entity("Pantry.Core.Models.Consumer", b =>
+                {
+                    b.HasOne("Pantry.Core.Models.MealOfTheDay", null)
+                        .WithMany("Consumers")
+                        .HasForeignKey("MealOfTheDayId");
+                });
+
             modelBuilder.Entity("Pantry.Core.Models.Equipment", b =>
                 {
                     b.HasOne("Pantry.Core.Models.EquipmentType", "EquipmentType")
@@ -409,12 +563,6 @@ namespace Pantry.Data.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Pantry.Core.Models.Recipe", "Recipe")
-                        .WithMany()
-                        .HasForeignKey("RecipeId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.HasOne("Pantry.Core.Models.RecipeStep", "RecipeStep")
                         .WithMany()
                         .HasForeignKey("RecipeStepId")
@@ -422,8 +570,6 @@ namespace Pantry.Data.Migrations
                         .IsRequired();
 
                     b.Navigation("Equipment");
-
-                    b.Navigation("Recipe");
 
                     b.Navigation("RecipeStep");
                 });
@@ -479,6 +625,25 @@ namespace Pantry.Data.Migrations
                     b.Navigation("Unit");
                 });
 
+            modelBuilder.Entity("Pantry.Core.Models.ItemReservation", b =>
+                {
+                    b.HasOne("Pantry.Core.Models.Item", "Item")
+                        .WithMany("ItemReservations")
+                        .HasForeignKey("ItemId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Pantry.Core.Models.PlannedCook", "PlannedCook")
+                        .WithMany("ItemReservations")
+                        .HasForeignKey("PlannedCookId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Item");
+
+                    b.Navigation("PlannedCook");
+                });
+
             modelBuilder.Entity("Pantry.Core.Models.LocationFoods", b =>
                 {
                     b.HasOne("Pantry.Core.Models.Item", "Item")
@@ -496,6 +661,66 @@ namespace Pantry.Data.Migrations
                     b.Navigation("Item");
 
                     b.Navigation("Location");
+                });
+
+            modelBuilder.Entity("Pantry.Core.Models.MealInstance", b =>
+                {
+                    b.HasOne("Pantry.Core.Models.Consumer", "Consumer")
+                        .WithMany("MealInstances")
+                        .HasForeignKey("ConsumerId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Pantry.Core.Models.MealOfTheDay", "MealOfTheDay")
+                        .WithMany("MealInstances")
+                        .HasForeignKey("MealOfTheDayId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Consumer");
+
+                    b.Navigation("MealOfTheDay");
+                });
+
+            modelBuilder.Entity("Pantry.Core.Models.MealInstanceRow", b =>
+                {
+                    b.HasOne("Pantry.Core.Models.Food", "Food")
+                        .WithMany()
+                        .HasForeignKey("FoodId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Pantry.Core.Models.MealInstance", "MealInstance")
+                        .WithMany("MealInstanceRows")
+                        .HasForeignKey("MealInstanceId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Food");
+
+                    b.Navigation("MealInstance");
+                });
+
+            modelBuilder.Entity("Pantry.Core.Models.PlannedCook", b =>
+                {
+                    b.HasOne("Pantry.Core.Models.Recipe", "Recipe")
+                        .WithMany("PlannedCooks")
+                        .HasForeignKey("RecipeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Recipe");
+                });
+
+            modelBuilder.Entity("Pantry.Core.Models.PlannedCookStep", b =>
+                {
+                    b.HasOne("Pantry.Core.Models.PlannedCook", "PlannedCook")
+                        .WithMany("PlannedCookSteps")
+                        .HasForeignKey("PlannedCookId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("PlannedCook");
                 });
 
             modelBuilder.Entity("Pantry.Core.Models.RecipeFood", b =>
@@ -574,6 +799,11 @@ namespace Pantry.Data.Migrations
                     b.Navigation("RecipeStep");
                 });
 
+            modelBuilder.Entity("Pantry.Core.Models.Consumer", b =>
+                {
+                    b.Navigation("MealInstances");
+                });
+
             modelBuilder.Entity("Pantry.Core.Models.Equipment", b =>
                 {
                     b.Navigation("EquipmentCommitments");
@@ -607,8 +837,34 @@ namespace Pantry.Data.Migrations
                     b.Navigation("Items");
                 });
 
+            modelBuilder.Entity("Pantry.Core.Models.Item", b =>
+                {
+                    b.Navigation("ItemReservations");
+                });
+
+            modelBuilder.Entity("Pantry.Core.Models.MealInstance", b =>
+                {
+                    b.Navigation("MealInstanceRows");
+                });
+
+            modelBuilder.Entity("Pantry.Core.Models.MealOfTheDay", b =>
+                {
+                    b.Navigation("Consumers");
+
+                    b.Navigation("MealInstances");
+                });
+
+            modelBuilder.Entity("Pantry.Core.Models.PlannedCook", b =>
+                {
+                    b.Navigation("ItemReservations");
+
+                    b.Navigation("PlannedCookSteps");
+                });
+
             modelBuilder.Entity("Pantry.Core.Models.Recipe", b =>
                 {
+                    b.Navigation("PlannedCooks");
+
                     b.Navigation("RecipeFoods");
 
                     b.Navigation("RecipeRecipeTags");

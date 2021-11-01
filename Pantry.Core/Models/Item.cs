@@ -1,4 +1,7 @@
 ﻿// ReSharper disable UnusedMember.Global
+
+using System.Collections.Generic;
+
 namespace Pantry.Core.Models
 {
     public class Item
@@ -10,5 +13,6 @@ namespace Pantry.Core.Models
         public string Upc { get; set; }
         public int? UnitId { get; set; }
         public Unit Unit { get; set; }
+        public ICollection<ItemReservation> ItemReservations { get; set; }
     }
 }

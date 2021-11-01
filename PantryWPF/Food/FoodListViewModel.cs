@@ -1,6 +1,6 @@
 ﻿using System.Linq;
+using System.Windows;
 using Pantry.ServiceGateways.Food;
-using Pantry.ServiceGateways.Recipe;
 using Pantry.WPF.Shared;
 using Serilog.Core;
 using Stylet;
@@ -33,15 +33,26 @@ namespace Pantry.WPF.Food
             }
         }
 
-        public DelegateCommand AddRecipeCommand { get; set; }
+        public DelegateCommand AddFoodCommand { get; set; }
         public DelegateCommand DeleteFoodCommand { get; set; }
+        public DelegateCommand EditFoodCommand { get; set; }
 
         public FoodListViewModel(FoodServiceGateway foodServiceGateway, Logger logger)
         {
             _foodServiceGateway = foodServiceGateway;
             _logger = logger;
-            AddRecipeCommand = new(AddFood);
+            AddFoodCommand = new(AddFood);
             DeleteFoodCommand = new(DeleteSelectedFood);
+            EditFoodCommand = new(SaveSelectedFood);
+        }
+
+        public void SaveSelectedFood()
+        {
+            if (SelectedFood is null) return;
+            if (!_foodServiceGateway.SaveSelectedFood(SelectedFood.FoodId, SelectedFood.IsEdible, SelectedFood.FoodName))
+            {
+                MessageBox.Show("Food not selected or save didn't work.");
+            }
         }
 
         protected override void OnActivate()

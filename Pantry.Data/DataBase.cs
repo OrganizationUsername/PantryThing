@@ -1,7 +1,6 @@
 ﻿// ReSharper disable UnusedMember.Global
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using Microsoft.EntityFrameworkCore;
 using Pantry.Core.Models;
 
@@ -58,7 +57,15 @@ namespace Pantry.Data
         public DbSet<FoodFoodTag> FoodFoodTags { get; set; }
         public DbSet<RecipeTag> RecipeTags { get; set; }
         public DbSet<RecipeRecipeTag> RecipeRecipeTags { get; set; }
+        public DbSet<Consumer> Consumers { get; set; }
+        public DbSet<MealInstance> MealInstances { get; set; }
+        public DbSet<MealInstanceRow> MealInstanceRows { get; set; }
+        public DbSet<MealOfTheDay> MealOfTheDays { get; set; }
+        public DbSet<PlannedCookStep> PlannedCookSteps { get; set; }
+        public DbSet<ItemReservation> ItemReservations { get; set; }
+        public DbSet<PlannedCook> PlannedCooks { get; set; }
         public DbSet<Item> Items { get; set; }
+
         public DbSet<Unit> Units { get; set; }
         // ReSharper disable once IdentifierTypo
         public DbSet<Inventory> Inventorys { get; set; }

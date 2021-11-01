@@ -38,6 +38,19 @@ namespace Pantry.ServiceGateways.Food
                     .ThenInclude(x => x.Recipe).ToList();
             }
         }
+
+        public bool SaveSelectedFood(int foodId, bool isEdible, string foodName)
+        {
+            using (var db = _dbFactory())
+            {
+                var food = db.Foods.FirstOrDefault(x => x.FoodId == foodId);
+                if (food is null) return false;
+                food.FoodName = foodName;
+                food.IsEdible = isEdible;
+                return 1 == db.SaveChanges();
+            }
+        }
+
         public void AddFood(string newFoodName)
         {
             using (var db = _dbFactory())

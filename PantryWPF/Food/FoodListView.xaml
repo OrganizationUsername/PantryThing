@@ -14,7 +14,7 @@
                         <KeyBinding Command="{Binding AddRecipeCommand, Mode=OneWay}" Key="Return" />
                     </TextBox.InputBindings>-->
                 </TextBox>
-                <Button Content="Add Food" Command="{Binding AddRecipeCommand}" DockPanel.Dock="Top"/>
+                <Button Content="Add Food" Command="{Binding AddFoodCommand}" DockPanel.Dock="Top"/>
                 <ListView ItemsSource="{Binding Foods}" SelectedValue="{Binding SelectedFood, Mode=TwoWay}"
                     DockPanel.Dock="Top" DisplayMemberPath="FoodName"/>
             </DockPanel>
@@ -28,6 +28,12 @@
                 <TextBlock Text="Name" Width="75"/>
                 <TextBlock Text="{Binding SelectedFood.FoodName}"/>
             </StackPanel>
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Text="Is Immediately Edible?"/>
+                <CheckBox IsChecked="{Binding SelectedFood.IsEdible}"/>
+            </StackPanel>
+            <Button Content="Save Changes" Command="{Binding EditFoodCommand}"/>
+            <Label Content=""/>
             <GroupBox Header="Used In:">
                 <ListView ItemsSource="{Binding Recipes}" DisplayMemberPath="Description"/>
             </GroupBox>

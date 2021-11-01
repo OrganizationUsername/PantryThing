@@ -81,6 +81,7 @@ namespace Pantry.ServiceGateways
                 _ = dbContext.LocationFoods.Add(new()
                 {
                     Item = dbContext.Items.First(x => x.Upc == "1GalMilk"),
+                    PurchaseDate = now,
                     ExpiryDate = now + TimeSpan.FromDays(14),
                     Quantity = 3900,
                     Location = defaultLocation,
@@ -90,6 +91,7 @@ namespace Pantry.ServiceGateways
                 _ = dbContext.LocationFoods.Add(new()
                 {
                     Item = dbContext.Items.First(x => x.Upc == "Artisan Bread"),
+                    PurchaseDate = now,
                     ExpiryDate = now + TimeSpan.FromDays(14),
                     Quantity = 1000,
                     Location = defaultLocation,
@@ -99,6 +101,7 @@ namespace Pantry.ServiceGateways
                 _ = dbContext.LocationFoods.Add(new()
                 {
                     Item = dbContext.Items.First(x => x.Upc == "LotsOfBread"),
+                    PurchaseDate = now + TimeSpan.FromDays(-7),
                     OpenDate = now + TimeSpan.FromDays(-7),
                     ExpiryDate = now + TimeSpan.FromDays(1),
                     Quantity = 454,
@@ -109,6 +112,7 @@ namespace Pantry.ServiceGateways
                 _ = dbContext.LocationFoods.Add(new()
                 {
                     Item = dbContext.Items.First(x => x.Upc == "1GalMilk"),
+                    PurchaseDate = now + TimeSpan.FromDays(-7),
                     OpenDate = now + TimeSpan.FromDays(-7),
                     ExpiryDate = now + TimeSpan.FromDays(1),
                     Quantity = 3900,
@@ -119,6 +123,7 @@ namespace Pantry.ServiceGateways
                 _ = dbContext.LocationFoods.Add(new()
                 {
                     Item = dbContext.Items.First(x => x.Upc == "100Chicken"),
+                    PurchaseDate = now + TimeSpan.FromDays(-30),
                     ExpiryDate = now + TimeSpan.FromDays(180),
                     Quantity = 75,
                     Location = defaultLocation,
@@ -128,7 +133,8 @@ namespace Pantry.ServiceGateways
                 _ = dbContext.LocationFoods.Add(new()
                 {
                     Item = dbContext.Items.First(x => x.Upc == "100Chicken"),
-                    ExpiryDate = now + TimeSpan.FromDays(180),
+                    PurchaseDate = now + TimeSpan.FromDays(-180),
+                    ExpiryDate = now + TimeSpan.FromDays(30),
                     Quantity = 66,
                     Location = dbContext.Locations.First(x => x.LocationName == "Deep Freezer"),
                     Exists = true
@@ -137,6 +143,7 @@ namespace Pantry.ServiceGateways
                 _ = dbContext.LocationFoods.Add(new()
                 {
                     Item = dbContext.Items.First(x => x.Upc == "200BBQ"),
+                    PurchaseDate = now + TimeSpan.FromDays(-30),
                     ExpiryDate = now + TimeSpan.FromDays(180),
                     Quantity = 220,
                     Location = defaultLocation,
@@ -193,9 +200,9 @@ namespace Pantry.ServiceGateways
                 {
                     _ = dbContext.Database.ExecuteSqlRaw(@$"UPDATE `sqlite_sequence` SET `seq` = 0 WHERE `name` = '{tableName}';");
                 }
-                _ = dbContext.Equipments.Add(new() { EquipmentName = "Bread Machine",  EquipmentTypeId = dbContext.EquipmentTypes.First(x => x.EquipmentTypeName == "Bread Machine").EquipmentTypeId });
-                _ = dbContext.Equipments.Add(new() { EquipmentName = "Human",  EquipmentTypeId = dbContext.EquipmentTypes.First(x => x.EquipmentTypeName == "Human").EquipmentTypeId });
-                _ = dbContext.Equipments.Add(new() { EquipmentName = "Fridge",  EquipmentTypeId = dbContext.EquipmentTypes.First(x => x.EquipmentTypeName == "Fridge").EquipmentTypeId });
+                _ = dbContext.Equipments.Add(new() { EquipmentName = "Bread Machine", EquipmentTypeId = dbContext.EquipmentTypes.First(x => x.EquipmentTypeName == "Bread Machine").EquipmentTypeId });
+                _ = dbContext.Equipments.Add(new() { EquipmentName = "Human", EquipmentTypeId = dbContext.EquipmentTypes.First(x => x.EquipmentTypeName == "Human").EquipmentTypeId });
+                _ = dbContext.Equipments.Add(new() { EquipmentName = "Fridge", EquipmentTypeId = dbContext.EquipmentTypes.First(x => x.EquipmentTypeName == "Fridge").EquipmentTypeId });
                 _ = dbContext.Equipments.Add(new() { EquipmentName = "Sous Vide", EquipmentTypeId = dbContext.EquipmentTypes.First(x => x.EquipmentTypeName == "Sous Vide").EquipmentTypeId });
                 _ = dbContext.SaveChanges();
             }
@@ -421,13 +428,13 @@ namespace Pantry.ServiceGateways
                 _ = dbContext.Foods.Add(new() { FoodName = "Raw Chicken", });
                 _ = dbContext.Foods.Add(new() { FoodName = "BBQ Sauce" });
                 _ = dbContext.Foods.Add(new() { FoodName = "Cooked Chicken" });
-                _ = dbContext.Foods.Add(new() { FoodName = "Sliced Chicken" });
+                _ = dbContext.Foods.Add(new() { FoodName = "Sliced Chicken", IsEdible = true });
                 _ = dbContext.Foods.Add(new() { FoodName = "Flour" });
                 _ = dbContext.Foods.Add(new() { FoodName = "Eggs" });
-                _ = dbContext.Foods.Add(new() { FoodName = "Milk" });
+                _ = dbContext.Foods.Add(new() { FoodName = "Milk", IsEdible = true });
                 _ = dbContext.Foods.Add(new() { FoodName = "Bread" });
-                _ = dbContext.Foods.Add(new() { FoodName = "Sliced Bread" });
-                _ = dbContext.Foods.Add(new() { FoodName = "Chicken Sandwich" });
+                _ = dbContext.Foods.Add(new() { FoodName = "Sliced Bread", IsEdible = true });
+                _ = dbContext.Foods.Add(new() { FoodName = "Chicken Sandwich", IsEdible = true });
                 _ = dbContext.SaveChanges();
 
             }
