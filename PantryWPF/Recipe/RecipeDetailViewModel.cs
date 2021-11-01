@@ -96,19 +96,7 @@ namespace Pantry.WPF.Recipe
             DeleteFoodCommand = new(DeleteSelectedFood);
             DeleteThisRecipeCommand = new(DeleteThisRecipe);
             CookCommand = new(CookIt);
-            GoToFoodCommand = new(GoToFood);
         }
-
-        public void GoToFood()
-        {
-            if (SelectedRecipeFood is null) return;
-            _foodListViewModel.SelectedFood = SelectedRecipeFood.Food;
-            var x = this.Parent;
-            
-            this.ConductWith(_foodListViewModel);
-
-        }
-
 
         public void Load(int recipeId, string description)
         {

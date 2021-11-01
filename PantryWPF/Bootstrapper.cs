@@ -55,5 +55,11 @@ namespace Pantry.WPF
             var ctx = Container.Get<DataBase>();
             ctx.Database.EnsureCreated();
         }
+
+        protected override void OnLaunch()
+        {
+            //ToDo: Implement https://github.com/canton7/Stylet/blob/master/Samples/Stylet.Samples.NavigationController/NavigationController.cs
+            base.OnLaunch();
+        }
     }
 }

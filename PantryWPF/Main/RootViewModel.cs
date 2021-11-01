@@ -27,9 +27,7 @@ namespace Pantry.WPF.Main
         public NavigationCommand EquipmentNavigationCommand { get; set; }
         public NavigationCommand LocationNavigationCommand { get; set; }
         public NavigationCommand EquipmentTypeNavigationCommand { get; set; }
-
         public DelegateCommand SeedDatabaseCommand { get; set; }
-
 
         public RootViewModel(
             RecipesListViewModel recipesListViewModel,
