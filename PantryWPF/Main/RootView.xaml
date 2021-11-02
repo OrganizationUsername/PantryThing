@@ -18,6 +18,8 @@
                 <Button Content="Location Management" Command="{Binding LocationNavigationCommand}" Margin="5"/>
                 <Button Content="Food Management" Command="{Binding FoodNavigationCommand}" Margin="5"/>
                 <Button Content="Item Management" Command="{Binding ItemNavigationCommand}" Margin="5"/>
+                <Button Content="Meal Instance Management" Command="{Binding MealInstanceTypeNavigationCommand}" Margin="5"/>
+
                 <Label Content=""/>
                 <Button Content="Seed" Command="{Binding SeedDatabaseCommand}" Margin="5"/>
             </StackPanel>

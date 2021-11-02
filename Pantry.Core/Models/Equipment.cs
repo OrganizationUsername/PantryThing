@@ -28,7 +28,7 @@ namespace Pantry.Core.Models
         public int ConsumerId { get; set; }
         public Consumer Consumer { get; set; }
         public DateTime MealInstanceDateTime { get; set; }
-        public int DaySinceMillennium { get; set; } //For db.
+        public int DaysSinceZero { get; set; } //For db.
         public int MealOfTheDayId { get; set; }
         public MealOfTheDay MealOfTheDay { get; set; }
         public ICollection<MealInstanceRow> MealInstanceRows { get; set; }

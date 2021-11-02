@@ -1,0 +1,35 @@
+﻿<UserControl x:Class="Pantry.WPF.Meal.MealInstanceView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:Pantry.WPF.Meal"
+             xmlns:s="https://github.com/canton7/Stylet"
+             d:DataContext="{d:DesignInstance Type=local:MealInstanceViewModel}"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="800">
+    <DockPanel>
+        <ListView ItemsSource="{Binding MealInstances}" 
+                  SelectedItem="{Binding SelectedMealInstance}" 
+                  DockPanel.Dock="Left">
+            <ListView.ItemTemplate>
+                <DataTemplate>
+                    <StackPanel>
+                        <TextBlock Text="{Binding Consumer.ConsumerName}"/>
+                        <TextBlock>
+                            <Run Text="{Binding MealInstanceDateTime.Month, Mode=OneWay}"/>
+                            <Run Text="/"/>
+                            <Run Text="{Binding MealInstanceDateTime.Day, Mode=OneWay}"/>
+                            <Run Text="- "/>
+                            <Run Text="{Binding MealInstanceDateTime.Hour, Mode=OneWay}"/>
+                            <Run Text=":"/>
+                            <Run Text="{Binding MealInstanceDateTime.Minute, Mode=OneWay}"/>
+                            <Run Text="{Binding MealInstanceId, Mode=OneWay}"/>
+                        </TextBlock>
+                    </StackPanel>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+        </ListView>
+        <ContentControl s:View.Model="{Binding SelectedDetailViewModel}"/>
+    </DockPanel>
+</UserControl>

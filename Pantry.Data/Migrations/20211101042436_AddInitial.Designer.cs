@@ -298,7 +298,7 @@ namespace Pantry.Data.Migrations
                     b.Property<int>("ConsumerId")
                         .HasColumnType("INTEGER");
 
-                    b.Property<int>("DaySinceMillennium")
+                    b.Property<int>("DaysSinceZero")
                         .HasColumnType("INTEGER");
 
                     b.Property<DateTime>("MealInstanceDateTime")

@@ -16,6 +16,29 @@ namespace Pantry.ServiceGateways
             _dbFactory = dbFactory;
         }
 
+        public List<MealInstance> GetMealInstances()
+        {
+            using (var db = _dbFactory())
+            {
+                return db.MealInstances.Include(x => x.Consumer).ToList();
+            }
+        }
+
+        public MealInstance GetMealInstance(int mealInstanceId)
+        {
+            using (var db = _dbFactory())
+            {
+                var result =
+                    db
+                    .MealInstances
+                    .Include(x => x.MealInstanceRows).ThenInclude(x => x.Food)
+                    .First(x => x.MealInstanceId == mealInstanceId);
+                return result;
+            }
+        }
+
+
+
         public List<Item> GetItems()
         {
             using (var db = _dbFactory())

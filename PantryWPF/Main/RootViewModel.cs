@@ -4,6 +4,7 @@ using Pantry.WPF.Food;
 using Pantry.WPF.Inventory;
 using Pantry.WPF.Item;
 using Pantry.WPF.Location;
+using Pantry.WPF.Meal;
 using Pantry.WPF.Recipe;
 using Pantry.WPF.Shared;
 using Serilog.Core;
@@ -27,6 +28,7 @@ namespace Pantry.WPF.Main
         public NavigationCommand EquipmentNavigationCommand { get; set; }
         public NavigationCommand LocationNavigationCommand { get; set; }
         public NavigationCommand EquipmentTypeNavigationCommand { get; set; }
+        public NavigationCommand MealInstanceTypeNavigationCommand { get; set; }
         public DelegateCommand SeedDatabaseCommand { get; set; }
 
         public RootViewModel(
@@ -37,6 +39,7 @@ namespace Pantry.WPF.Main
             ItemViewModel itemViewModel,
             EquipmentTypeViewModel equipmentTypeViewModel,
             LocationViewModel locationViewModel,
+            MealInstanceViewModel mealInstanceViewModel,
             Seeder seed,
             Logger logger)
         {
@@ -47,6 +50,7 @@ namespace Pantry.WPF.Main
             LocationNavigationCommand = new(this, locationViewModel);
             ItemNavigationCommand = new(this, itemViewModel);
             EquipmentTypeNavigationCommand = new(this, equipmentTypeViewModel);
+            MealInstanceTypeNavigationCommand = new(this, mealInstanceViewModel);
             SeedDatabaseCommand = new(seed.SeedDatabase);
             seed.PopulateLocationIfNone();
             logger.Debug("Opened application.");

@@ -42,7 +42,81 @@ namespace Pantry.ServiceGateways
             PopulateRecipes();
             PopulateItems();
             PopulateInventory();
+            PopulateConsumers();
+            PopulateMealOfTheDay();
+            PopulateMealInstances();
             _logger.Debug("Finished seed.");
+        }
+
+
+        private void PopulateMealInstances()
+        {
+            using (var dbContext = _dbFactory())
+            {
+                var tableName = dbContext.MealInstances.EntityType.GetTableName();
+                _ = dbContext.Database.ExecuteSqlRaw(@$"DELETE FROM {tableName};");
+                if (dbContext.Database.ProviderName == "Microsoft.EntityFrameworkCore.Sqlite")
+                {
+                    _ = dbContext.Database.ExecuteSqlRaw(@$"UPDATE `sqlite_sequence` SET `seq` = 0 WHERE `name` = '{tableName}';");
+                }
+
+                var day = (DateTime.Now - DateTime.MinValue).Days;
+
+                foreach (var consumer in dbContext.Consumers)
+                {
+                    foreach (var mealOfTheDay in dbContext.MealOfTheDays)
+                    {
+                        for (var i = 1; i < 8; i++)
+                        {
+                            dbContext.MealInstances.Add(new()
+                            {
+                                ConsumerId = consumer.ConsumerId,
+                                MealOfTheDayId = mealOfTheDay.MealOfTheDayId,
+                                DaysSinceZero = day + i,
+                                MealInstanceDateTime = DateTime.MinValue + TimeSpan.FromDays(day + i) + mealOfTheDay.MealOfTheDayDateTime.TimeOfDay
+                            });
+                        }
+                    }
+                }
+                _ = dbContext.SaveChanges();
+            }
+        }
+
+        private void PopulateMealOfTheDay()
+        {
+            using (var dbContext = _dbFactory())
+            {
+                var tableName = dbContext.MealOfTheDays.EntityType.GetTableName();
+                _ = dbContext.Database.ExecuteSqlRaw(@$"DELETE FROM {tableName};");
+                if (dbContext.Database.ProviderName == "Microsoft.EntityFrameworkCore.Sqlite")
+                {
+                    _ = dbContext.Database.ExecuteSqlRaw(@$"UPDATE `sqlite_sequence` SET `seq` = 0 WHERE `name` = '{tableName}';");
+                }
+                dbContext.MealOfTheDays.Add(new() { MealOfTheDayName = "Ad hoc", MealOfTheDayDateTime = DateTime.MinValue + DateTime.Parse("00:00").TimeOfDay });
+                dbContext.MealOfTheDays.Add(new() { MealOfTheDayName = "Breakfast", MealOfTheDayDateTime = DateTime.MinValue + DateTime.Parse("06:35").TimeOfDay });
+                dbContext.MealOfTheDays.Add(new() { MealOfTheDayName = "Lunch", MealOfTheDayDateTime = DateTime.MinValue + DateTime.Parse("12:00").TimeOfDay });
+                dbContext.MealOfTheDays.Add(new() { MealOfTheDayName = "Dinner", MealOfTheDayDateTime = DateTime.MinValue + DateTime.Parse("18:30").TimeOfDay });
+                _ = dbContext.SaveChanges();
+            }
+        }
+
+        private void PopulateConsumers()
+        {
+            using (var dbContext = _dbFactory())
+            {
+                var tableName = dbContext.Consumers.EntityType.GetTableName();
+                _ = dbContext.Database.ExecuteSqlRaw(@$"DELETE FROM {tableName};");
+                if (dbContext.Database.ProviderName == "Microsoft.EntityFrameworkCore.Sqlite")
+                {
+                    _ = dbContext.Database.ExecuteSqlRaw(@$"UPDATE `sqlite_sequence` SET `seq` = 0 WHERE `name` = '{tableName}';");
+                }
+
+                dbContext.Consumers.Add(new() { ConsumerName = "Abel" });
+                dbContext.Consumers.Add(new() { ConsumerName = "Betty" });
+                dbContext.Consumers.Add(new() { ConsumerName = "Clyde" });
+                dbContext.Consumers.Add(new() { ConsumerName = "Dorthy" });
+                _ = dbContext.SaveChanges();
+            }
         }
 
         private void PopulateItems()
