@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
 using Pantry.Data;
 using Serilog.Core;
 
@@ -32,13 +34,13 @@ namespace Pantry.ServiceGateways.Location
             }
         }
 
-        public int AddNewLocation(string newLocationName)
+        public async Task<int> AddNewLocation(string newLocationName)
         {
             using (var db = _dbFactory())
             {
-                if (db.Locations.Any(x => x.LocationName == newLocationName)) return 0;
-                db.Locations.Add(new Core.Models.Location() { LocationName = newLocationName.Trim() });
-                int rowChange= db.SaveChanges();
+                if (await db.Locations.AnyAsync(x => x.LocationName == newLocationName)) return 0;
+                await db.Locations.AddAsync(new Core.Models.Location() { LocationName = newLocationName.Trim() });
+                int rowChange = await db.SaveChangesAsync();
                 return rowChange;
             }
 
@@ -46,21 +48,24 @@ namespace Pantry.ServiceGateways.Location
 
         }
 
-        public int? DeleteLocation(int locationId)
+        public async Task<int?> DeleteLocation(int locationId)
         {
             using (var db = _dbFactory())
             {
-                var locationToRemove = db.Locations.First(x => x.LocationId == locationId);
+                var locationToRemove = await db.Locations.FirstAsync(x => x.LocationId == locationId);
                 if (locationToRemove.LocationName == "Default") return null;
-                var locationFoods = db.LocationFoods.Where(x => x.LocationId == locationId).ToList();
-                var defaultLocation = db.Locations.First(x => x.LocationName == "Default");
+                var locationFoods = await db.LocationFoods.Where(x => x.LocationId == locationId).ToListAsync();
+                var defaultLocation = await db.Locations.FirstAsync(x => x.LocationName == "Default");
                 foreach (var lf in locationFoods)
                 {
                     lf.LocationId = defaultLocation.LocationId;
                 }
-                int rowCount = db.SaveChanges();
+                int rowCount = await db.SaveChangesAsync();
+
+                // something something this changes state and the remove happens on the savechanges
                 db.Locations.Remove(locationToRemove);
-                db.SaveChanges();
+
+                await db.SaveChangesAsync();
                 return rowCount;
             }
         }

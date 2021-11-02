@@ -1,4 +1,5 @@
-﻿using System.Windows;
+﻿using System.Threading.Tasks;
+using System.Windows;
 using Pantry.ServiceGateways;
 using Pantry.WPF.Shared;
 using Stylet;
@@ -52,25 +53,25 @@ namespace Pantry.WPF.Item
             AddLocationFoodCommand = new(AddLocationFood);
         }
 
-        protected override void OnActivate()
+        protected async override void OnActivate()
         {
             base.OnActivate();
-            LoadData();
+            await LoadData();
         }
 
 
-        public void AddLocationFood()
+        public async Task AddLocationFood()
         {
-            _itemService.AddLocationFood(SelectedItem);
+            await _itemService.AddLocationFood(SelectedItem);
         }
 
-        public void AddItem()
+        public async Task AddItem()
         {
             if (string.IsNullOrEmpty(NewItemUpc) || SelectedFood is null) { return; }
-            bool addItemSuccess = _itemService.AddItem(SelectedFood, NewItemUpc, NewItemWeight);
+            bool addItemSuccess = await _itemService.AddItem(SelectedFood, NewItemUpc, NewItemWeight);
             if (addItemSuccess)
             {
-                LoadData();
+                await LoadData();
             }
             else
             {
@@ -78,10 +79,10 @@ namespace Pantry.WPF.Item
             }
         }
 
-        public void LoadData()
+        public async Task LoadData()
         {
-            Items = new(_itemService.GetItems());
-            Foods = new(_itemService.GetFoods());
+            Items = new(await _itemService.GetItems());
+            Foods = new(await _itemService.GetFoods());
         }
     }
 }

@@ -22,7 +22,7 @@ namespace Pantry.WPF.Meal
                 if (_selectedMealInstance is not null)
                 {
                     SelectedDetailViewModel = _mealInstanceDetailVmFactory();
-                    SelectedDetailViewModel.LoadData(_selectedMealInstance.MealInstanceId);
+                    SelectedDetailViewModel.LoadData(_selectedMealInstance.MealInstanceId).GetAwaiter().GetResult();
                     OnPropertyChanged(nameof(SelectedDetailViewModel));
                 }
             }

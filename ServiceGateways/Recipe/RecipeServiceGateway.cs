@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Pantry.Core.Models;
 using Pantry.Data;
@@ -27,61 +28,61 @@ namespace Pantry.ServiceGateways.Recipe
             }
         }
 
-        public void AddEmptyRecipe(string newRecipeName)
+        public async Task AddEmptyRecipe(string newRecipeName)
         {
             using (var db = _dbFactory())
             {
-                db.Recipes.Add(new() { Description = newRecipeName });
-                db.SaveChanges();
+                await db.Recipes.AddAsync(new() { Description = newRecipeName });
+                await db.SaveChangesAsync();
             }
         }
-        public List<Core.Models.Recipe> GetRecipe(int recipeId)
+        public async Task<List<Core.Models.Recipe>> GetRecipe(int recipeId)
         {
             using (var db = _dbFactory())
             {
-                return db.Recipes
+                return await db.Recipes
                     .Where(x => x.RecipeId == recipeId)
                     .Include(x => x.RecipeFoods)
                     .ThenInclude(x => x.Food)
-                    .ToList();
+                    .ToListAsync();
             }
         }
 
-        public List<Core.Models.Food> GetFoods()
+        public async Task<List<Core.Models.Food>> GetFoods()
         {
             using (var db = _dbFactory())
             {
-                return db.Foods.ToList();
+                return await db.Foods.ToListAsync();
             }
         }
 
-        public void DeleteRecipe(Core.Models.Recipe recipe)
+        public async Task DeleteRecipe(Core.Models.Recipe recipe)
         {
             using (var db = _dbFactory())
             {
                 db.Recipes.Remove(recipe);
-                db.SaveChanges();
+                await db.SaveChangesAsync();
             }
         }
 
-        public void DeleteFood(RecipeFood selectedRecipeFood)
+        public async Task DeleteFood(RecipeFood selectedRecipeFood)
         {
             using (var db = _dbFactory())
             {
                 db.RecipeFoods.Remove(selectedRecipeFood);
-                db.SaveChanges();
+                await db.SaveChangesAsync();
             }
         }
 
-        public void DeleteRecipeStep(RecipeStep selectedRecipeStep)
+        public async Task DeleteRecipeStep(RecipeStep selectedRecipeStep)
         {
             using (var db = _dbFactory())
             {
                 db.RecipeSteps.Remove(selectedRecipeStep);
-                db.SaveChanges();
+                await db.SaveChangesAsync();
             }
         }
-        public List<RecipeStep> GetRecipeSteps(int selectedRecipeId)
+        public async Task<List<RecipeStep>> GetRecipeSteps(int selectedRecipeId)
         {
             using (var db = _dbFactory())
             {
@@ -94,11 +95,11 @@ namespace Pantry.ServiceGateways.Recipe
                 }
                 else
                 {
-                    newList = db.RecipeSteps.Where(
+                    newList = await db.RecipeSteps.Where(
                             x => x.RecipeId == selectedRecipeId)
                         .Include(y => y.RecipeStepEquipmentType)
                         .ThenInclude(x => x.EquipmentType)
-                        .ToList();
+                        .ToListAsync();
                 }
 
                 return newList;
@@ -117,37 +118,38 @@ namespace Pantry.ServiceGateways.Recipe
             }
         }
 
-        public bool AddRecipeFood(int recipeId, int foodId, double amount)
+        public async Task<bool> AddRecipeFood(int recipeId, int foodId, double amount)
         {
             using (var db = _dbFactory())
             {
                 var rx =
-                    db.Recipes
+                    await db.Recipes
                         .Where(x => x.RecipeId == recipeId)
                         .Include(x => x.RecipeFoods)
-                        .FirstOrDefault();
+                        .FirstOrDefaultAsync();
                 if (rx?.RecipeFoods is null)
                 {
                     return false;
                 }
                 var x = new RecipeFood() { Amount = amount, FoodId = foodId, RecipeId = recipeId };
                 rx.RecipeFoods.Add(x);
-                db.SaveChanges();
+                await db.SaveChangesAsync();
                 return true;
             }
         }
 
-        public void AddRecipeStep(string newDescription, int recipeId, double tempDuration, IEnumerable<int> equipmentTypeIds)
+        public async Task AddRecipeStep(string newDescription, int recipeId, double tempDuration, IEnumerable<int> equipmentTypeIds)
         {
 
             using (var db = _dbFactory())
             {
-                var entity = db.RecipeSteps.Add(new()
+                var addResposne = await db.RecipeSteps.AddAsync(new()
                 {
                     Instruction = newDescription,
                     RecipeId = recipeId,
                     TimeCost = tempDuration
-                }).Entity;
+                });
+                var entity= addResposne.Entity;
                 var stepId = entity.RecipeStepId;
 
                 entity.RecipeStepEquipmentType = new List<RecipeStepEquipmentType>(equipmentTypeIds
@@ -157,7 +159,7 @@ namespace Pantry.ServiceGateways.Recipe
                         RecipeStepId = stepId,
                         EquipmentId = 1,
                     }));
-                db.SaveChanges();
+                await db.SaveChangesAsync();
             }
         }
 

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Pantry.Core.Models;
 using Pantry.Data;
@@ -24,112 +25,113 @@ namespace Pantry.ServiceGateways
             }
         }
 
-        public MealInstance GetMealInstance(int mealInstanceId)
+        public async Task<MealInstance> GetMealInstance(int mealInstanceId)
         {
             using (var db = _dbFactory())
             {
-                var result =
-                    db
+                return await db
                     .MealInstances
                     .Include(x => x.MealInstanceRows).ThenInclude(x => x.Food)
-                    .First(x => x.MealInstanceId == mealInstanceId);
-                return result;
+                    .FirstAsync(x => x.MealInstanceId == mealInstanceId);
             }
         }
 
 
 
-        public List<Item> GetItems()
+        public async Task<List<Item>> GetItems()
         {
             using (var db = _dbFactory())
             {
-                return db.Items.Include(x => x.Food).ToList();
+                return await db.Items.Include(x => x.Food).ToListAsync();
             }
         }
 
-        public bool AddItem(Core.Models.Food selectedFood, string newItemUpc, double newItemWeight)
+        public async Task<bool> AddItem(Core.Models.Food selectedFood, string newItemUpc, double newItemWeight)
         {
             using (var db = _dbFactory())
             {
-                if (db.Items.Any(x => x.Upc == ""))
+                if (await db.Items.AnyAsync(x => x.Upc == ""))
                 {
                     return false;
                 }
 
-                db.Items.Add(new()
-                {
-                    FoodId = selectedFood.FoodId,
-                    Unit = null,
-                    Upc = newItemUpc,
-                    Weight = newItemWeight
-                });
-                db.SaveChanges();
+                await db .Items.AddAsync(new()
+                    {
+                        FoodId = selectedFood.FoodId,
+                        Unit = null,
+                        Upc = newItemUpc,
+                        Weight = newItemWeight
+                    });
+                await db .SaveChangesAsync();
 
                 return true;
             }
         }
 
-        public List<Core.Models.Food> GetFoods()
+        public async Task<List<Core.Models.Food>> GetFoods()
         {
             using (var db = _dbFactory())
             {
-                return db.Foods.ToList();
+                return await db.Foods.ToListAsync();
             }
         }
 
-        public void AddLocationFood(Item selectedItem, Core.Models.Location selectedLocation = null)
+        public async Task AddLocationFood(Item selectedItem, Core.Models.Location selectedLocation = null)
         {
             using (var db = _dbFactory())
             {
                 if (selectedLocation is null)
                 {
-                    if (!db.Locations.Any()) db.Locations.Add(new() { LocationName = "default" });
-                    selectedLocation = db.Locations.First();
+                    if (!db.Locations.Any()) await db.Locations.AddAsync(new() { LocationName = "default" });
+                    selectedLocation = await db.Locations.FirstAsync();
                 }
 
-                db.LocationFoods.Add(new()
+                var item = await db.Items.SingleAsync(x => x.FoodId == selectedItem.FoodId);
+
+                await db.LocationFoods.AddAsync(new()
                 {
                     Exists = true,
                     ExpiryDate = DateTime.MinValue,
                     OpenDate = DateTime.MinValue,
                     ItemId = selectedItem.ItemId,
                     LocationId = selectedLocation.LocationId,
-                    Quantity = db.Items.Single(x => x.FoodId == selectedItem.FoodId).Weight
+                    Quantity = item.Weight
                 });
-                db.SaveChanges();
+
+                await db.SaveChangesAsync();
             }
         }
 
-        public List<LocationFoods> GetLocationFoodsAtLocation(int selectedLocationId)
+        public async Task<List<LocationFoods>> GetLocationFoodsAtLocation(int selectedLocationId)
         {
             using (var db = _dbFactory())
             {
-                return db.LocationFoods
+                return await db.LocationFoods
                     .Where(x => x.Location.LocationId == selectedLocationId)
                     .Where(x => x.Quantity > 0)
                     .Include(x => x.Item)
                     .ThenInclude(x => x.Food)
-                    .ToList();
+                    .ToListAsync();
             }
         }
 
-        public void SaveLocationFood(LocationFoods lf)
+        public async Task SaveLocationFood(LocationFoods lf)
         {
             using (var db = _dbFactory())
             {
                 var x =
-                    db.LocationFoods.First(x => x.LocationFoodsId == lf.LocationFoodsId);
+                   await db.LocationFoods.FirstAsync(x => x.LocationFoodsId == lf.LocationFoodsId);
                 x.Quantity = lf.Quantity;
                 x.LocationId = lf.Location.LocationId;
-                db.SaveChanges();
+                await db.SaveChangesAsync();
             }
         }
 
-        public List<Core.Models.Location> GetLocations()
+        public async Task<List<Core.Models.Location>> GetLocations()
         {
             using (var db = _dbFactory())
             {
-                return db.Locations.ToList();
+                return await db.Locations.ToListAsync();
             }
         }
     }

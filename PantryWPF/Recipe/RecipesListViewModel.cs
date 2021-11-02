@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using System.Threading.Tasks;
 using Pantry.ServiceGateways.Recipe;
 using Pantry.WPF.Shared;
 using Stylet;
@@ -65,7 +66,7 @@ namespace Pantry.WPF.Recipe
             ACollection.AddRange(_recipeServiceGateway.GetRecipes());
         }
 
-        public void AddRecipe()
+        public async Task AddRecipe()
         {
             if (string.IsNullOrWhiteSpace(NewRecipeName) || _recipeServiceGateway.GetRecipes().Any(x => x.Description == NewRecipeName)) { return; }
 

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Pantry.Core.Models;
 using Pantry.Data;
@@ -32,7 +33,7 @@ namespace Pantry.ServiceGateways
             }
         }
 
-        public void SeedDatabase()
+        public async Task SeedDatabase()
         {
             _logger.Debug("Beginning seed.");
             PopulateFoods();
