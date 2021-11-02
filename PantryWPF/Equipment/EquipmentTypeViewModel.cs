@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 using System.Windows;
 using Pantry.Core.Models;
 using Pantry.ServiceGateways.Equipment;
@@ -52,9 +53,9 @@ namespace Pantry.WPF.Equipment
 
         }
 
-        public void AddEquipmentType()
+        public async Task AddEquipmentType()
         {
-            if (_equipmentServiceGateway.AddEquipmentType(NewEquipmentType))
+            if (await _equipmentServiceGateway.AddEquipmentType(NewEquipmentType))
             {
                 NewEquipmentType = "";
                 LoadData();
@@ -66,22 +67,22 @@ namespace Pantry.WPF.Equipment
         }
 
 
-        protected override void OnActivate()
+        protected async override void OnActivate()
         {
             base.OnActivate();
-            LoadData();
+            await LoadData();
         }
 
-        private void LoadData()
+        private async Task LoadData()
         {
             if (EquipmentTypes is null)
             {
-                EquipmentTypes = new(_equipmentServiceGateway.GetEquipmentTypes());
+                EquipmentTypes = new(await _equipmentServiceGateway.GetEquipmentTypes());
             }
             else
             {
                 EquipmentTypes.Clear();
-                EquipmentTypes.AddRange(_equipmentServiceGateway.GetEquipmentTypes());
+                EquipmentTypes.AddRange(await _equipmentServiceGateway.GetEquipmentTypes());
             }
 
         }

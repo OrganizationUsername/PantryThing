@@ -1,4 +1,5 @@
 ﻿using System.Linq;
+using System.Threading.Tasks;
 using System.Windows;
 using Pantry.Core.Models;
 using Pantry.ServiceGateways;
@@ -34,7 +35,7 @@ namespace Pantry.WPF.Inventory
                 if (SetAndNotify(ref _selectedLocation, value, nameof(SelectedLocation)) && _selectedLocation is not null)
                 {
                     LocationFoodsCollection.Clear();
-                    LocationFoodsCollection.AddRange(_itemService.GetLocationFoodsAtLocation(SelectedLocation.LocationId));
+                    LocationFoodsCollection.AddRange(_itemService.GetLocationFoodsAtLocation(SelectedLocation.LocationId).GetAwaiter().GetResult());
                     NotifyOfPropertyChange(nameof(LocationFoodsCollection));
                 }
             }
@@ -52,7 +53,7 @@ namespace Pantry.WPF.Inventory
             _itemService = itemService;
             SaveChangesDelegateCommand = new(SaveChanges);
             AddLocationFoodDelegateCommand = new(AddNewLocationFood);
-            LoadData();
+            LoadData().GetAwaiter().GetResult();
         }
 
         protected override void OnActivate()
@@ -61,31 +62,31 @@ namespace Pantry.WPF.Inventory
             LoadData();
         }
 
-        public void LoadData()
+        public async Task LoadData()
         {
             Locations.Clear();
-            Locations.AddRange(_itemService.GetLocations());
+            Locations.AddRange(await _itemService.GetLocations());
             if (Locations.Count == 0) return;
-            LocationFoodsCollection = new(_itemService.GetLocationFoodsAtLocation(Locations.First().LocationId));
+            LocationFoodsCollection = new(await _itemService.GetLocationFoodsAtLocation(Locations.First().LocationId));
             SelectedLocation = LocationFoodsCollection.Count == 0 ? null : Locations.First(x => x.LocationId == LocationFoodsCollection.FirstOrDefault()?.LocationId);
-            Items = new(_itemService.GetItems());
+            Items = new(await _itemService.GetItems());
         }
 
-        public void AddNewLocationFood()
+        public async Task AddNewLocationFood()
         {
             if (SelectedItem is null || SelectedLocation is null) { return; }
-            _itemService.AddLocationFood(SelectedItem, SelectedLocation);
-            ReLoadData();
+            await _itemService.AddLocationFood(SelectedItem, SelectedLocation);
+            await ReLoadData();
         }
 
-        public void ReLoadData()
+        public async Task ReLoadData()
         {
             LocationFoodsCollection.Clear();
-            LocationFoodsCollection.AddRange(_itemService.GetLocationFoodsAtLocation(SelectedLocation.LocationId));
+            LocationFoodsCollection.AddRange(await _itemService.GetLocationFoodsAtLocation(SelectedLocation.LocationId));
             SelectedLocationFood = null;
         }
 
-        public void SaveChanges()
+        public async Task SaveChanges()
         {
             if (SelectedLocationFood is null)
             {
@@ -99,7 +100,7 @@ namespace Pantry.WPF.Inventory
                 return;
             }
 
-            _itemService.SaveLocationFood(SelectedLocationFood);
+            await _itemService.SaveLocationFood(SelectedLocationFood);
             ReLoadData();
         }
 

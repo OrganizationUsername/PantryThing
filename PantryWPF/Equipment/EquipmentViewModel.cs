@@ -1,4 +1,5 @@
-﻿using System.Windows;
+﻿using System.Threading.Tasks;
+using System.Windows;
 using Pantry.Core.Models;
 using Pantry.ServiceGateways.Equipment;
 using Pantry.WPF.Shared;
@@ -37,23 +38,23 @@ namespace Pantry.WPF.Equipment
             AddEquipmentDelegateCommand = new(AddEquipment);
         }
 
-        protected override void OnActivate()
+        protected override async void OnActivate()
         {
             base.OnActivate();
-            LoadData();
+            await LoadData();
         }
 
-        private void LoadData()
+        private async Task LoadData()
         {
             _logger.Debug("Loading EquipmentViewModel.");
-            LoadEquipments();
-            LoadEquipmentTypes();
+            await LoadEquipments();
+            await LoadEquipmentTypes();
             _logger.Debug("Loaded EquipmentViewModel.");
         }
 
-        private void LoadEquipmentTypes()
+        private async Task LoadEquipmentTypes()
         {
-            var equipmentTypes = _equipmentSg.GetEquipmentTypes();
+            var equipmentTypes = await _equipmentSg.GetEquipmentTypes();
             if (EquipmentTypes is null)
             {
                 EquipmentTypes = new(equipmentTypes);
@@ -65,9 +66,9 @@ namespace Pantry.WPF.Equipment
             }
         }
 
-        private void LoadEquipments()
+        private async Task LoadEquipments()
         {
-            var equipments = _equipmentSg.GetEquipments();
+            var equipments = await _equipmentSg.GetEquipments();
             if (Equipments is null)
             {
                 Equipments = new(equipments);
@@ -79,10 +80,10 @@ namespace Pantry.WPF.Equipment
             }
         }
 
-        private void AddEquipment()
+        private async Task AddEquipment()
         {
             if (string.IsNullOrWhiteSpace(NewEquipmentName) || SelectedEquipmentType is null) { return; }
-            var addSuccess = _equipmentSg.AddEquipment(NewEquipmentName, SelectedEquipmentType.EquipmentTypeId);
+            var addSuccess = await _equipmentSg.AddEquipment(NewEquipmentName, SelectedEquipmentType.EquipmentTypeId);
             if (!addSuccess)
             {
                 MessageBox.Show("Locations must first be populated");

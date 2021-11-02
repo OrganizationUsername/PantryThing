@@ -1,4 +1,5 @@
 ﻿using System.Linq;
+using System.Threading.Tasks;
 using Pantry.Core.Models;
 using Pantry.ServiceGateways;
 using Stylet;
@@ -17,10 +18,10 @@ namespace Pantry.WPF.Meal
 
         }
 
-        public void LoadData(int mealInstanceId)
+        public async Task LoadData(int mealInstanceId)
         {
 
-            SelectedMealInstance = _itemService.GetMealInstance(mealInstanceId);
+            SelectedMealInstance = await _itemService.GetMealInstance(mealInstanceId);
         }
     }
 }

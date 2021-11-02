@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Pantry.Core.Models;
 using Pantry.Data;
@@ -16,32 +17,32 @@ namespace Pantry.ServiceGateways.Equipment
             _dbFactory = dbFactory;
         }
 
-        public List<EquipmentType> GetEquipmentTypes()
+        public async Task<List<EquipmentType>> GetEquipmentTypes()
         {
             using (var db = _dbFactory())
             {
-                return db.EquipmentTypes.ToList();
+                return await db.EquipmentTypes.ToListAsync();
             }
         }
 
-        public List<Core.Models.Equipment> GetEquipments()
+        public async Task<List<Core.Models.Equipment>> GetEquipments()
         {
             using (var db = _dbFactory())
             {
-                return db.Equipments.Include(x => x.EquipmentType).ToList();
+                return await db.Equipments.Include(x => x.EquipmentType).ToListAsync();
             }
         }
 
-        public bool AddEquipmentType(string equipmentTypeName)
+        public async Task<bool> AddEquipmentType(string equipmentTypeName)
         {
             if (string.IsNullOrWhiteSpace(equipmentTypeName)) return false;
             using (var db = _dbFactory())
             {
-                var existingIdentical = db.EquipmentTypes.FirstOrDefault(x => x.EquipmentTypeName == equipmentTypeName.Trim());
+                var existingIdentical = await db.EquipmentTypes.FirstOrDefaultAsync(x => x.EquipmentTypeName == equipmentTypeName.Trim());
                 if (existingIdentical is null)
                 {
-                    db.EquipmentTypes.Add(new() { EquipmentTypeName = equipmentTypeName.Trim() });
-                    db.SaveChanges();
+                    await db.EquipmentTypes.AddAsync(new() { EquipmentTypeName = equipmentTypeName.Trim() });
+                    await db.SaveChangesAsync();
                     return true;
                 }
 
@@ -50,25 +51,25 @@ namespace Pantry.ServiceGateways.Equipment
         }
 
 
-        public bool AddEquipment(string newEquipmentName, int newEquipmentTypeId)
+        public async Task<bool> AddEquipment(string newEquipmentName, int newEquipmentTypeId)
         {
             using (var db = _dbFactory())
             {
-                db.Equipments.Add(new()
-                {
-                    EquipmentName = newEquipmentName,
-                    EquipmentTypeId = newEquipmentTypeId
-                });
-                db.SaveChanges();
+                await db.Equipments.AddAsync(new()
+                    {
+                        EquipmentName = newEquipmentName,
+                        EquipmentTypeId = newEquipmentTypeId
+                    });
+                await db.SaveChangesAsync();
             }
             return true;
         }
 
-        public List<Core.Models.Equipment> GetEquipments(int equipmentTypeId)
+        public async Task<List<Core.Models.Equipment>> GetEquipments(int equipmentTypeId)
         {
             using (var db = _dbFactory())
             {
-                return db.Equipments.Where(x => x.EquipmentTypeId == equipmentTypeId).ToList();
+                return await db.Equipments.Where(x => x.EquipmentTypeId == equipmentTypeId).ToListAsync();
             }
         }
 

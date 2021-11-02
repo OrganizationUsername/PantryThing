@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows;
 using Pantry.Core.Models;
 using Pantry.ServiceGateways.Recipe;
@@ -98,70 +99,72 @@ namespace Pantry.WPF.Recipe
             CookCommand = new(CookIt);
         }
 
-        public void Load(int recipeId, string description)
+        public async Task Load(int recipeId, string description)
         {
             Description = description;
-            _selectedRecipe = _recipeServiceGateway.GetRecipe(recipeId).FirstOrDefault(x => x.RecipeId == recipeId);
-            Foods = _recipeServiceGateway.GetFoods();
+            var recipes = await _recipeServiceGateway.GetRecipe(recipeId);
+            _selectedRecipe = recipes.FirstOrDefault(x => x.RecipeId == recipeId);
+            Foods = await _recipeServiceGateway.GetFoods();
             EquipmentTypeProjections = new(_recipeServiceGateway.GetEquipmentTypeProjections());
-            LoadRecipeDetailData();
-            CanCook = CalculateCanCook();
+            await LoadRecipeDetailData();
+            CanCook = await CalculateCanCook();
         }
 
-        public void CookIt()
+        public async Task CookIt()
         {
             // ReSharper disable once RedundantJumpStatement
             return;
         }
 
-        public bool CalculateCanCook()
+        public async Task<bool> CalculateCanCook()
         {
             return false;
         }
 
 
-        private void LoadRecipeDetailData()
+        private async Task LoadRecipeDetailData()
         {
-            LoadSteps();
-            LoadFoodInstances();
+            await LoadSteps();
+            await LoadFoodInstances();
         }
 
-        private void DeleteThisRecipe()
+        private async Task DeleteThisRecipe()
         {
-            var thisRecipe = _recipeServiceGateway.GetRecipe(_selectedRecipe.RecipeId).FirstOrDefault();
+            var recipes = await _recipeServiceGateway.GetRecipe(_selectedRecipe.RecipeId);
+            var thisRecipe =recipes.FirstOrDefault();
             if (thisRecipe is null)
             {
                 return;
             }
 
-            _recipeServiceGateway.DeleteRecipe(thisRecipe);
-            LoadRecipeDetailData();
+            await _recipeServiceGateway.DeleteRecipe(thisRecipe);
+            await LoadRecipeDetailData();
         }
 
-        private void DeleteSelectedFood()
+        private async Task DeleteSelectedFood()
         {
             if (SelectedRecipeFood is null || _selectedRecipe is null) return;
-            _recipeServiceGateway.DeleteFood(SelectedRecipeFood);
-            LoadRecipeDetailData();
+            await _recipeServiceGateway.DeleteFood(SelectedRecipeFood);
+            await LoadRecipeDetailData();
         }
 
-        private void DeleteSelectedStep()
+        private async Task DeleteSelectedStep()
         {
             if (SelectedRecipeStep is null || _selectedRecipe is null) return;
-            _recipeServiceGateway.DeleteRecipeStep(SelectedRecipeStep);
-            LoadRecipeDetailData();
+            await _recipeServiceGateway.DeleteRecipeStep(SelectedRecipeStep);
+            await LoadRecipeDetailData();
         }
 
-        private void SaveNewFood()
+        private async Task SaveNewFood()
         {
             if (_selectedRecipe is null) { return; }
             if (NewFood is not null && double.TryParse(NewFoodAmount, out var foodAmount) && foodAmount != 0)
             {
-                var saveSucceeded = _recipeServiceGateway.AddRecipeFood(_selectedRecipe.RecipeId, NewFood.FoodId, foodAmount);
+                var saveSucceeded = await _recipeServiceGateway.AddRecipeFood(_selectedRecipe.RecipeId, NewFood.FoodId, foodAmount);
                 if (saveSucceeded)
                 {
                     NewFoodAmount = "";
-                    LoadRecipeDetailData();
+                    await LoadRecipeDetailData();
                 }
                 else
                 {
@@ -170,20 +173,20 @@ namespace Pantry.WPF.Recipe
             }
         }
 
-        private void LoadFoodInstances()
+        private async Task LoadFoodInstances()
         {
             RecipeFoodsList.Clear();
             RecipeFoodsList.AddRange(_recipeServiceGateway.GetRecipeFoods(_selectedRecipe));
         }
 
-        private void LoadSteps()
+        private async Task LoadSteps()
         {
             RecipeStepsList.Clear();
-            RecipeStepsList.AddRange(_recipeServiceGateway.GetRecipeSteps(_selectedRecipe.RecipeId));
+            RecipeStepsList.AddRange(await _recipeServiceGateway.GetRecipeSteps(_selectedRecipe.RecipeId));
             NotifyOfPropertyChange(nameof(RecipeStepsList));
         }
 
-        private void SaveNewStep()
+        private async Task SaveNewStep()
         {
             if (_selectedRecipe is null) return;
             //ToDo: Why do I not yet have centralized exception handling?
@@ -196,7 +199,7 @@ namespace Pantry.WPF.Recipe
 
             NewDescription = "";
             NewDuration = "";
-            LoadRecipeDetailData();
+            await LoadRecipeDetailData ();
         }
     }
 }

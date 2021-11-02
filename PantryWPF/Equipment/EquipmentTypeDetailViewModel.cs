@@ -1,5 +1,6 @@
 ﻿using Pantry.ServiceGateways.Equipment;
 using Stylet;
+using System.Threading.Tasks;
 
 namespace Pantry.WPF.Equipment
 {
@@ -13,9 +14,9 @@ namespace Pantry.WPF.Equipment
             _equipmentServiceGateway = equipmentServiceGateway;
         }
 
-        public void Load(int equipmentTypeId)
+        public async Task Load(int equipmentTypeId)
         {
-            var equipments = _equipmentServiceGateway.GetEquipments(equipmentTypeId);
+            var equipments = await _equipmentServiceGateway.GetEquipments(equipmentTypeId);
             if (Equipments is null)
             {
                 Equipments = new(equipments);

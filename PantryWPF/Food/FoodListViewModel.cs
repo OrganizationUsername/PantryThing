@@ -1,4 +1,5 @@
 ﻿using System.Linq;
+using System.Threading.Tasks;
 using System.Windows;
 using Pantry.ServiceGateways.Food;
 using Pantry.WPF.Shared;
@@ -29,7 +30,7 @@ namespace Pantry.WPF.Food
             set
             {
                 SetAndNotify(ref _selectedFood, value, nameof(SelectedFood));
-                GetSelectedRecipes();
+                GetSelectedRecipes().GetAwaiter().GetResult();
             }
         }
 
@@ -46,30 +47,33 @@ namespace Pantry.WPF.Food
             EditFoodCommand = new(SaveSelectedFood);
         }
 
-        public void SaveSelectedFood()
+        public async Task SaveSelectedFood()
         {
             if (SelectedFood is null) return;
-            if (!_foodServiceGateway.SaveSelectedFood(SelectedFood.FoodId, SelectedFood.IsEdible, SelectedFood.FoodName))
+
+            bool saved = await _foodServiceGateway.SaveSelectedFood(SelectedFood.FoodId, SelectedFood.IsEdible, SelectedFood.FoodName);
+
+            if (!saved)
             {
                 MessageBox.Show("Food not selected or save didn't work.");
             }
         }
 
-        protected override void OnActivate()
+        protected async override void OnActivate()
         {
             base.OnActivate();
-            KeepOnlyUniqueFoodNames();
-            LoadData();
+            await KeepOnlyUniqueFoodNames ();
+            await LoadData();
         }
 
-        public void DeleteSelectedFood()
+        public async Task DeleteSelectedFood()
         {
             if (_selectedFood is null) return;
-            _foodServiceGateway.DeleteFood(_selectedFood.FoodId);
-            LoadData();
+            await _foodServiceGateway.DeleteFood(_selectedFood.FoodId);
+            await LoadData();
         }
 
-        public void GetSelectedRecipes()
+        public async Task GetSelectedRecipes()
         {
             if (SelectedFood is null)
             {
@@ -78,34 +82,34 @@ namespace Pantry.WPF.Food
                 return;
             }
 
-            var recipeList = _foodServiceGateway.GetRecipes(SelectedFood);
+            var recipeList = await _foodServiceGateway.GetRecipes(SelectedFood);
             Recipes.Clear();
             Recipes.AddRange(recipeList);
             OnPropertyChanged(nameof(Recipes));
         }
 
-        public void KeepOnlyUniqueFoodNames()
+        public async Task KeepOnlyUniqueFoodNames()
         {
-            _foodServiceGateway.KeepOnlyUniqueFoodNames();
+            await _foodServiceGateway.KeepOnlyUniqueFoodNames();
         }
 
-        public void LoadData()
+        public async Task LoadData()
         {
             _logger.Debug("FoodListViewModel.LoadData() Start");
             Foods.Clear();
-            var tempList = _foodServiceGateway.GetAllFoods();
+            var tempList = await _foodServiceGateway.GetAllFoods();
             if (tempList is null) return;
             Foods.AddRange(tempList);
             SelectedFood = Foods.FirstOrDefault();
             _logger.Debug("FoodListViewModel.LoadData() End");
         }
 
-        public void AddFood()
+        public async Task AddFood()
         {
             if (string.IsNullOrWhiteSpace(NewFoodName)) return;
-            _foodServiceGateway.AddFood(NewFoodName);
+            await _foodServiceGateway.AddFood(NewFoodName);
             NewFoodName = "";
-            LoadData();
+            await LoadData();
             SelectedFood = Foods.Last();
         }
     }

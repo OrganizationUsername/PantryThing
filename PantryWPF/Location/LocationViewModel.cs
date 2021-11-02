@@ -1,4 +1,5 @@
-﻿using System.Windows;
+﻿using System.Threading.Tasks;
+using System.Windows;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Pantry.ServiceGateways.Location;
 using Pantry.WPF.Shared;
@@ -32,11 +33,11 @@ namespace Pantry.WPF.Location
             Locations.AddRange(locations);
         }
 
-        public void AddNewLocation()
+        public async Task AddNewLocation()
         {
             if (!string.IsNullOrWhiteSpace(NewLocationName))
             {
-                var insertCount = _locationServiceGateway.AddNewLocation(NewLocationName);
+                var insertCount = await _locationServiceGateway.AddNewLocation(NewLocationName);
                 if (insertCount > 0)
                 {
                     LoadData();
@@ -52,10 +53,10 @@ namespace Pantry.WPF.Location
             }
         }
 
-        public void DeleteSelectedLocation()
+        public async Task DeleteSelectedLocation()
         {
             if (SelectedLocation is null) return;
-            var deleteCount = _locationServiceGateway.DeleteLocation(SelectedLocation.LocationId);
+            var deleteCount = await _locationServiceGateway.DeleteLocation(SelectedLocation.LocationId);
             if (deleteCount.HasValue)
             {
                 MessageBox.Show($"{deleteCount.Value} LocationFoods changed.");
