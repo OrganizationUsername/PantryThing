@@ -1,6 +1,7 @@
 ﻿// ReSharper disable UnusedMember.Global
 using System;
 using System.Collections.Generic;
+using System.IO;
 using Microsoft.EntityFrameworkCore;
 using Pantry.Core.Models;
 
@@ -90,7 +91,8 @@ namespace Pantry.Data
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             optionsBuilder.EnableSensitiveDataLogging();
-            optionsBuilder.UseSqlite(@"Data Source=..\..\..\..\testDb.db");
+            var location = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "testDb.db");
+            optionsBuilder.UseSqlite(@$"Data Source={location}");
         }
     }
 }
