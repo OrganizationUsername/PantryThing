@@ -1,3 +1,5 @@
+using System.Security.Cryptography;
+using System.Text;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore; //If this is here, something is wrong.
 using Pantry.Core.Models;
@@ -27,7 +29,7 @@ public class FoodController : ControllerBase
 }
 
 [ApiController]
-//[Route("Admin")]
+[Route("Admin")]
 public class AdminController : ControllerBase
 {
     private readonly Logger _logger;
@@ -38,6 +40,14 @@ public class AdminController : ControllerBase
         _logger = logger;
         _context = context;
     }
-    [Route("Admin/SeedFood")]
+    [Route("SeedFood")]
     [HttpGet] public void SeedFoods() => Seeder.DoSomething(_context);
+
+    public void DoSomething()
+    {
+        var currentTime = DateTime.UtcNow.Ticks;
+        Encoding.ASCII.GetBytes("");
+        var result = HMACSHA256.HashData(Encoding.ASCII.GetBytes(""), Encoding.ASCII.GetBytes(""));
+    }
+
 }
