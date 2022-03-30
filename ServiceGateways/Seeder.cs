@@ -19,6 +19,29 @@ namespace Pantry.ServiceGateways
             _logger = logger;
         }
 
+        public static void DoSomething(DataBase dataBase)
+        {
+
+            _ = dataBase.Database.ExecuteSqlRaw(@$"DELETE FROM {dataBase.Foods.EntityType.GetTableName()};");
+            if (dataBase.Database.ProviderName == "Microsoft.EntityFrameworkCore.Sqlite")
+            {
+                _ = dataBase.Database.ExecuteSqlRaw(@$"UPDATE `sqlite_sequence` SET `seq` = 0 WHERE `name` = '{dataBase.Foods.EntityType.GetTableName()}';");
+            }
+            _ = dataBase.Foods.Add(new() { FoodName = "Frozen Chicken" });
+            _ = dataBase.Foods.Add(new() { FoodName = "Raw Chicken", });
+            _ = dataBase.Foods.Add(new() { FoodName = "BBQ Sauce" });
+            _ = dataBase.Foods.Add(new() { FoodName = "Cooked Chicken" });
+            _ = dataBase.Foods.Add(new() { FoodName = "Sliced Chicken", IsEdible = true });
+            _ = dataBase.Foods.Add(new() { FoodName = "Flour" });
+            _ = dataBase.Foods.Add(new() { FoodName = "Eggs" });
+            _ = dataBase.Foods.Add(new() { FoodName = "Milk", IsEdible = true });
+            _ = dataBase.Foods.Add(new() { FoodName = "Bread" });
+            _ = dataBase.Foods.Add(new() { FoodName = "Sliced Bread", IsEdible = true });
+            _ = dataBase.Foods.Add(new() { FoodName = "Chicken Sandwich", IsEdible = true });
+            _ = dataBase.SaveChanges();
+
+        }
+
         public void PopulateLocationIfNone()
         {
             using (var dbContext = _dbFactory())
