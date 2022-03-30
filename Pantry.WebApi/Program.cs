@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Pantry.Data;
+using Pantry.ServiceGateways.WebApi.ServiceGateways;
 using Serilog;
 using Serilog.Core;
 
@@ -9,14 +10,14 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
 
-new DataBase().Database.Migrate();
-builder.Services.AddDbContext<Pantry.Data.DataBase>();
-var s = new LoggerConfiguration()
+new DataBase().Database.EnsureCreated();
+builder.Services.AddDbContext<DataBase>();
+var logger = new LoggerConfiguration()
     .MinimumLevel.Verbose()
     .WriteTo.File(@"..\..\..\..\PantryLogs.log")
     .CreateLogger();
 
-builder.Services.AddSingleton<Logger>(s);
+builder.Services.AddSingleton<Logger>(logger);
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();

@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore; //If this is here, something is wrong.
 using Pantry.Core.Models;
 using Pantry.Data;
-using Pantry.ServiceGateways;
+using Pantry.ServiceGateways.WebApi.ServiceGateways;
 using Serilog.Core;
 
 namespace Pantry.WebApi.Controllers;
@@ -41,8 +41,10 @@ public class AdminController : ControllerBase
         _context = context;
     }
     [Route("SeedFood")]
-    [HttpGet] public void SeedFoods() => Seeder.DoSomething(_context);
+    [HttpGet] public void SeedFoods() => Seeder.SeedDatabase(_context);
 
+    [Route("DontUseThis")]
+    [HttpGet]
     public void DoSomething()
     {
         var currentTime = DateTime.UtcNow.Ticks;
