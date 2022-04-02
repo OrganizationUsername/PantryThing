@@ -17,6 +17,7 @@
                       SelectedItem="{Binding SelectedLocation}"
                       DockPanel.Dock="Left"/>
             <Button Content="Delete Selected Location" Command="{Binding DeleteCommand}"/>
+            <Button Content="Clipboard Stuff" Command="{Binding ClickMe}"/>
         </StackPanel>
     </DockPanel>
 </UserControl>

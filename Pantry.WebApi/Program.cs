@@ -1,6 +1,4 @@
-using Microsoft.EntityFrameworkCore;
 using Pantry.Data;
-using Pantry.ServiceGateways.WebApi.ServiceGateways;
 using Serilog;
 using Serilog.Core;
 

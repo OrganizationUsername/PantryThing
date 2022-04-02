@@ -1,4 +1,5 @@
-﻿using System.Windows;
+﻿using System.Diagnostics;
+using System.Windows;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Pantry.ServiceGateways.Location;
 using Pantry.WPF.Shared;
@@ -16,13 +17,24 @@ namespace Pantry.WPF.Location
         public string NewLocationName { get; set; }
         public DelegateCommand DeleteCommand { get; set; }
         public DelegateCommand AddLocationCommand { get; set; }
+        public DelegateCommand ClickMe { get; set; }
         public LocationViewModel(LocationServiceGateway locationServiceGateway, Logger logger)
         {
             _locationServiceGateway = locationServiceGateway;
             _logger = logger;
             DeleteCommand = new(DeleteSelectedLocation);
             AddLocationCommand = new(AddNewLocation);
+            ClickMe = new(GetClipboardStuff);
             LoadData();
+        }
+
+        public void GetClipboardStuff()
+        {
+            IDataObject iData = Clipboard.GetDataObject();
+            var list= iData.GetData(DataFormats.Text);
+            var list2 = iData.GetData(DataFormats.Html);
+            var list3 = iData.GetData(DataFormats.Rtf);
+            Trace.WriteLine(list3);
         }
 
         public void LoadData()

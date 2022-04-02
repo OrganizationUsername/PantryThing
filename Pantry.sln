@@ -23,7 +23,13 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Pantry.ServiceGateways", "S
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Pantry.WebApi", "Pantry.WebApi\Pantry.WebApi.csproj", "{C0D54E8C-821D-4755-9465-F2CD8C9CD028}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Pantry.Avalonia", "Pantry.Avalonia\Pantry.Avalonia.csproj", "{A847CF6E-C0B4-4F37-ABC1-90E9092909B8}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Pantry.Avalonia", "Pantry.Avalonia\Pantry.Avalonia.csproj", "{A847CF6E-C0B4-4F37-ABC1-90E9092909B8}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "KnockOff", "KnockOff\KnockOff.csproj", "{915D5E82-E7F3-4D1A-B505-015590CEFEC8}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "KnockOff.CoreLogic", "KnockOff.CoreLogic\KnockOff.CoreLogic.csproj", "{254FF4A4-9A8E-40FD-BFAE-38DCDC26EB7D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestProject1", "TestProject1\TestProject1.csproj", "{90A7A882-5141-4429-9E21-AB121CC51AA8}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -59,6 +65,18 @@ Global
 		{A847CF6E-C0B4-4F37-ABC1-90E9092909B8}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A847CF6E-C0B4-4F37-ABC1-90E9092909B8}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A847CF6E-C0B4-4F37-ABC1-90E9092909B8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{915D5E82-E7F3-4D1A-B505-015590CEFEC8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{915D5E82-E7F3-4D1A-B505-015590CEFEC8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{915D5E82-E7F3-4D1A-B505-015590CEFEC8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{915D5E82-E7F3-4D1A-B505-015590CEFEC8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{254FF4A4-9A8E-40FD-BFAE-38DCDC26EB7D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{254FF4A4-9A8E-40FD-BFAE-38DCDC26EB7D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{254FF4A4-9A8E-40FD-BFAE-38DCDC26EB7D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{254FF4A4-9A8E-40FD-BFAE-38DCDC26EB7D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{90A7A882-5141-4429-9E21-AB121CC51AA8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{90A7A882-5141-4429-9E21-AB121CC51AA8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{90A7A882-5141-4429-9E21-AB121CC51AA8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{90A7A882-5141-4429-9E21-AB121CC51AA8}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

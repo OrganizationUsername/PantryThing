@@ -40,16 +40,17 @@ public class AdminController : ControllerBase
         _logger = logger;
         _context = context;
     }
-    [Route("SeedFood")]
-    [HttpGet] public void SeedFoods() => Seeder.SeedDatabase(_context);
+    [Route("Seed")]
+    [HttpGet] public void Seed() => Seeder.SeedDatabase(_context);
 
     [Route("DontUseThis")]
     [HttpGet]
-    public void DoSomething()
+    public string DoSomething()
     {
         var currentTime = DateTime.UtcNow.Ticks;
         Encoding.ASCII.GetBytes("");
         var result = HMACSHA256.HashData(Encoding.ASCII.GetBytes(""), Encoding.ASCII.GetBytes(""));
+        return result.ToString();
     }
 
 }
